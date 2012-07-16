@@ -6,36 +6,51 @@ import (
 	"bytes"
 	"io/ioutil"
 	"text/template"
+	"path/filepath"
 	blackfriday "github.com/russross/blackfriday"
 )
 
 type Page struct {
+	Site *Site
 	Config
-	Content []byte
+	Content string
 	Path string
 	Mod time.Time
-	Template *template.Template
 }
 
-func NewPage(path string, base string, t *template.Template) *Page {
+func NewPage(site *Site, path string) *Page {
 	text, err := ioutil.ReadFile(path)
 	errhandle(err)
 
 	stat, err := os.Stat(path)
 	errhandle(err)
 
+	relpath, err := filepath.Rel(site.Path, path)
+	errhandle(err)
+
 	head, content := SplitHead(text)
 
 	return &Page{
-		Config: *ParseConfig(string(head)),
-		Content: blackfriday.MarkdownCommon(content),
-		Path: path,
+		Site: site,
+		Config: *ParseConfig(head),
+		Content: content,
+		Path: relpath,
 		Mod: stat.ModTime(),
-		Template: t,
 	}
 }
 
-func SplitHead(text []byte) ([]byte, []byte) {
+func (page *Page) Rendered() []byte {
+	ctmpl, err := template.New("ad-hoc").Parse(page.Content)
+	errhandle(err)
+
+	var buffer bytes.Buffer
+	err = ctmpl.Execute(&buffer, page)
+	errhandle(err)
+
+	return blackfriday.MarkdownCommon(buffer.Bytes())
+}
+
+func SplitHead(text []byte) (string, string) {
 	parts := bytes.SplitN(text, []byte("----\n"), 2)
-	return parts[0], parts[1]
+	return string(parts[0]), string(parts[1])
 }
