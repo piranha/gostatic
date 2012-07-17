@@ -1,0 +1,51 @@
+{{/* -*- mode: django-template-mode -*- */}}
+
+{{define "header"}}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="author" content="Alexander Solovyov">
+  <meta name="keywords" content="alexander solovyov, piranha, python, mercurial, django, emacs">
+  <meta name="description" content="Alexander Solovyov, piranha">
+
+  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ubuntu:regular&subset=Latin,Cyrillic">
+  <link rel="alternate" type="application/atom+xml"
+        title="solovyov.net russian posts" href="http://feeds.feedburner.com/AmazonByteflow">
+  <link rel="alternate" type="application/atom+xml"
+        title="solovyov.net english posts" href="http://feeds.feedburner.com/BloggingSpree">
+  <title>solovyov.net{{ if .Title }}: {{ .Title }}{{ end }}</title>
+
+  <link rel="openid.server" href="http://www.myopenid.com/server">
+  <link rel="openid.delegate" href="http://alexander.solovyov.myopenid.com/">
+  <link rel="openid2.local_id" href="http://alexander.solovyov.myopenid.com/">
+  <link rel="openid2.provider" href="http://www.myopenid.com/server">
+  <meta http-equiv="X-XRDS-Location" content="http://www.myopenid.com/xrds?username=alexander.solovyov.myopenid.com">
+
+  <script type="text/javascript">
+  var _gaq = [['_setAccount', 'UA-317760-3'], ['_trackPageview']];
+  (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.src = 'http://www.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g, s);
+  }(document, 'script'));
+  </script>
+</head>
+<body>
+  <header>
+    <h1 id="site-title"><a href="/">solovyov.net</a></h1>
+  </header>
+{{end}}
+
+{{define "footer"}}
+  <footer>
+    &#169; 2006&ndash;2012 Alexander Solovyov (<a href="/about/">about</a>)
+  </footer>
+</body>
+</html>
+{{end}}
+
+{{define "page"}}{{ template "header" . }}
+  {{ .Content }}
+  {{ template "footer" . }}
+{{end}}
