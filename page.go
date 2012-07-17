@@ -1,25 +1,32 @@
+// (c) 2012 Alexander Solovyov
+// under terms of ISC license
+
 package main
 
 import (
-	"bytes"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sort"
 	"strings"
-	"text/template"
 	"time"
-	blackfriday "github.com/russross/blackfriday"
 )
+
+// stuff to remember
+// - научиться парсить дату из файла (?) - забить пока не заработает всë
+// - решить что-то с тегами
 
 type Page struct {
 	PageConfig
-	Site *Site
-	Content    string
-	Current    string
-	Path       string
-	ModTime    time.Time
-	RenderTime time.Time
+
+	Site		 *Site
+	Pattern		 string
+	Rules		 []string
+
+	Content		 string
+	Path		 string
+	ModTime		 time.Time
+	RenderTime	 time.Time
 }
 
 type PageSlice []*Page
@@ -34,54 +41,42 @@ func NewPage(site *Site, path string) *Page {
 	relpath, err := filepath.Rel(site.Path, path)
 	errhandle(err)
 
-	head, content := SplitHead(text)
+	pattern, rules := site.Rules.MatchedRules(path)
 
-	return &Page{
-		PageConfig: *ParseConfig(head),
+	page := &Page{
 		Site:    site,
-		Content: content,
+		Pattern: pattern,
+		Rules:   rules,
+		Content: string(text),
 		Path:    relpath,
 		ModTime: stat.ModTime(),
 	}
+	page.ReadConfig()
+	return page
 }
 
-// Destination() returns relative path to a file in future published site
-func (page *Page) Destination() string {
-	path := page.Path
-
-	if strings.HasSuffix(path, ".html") {
-		return path
+func (page *Page) ReadConfig() {
+	if page.Rules == nil || page.Rules[0] == ":ignore" {
+		return
 	}
 
-	if strings.HasSuffix(path, ".md") {
-		path = strings.Replace(path, ".md", ".html", 1)
+	parts := strings.SplitN(page.Content, "----\n", 2)
+	if len(parts) == 2 {
+		page.PageConfig = *ParseConfig(parts[0])
+		page.Content = parts[1]
+	} else {
+		page.PageConfig = *ParseConfig("")
 	}
+}
 
-	if filepath.Base(path) != "index.html" {
-		path = strings.Replace(path, ".html", "/index.html", 1)
+func (page *Page) Process() {
+	for _, rule := range page.Rules {
+		ProcessRule(page, rule)
 	}
-
-	return path
 }
 
 func (page *Page) Url() string {
-	return strings.Replace(page.Destination(), "/index.html", "/", 1)
-}
-
-func (page *Page) Rendered() []byte {
-	ctmpl, err := template.New("ad-hoc").Parse(page.Content)
-	errhandle(err)
-
-	var buffer bytes.Buffer
-	err = ctmpl.Execute(&buffer, page)
-	errhandle(err)
-
-	return blackfriday.MarkdownCommon(buffer.Bytes())
-}
-
-func SplitHead(text []byte) (string, string) {
-	parts := bytes.SplitN(text, []byte("----\n"), 2)
-	return string(parts[0]), string(parts[1])
+	return strings.Replace(page.Path, "/index.html", "/", 1)
 }
 
 // PageSlice manipulation

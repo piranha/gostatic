@@ -22,11 +22,13 @@ Build a site.
 var showVersion = goopt.Flag([]string{"-v", "--version"}, []string{},
 	"show version and exit", "")
 
+type RuleMap map[string]([]string)
+
 type GlobalConfig struct {
 	Templates []string
 	Source string
 	Output string
-	Rules map[string]([]string)
+	Rules RuleMap
 }
 
 func RetrieveGlobalConfig(path string) *GlobalConfig {
@@ -48,6 +50,27 @@ func RetrieveGlobalConfig(path string) *GlobalConfig {
 	config.Templates = templates
 
 	return &config
+}
+
+func (rules RuleMap) MatchedRules(path string) (string, []string) {
+	if rules[path] != nil {
+		return path, rules[path]
+	}
+
+	_, name := filepath.Split(path)
+	if rules[name] != nil {
+		return name, rules[name]
+	}
+
+	for pat, rules := range rules {
+		matched, err := filepath.Match(pat, name)
+		errhandle(err)
+		if matched {
+			return pat, rules
+		}
+	}
+
+	return "", nil
 }
 
 func main() {

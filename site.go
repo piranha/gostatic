@@ -1,3 +1,6 @@
+// (c) 2012 Alexander Solovyov
+// under terms of ISC license
+
 package main
 
 import (
@@ -11,7 +14,7 @@ type Site struct {
 	Path     string
 	Output   string
 	Template *template.Template
-	Rules    map[string]([]string)
+	Rules    RuleMap
 	Pages    PageSlice
 }
 
@@ -67,10 +70,16 @@ func (site *Site) walkFunc(errors chan<- error) filepath.WalkFunc {
 func (site *Site) Summary() {
 	println("Total pages", len(site.Pages))
 	for _, page := range site.Pages {
-		fmt.Printf("%s - %s: %d chars\n",
-			page.Path, page.Title, len(page.Content))
+		page.Process()
+
+		if len(page.Path) == 0 {
+			continue
+		}
+
+		fmt.Printf("%s - %s: %d chars; %s\n",
+			page.Path, page.Title, len(page.Content), page.Rules)
 		println("------------")
-		fmt.Printf("%s", page.Rendered())
+		fmt.Printf("%s", page.Content)
 		println("------------")
 		println()
 	}

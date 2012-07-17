@@ -5,8 +5,10 @@
     "rules": {
         "template.tmpl": [":ignore"],
         "config.json": [":ignore"],
-        "*.md": [":template", ":markdown", ":rename *.html"],
-        "*.html": [":template"],
-        "*.less": ["lessc", ":rename *.css"]
+        "*.md": [":rename *.html", ":directorify",
+                 ":inner-template", ":markdown", ":template"],
+        "*.html": [":directorify", ":template page"],
+        "*.less": ["lessc", ":rename *.css"],
+        "*.js": [":ignore"]
     }
 }

@@ -1,2 +1,2 @@
 run:
-	go run *.go -t test/template.tmpl test/site
+	go run *.go test/config.json
