@@ -18,9 +18,10 @@ Build a site
 
 var templates = goopt.Strings([]string{"-t", "--template"},
 	"template", "path to template")
+var output = goopt.String([]string{"-o", "--output"},
+	"directory", "output directory")
 var showVersion = goopt.Flag([]string{"-v", "--version"}, []string{},
 	"show version and exit", "")
-
 
 func main() {
 	goopt.Version = Version

@@ -8,14 +8,13 @@ import (
 )
 
 type Site struct {
-	Path string
+	Path     string
 	Template *template.Template
-	Pages []*Page
+	Pages    PageSlice
 }
 
-
 func NewSite(t *template.Template, dir string) *Site {
-	site := &Site{dir, t, make([]*Page, 0)}
+	site := &Site{dir, t, make(PageSlice, 0)}
 
 	site.Collect()
 
@@ -30,13 +29,13 @@ func (site *Site) AddPage(path string) {
 func (site *Site) Collect() {
 	errors := make(chan error)
 
-    filepath.Walk(site.Path, site.walkFunc(errors))
+	filepath.Walk(site.Path, site.walkFunc(errors))
 
-    select {
-    case err := <-errors:
-        errhandle(err)
-    default:
-    }
+	select {
+	case err := <-errors:
+		errhandle(err)
+	default:
+	}
 }
 
 func (site *Site) walkFunc(errors chan<- error) filepath.WalkFunc {
