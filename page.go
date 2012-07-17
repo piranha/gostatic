@@ -85,9 +85,9 @@ func SplitHead(text []byte) (string, string) {
 
 // PageSlice manipulation
 
-func (pages PageSlice) Get(i int) *Page   { return pages[i] }
-func (pages PageSlice) First(i int) *Page { return pages.Get(0) }
-func (pages PageSlice) Last(i int) *Page  { return pages.Get(len(pages) - 1) }
+func (pages PageSlice) Get(i int) *Page { return pages[i] }
+func (pages PageSlice) First() *Page    { return pages.Get(0) }
+func (pages PageSlice) Last() *Page     { return pages.Get(len(pages) - 1) }
 
 func (pages PageSlice) Len() int {
 	return len(pages)
