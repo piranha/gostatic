@@ -1,0 +1,12 @@
+{
+    "templates": ["template.tmpl"],
+    "source": "site",
+    "output": "out",
+    "rules": {
+        "template.tmpl": [":ignore"],
+        "config.json": [":ignore"],
+        "*.md": [":template", ":markdown", ":rename *.html"],
+        "*.html": [":template"],
+        "*.less": ["lessc", ":rename *.css"]
+    }
+}

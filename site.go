@@ -1,20 +1,31 @@
 package main
 
 import (
-	"os"
 	"fmt"
+	"os"
 	"path/filepath"
 	"text/template"
 )
 
 type Site struct {
 	Path     string
+	Output   string
 	Template *template.Template
+	Rules    map[string]([]string)
 	Pages    PageSlice
 }
 
-func NewSite(t *template.Template, dir string) *Site {
-	site := &Site{dir, t, make(PageSlice, 0)}
+func NewSite(config *GlobalConfig) *Site {
+	template, err := template.ParseFiles(config.Templates...)
+	errhandle(err)
+
+	site := &Site{
+		Path: config.Source,
+		Output: config.Output,
+		Template: template,
+		Rules: config.Rules,
+		Pages: make(PageSlice, 0),
+	}
 
 	site.Collect()
 

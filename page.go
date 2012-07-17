@@ -1,21 +1,22 @@
 package main
 
 import (
-	"os"
-	"time"
 	"bytes"
 	"io/ioutil"
-	"text/template"
+	"os"
 	"path/filepath"
-	"strings"
-	blackfriday "github.com/russross/blackfriday"
 	"sort"
+	"strings"
+	"text/template"
+	"time"
+	blackfriday "github.com/russross/blackfriday"
 )
 
 type Page struct {
+	PageConfig
 	Site *Site
-	Config
 	Content    string
+	Current    string
 	Path       string
 	ModTime    time.Time
 	RenderTime time.Time
@@ -36,15 +37,15 @@ func NewPage(site *Site, path string) *Page {
 	head, content := SplitHead(text)
 
 	return &Page{
+		PageConfig: *ParseConfig(head),
 		Site:    site,
-		Config:  *ParseConfig(head),
 		Content: content,
 		Path:    relpath,
 		ModTime: stat.ModTime(),
 	}
 }
 
-// Destination() returns relative path to a file in future published repository
+// Destination() returns relative path to a file in future published site
 func (page *Page) Destination() string {
 	path := page.Path
 

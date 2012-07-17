@@ -9,13 +9,13 @@ import (
 	"reflect"
 )
 
-type Config struct {
+type PageConfig struct {
 	Title string `default:"unknown title"`
 	Type string `default:"page"`
 	Other map[string]string
 }
 
-func (cfg *Config) ParseLine (line string, elemptr *reflect.Value) {
+func (cfg *PageConfig) ParseLine (line string, elemptr *reflect.Value) {
 	var s reflect.Value
 	if elemptr != nil {
 		s = *elemptr
@@ -45,8 +45,8 @@ func (cfg *Config) ParseLine (line string, elemptr *reflect.Value) {
 	f.SetString(strings.TrimSpace(value))
 }
 
-func ParseConfig (source string) *Config {
-	cfg := &Config{}
+func ParseConfig (source string) *PageConfig {
+	cfg := &PageConfig{}
 	s := reflect.ValueOf(cfg).Elem()
 
 	// Set default values
