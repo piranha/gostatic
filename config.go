@@ -12,6 +12,7 @@ import (
 type PageConfig struct {
 	Title string `default:"unknown title"`
 	Type  string `default:"page"`
+	Tags  []string
 	Other map[string]string
 }
 
@@ -22,6 +23,8 @@ func (cfg *PageConfig) ParseLine(line string, elemptr *reflect.Value) {
 	} else {
 		s = reflect.ValueOf(cfg).Elem()
 	}
+
+	// Cleanup line
 	line = strings.SplitN(line, "//", 2)[0]
 	line = strings.TrimSpace(line)
 
@@ -30,6 +33,7 @@ func (cfg *PageConfig) ParseLine(line string, elemptr *reflect.Value) {
 		return
 	}
 
+	// Split line in actual name and value
 	parts := strings.SplitN(line, ":", 2)
 	name := strings.ToUpper(parts[0][0:1]) + strings.TrimSpace(parts[0][1:])
 	value := strings.TrimSpace(parts[1])
@@ -42,7 +46,16 @@ func (cfg *PageConfig) ParseLine(line string, elemptr *reflect.Value) {
 
 	// Set value
 	f := s.FieldByName(name)
-	f.SetString(strings.TrimSpace(value))
+	switch f.Kind() {
+	case reflect.String:
+		f.SetString(value)
+	case reflect.Slice:
+		values := strings.Split(value, ",")
+		for i, v := range values {
+			values[i] = strings.TrimSpace(v)
+		}
+		f.Set(reflect.ValueOf(values))
+	}
 }
 
 func ParseConfig(source string) *PageConfig {

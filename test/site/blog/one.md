@@ -1,4 +1,5 @@
 title: First Post
+tags: first, hello
 
 ----
 
