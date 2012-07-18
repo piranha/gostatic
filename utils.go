@@ -4,8 +4,8 @@
 package main
 
 import (
-	"os"
 	"log"
+	"os"
 )
 
 func errhandle(err error) {

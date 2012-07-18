@@ -2,22 +2,22 @@ package main
 
 import (
 	"bytes"
-	"strings"
 	"errors"
-	"text/template"
-	"path/filepath"
 	blackfriday "github.com/russross/blackfriday"
+	"path/filepath"
+	"strings"
+	"text/template"
 )
 
-type Processor func (page *Page, args []string)
+type Processor func(page *Page, args []string)
 
 var Processors = map[string]Processor{
 	":inner-template": ProcessInnerTemplate,
-	":template": ProcessTemplate,
-	":markdown": ProcessMarkdown,
-	":rename": ProcessRename,
-	":ignore": ProcessIgnore,
-	":directorify": ProcessDirectorify,
+	":template":       ProcessTemplate,
+	":markdown":       ProcessMarkdown,
+	":rename":         ProcessRename,
+	":ignore":         ProcessIgnore,
+	":directorify":    ProcessDirectorify,
 }
 
 func ProcessRule(page *Page, rule string) {

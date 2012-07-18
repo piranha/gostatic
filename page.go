@@ -19,14 +19,14 @@ import (
 type Page struct {
 	PageConfig
 
-	Site		 *Site
-	Pattern		 string
-	Rules		 []string
+	Site    *Site
+	Pattern string
+	Rules   []string
 
-	Content		 string
-	Path		 string
-	ModTime		 time.Time
-	RenderTime	 time.Time
+	Content    string
+	Path       string
+	ModTime    time.Time
+	RenderTime time.Time
 }
 
 type PageSlice []*Page

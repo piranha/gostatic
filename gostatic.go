@@ -4,12 +4,11 @@
 package main
 
 import (
-	"fmt"
-	"path/filepath"
-	// "text/template"
-	"io/ioutil"
 	"encoding/json"
+	"fmt"
 	goopt "github.com/droundy/goopt"
+	"io/ioutil"
+	"path/filepath"
 )
 
 var Version = "0.1"
@@ -26,9 +25,9 @@ type RuleMap map[string]([]string)
 
 type GlobalConfig struct {
 	Templates []string
-	Source string
-	Output string
-	Rules RuleMap
+	Source    string
+	Output    string
+	Rules     RuleMap
 }
 
 func RetrieveGlobalConfig(path string) *GlobalConfig {

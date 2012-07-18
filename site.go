@@ -23,11 +23,11 @@ func NewSite(config *GlobalConfig) *Site {
 	errhandle(err)
 
 	site := &Site{
-		Path: config.Source,
-		Output: config.Output,
+		Path:     config.Source,
+		Output:   config.Output,
 		Template: template,
-		Rules: config.Rules,
-		Pages: make(PageSlice, 0),
+		Rules:    config.Rules,
+		Pages:    make(PageSlice, 0),
 	}
 
 	site.Collect()
