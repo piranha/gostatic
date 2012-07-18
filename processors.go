@@ -31,14 +31,14 @@ func ProcessRule(page *Page, rule string) {
 }
 
 func ProcessInnerTemplate(page *Page, args []string) {
-	t, err := template.New("ad-hoc").Parse(page.Content)
+	t, err := template.New("ad-hoc").Parse(page.GetContent())
 	errhandle(err)
 
 	var buffer bytes.Buffer
 	err = t.Execute(&buffer, page)
 	errhandle(err)
 
-	page.Content = buffer.String()
+	page.SetContent(buffer.String())
 }
 
 func ProcessTemplate(page *Page, args []string) {
@@ -53,12 +53,12 @@ func ProcessTemplate(page *Page, args []string) {
 	err := page.Site.Template.ExecuteTemplate(&buffer, pagetype, page)
 	errhandle(err)
 
-	page.Content = buffer.String()
+	page.SetContent(buffer.String())
 }
 
 func ProcessMarkdown(page *Page, args []string) {
-	result := blackfriday.MarkdownCommon([]byte(page.Content))
-	page.Content = string(result)
+	result := blackfriday.MarkdownCommon([]byte(page.GetContent()))
+	page.SetContent(string(result))
 }
 
 func ProcessRename(page *Page, args []string) {

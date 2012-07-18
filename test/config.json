@@ -5,6 +5,7 @@
     "rules": {
         "template.tmpl": [":ignore"],
         "config.json": [":ignore"],
+        "*.md1": [":rename *.html", ":directorify", ":inner-template"],
         "*.md": [":rename *.html", ":directorify",
                  ":inner-template", ":markdown", ":template"],
         "*.html": [":directorify", ":template page"],

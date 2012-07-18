@@ -79,7 +79,8 @@ func (site *Site) Summary() {
 		fmt.Printf("%s - %s: %d chars; %s\n",
 			page.Path, page.Title, len(page.Content), page.Rules)
 		println("------------")
-		fmt.Printf("%s", page.Content)
+		_, err := page.WriteTo(os.Stdout)
+		errhandle(err)
 		println("------------")
 		println()
 	}

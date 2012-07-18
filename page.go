@@ -4,6 +4,7 @@
 package main
 
 import (
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -19,11 +20,13 @@ import (
 type Page struct {
 	PageConfig
 
-	Site    *Site
-	Pattern string
-	Rules   []string
+	Site      *Site
+	Pattern   string
+	Rules     []string
+	Processed bool
 
 	Content    string
+	Source     string
 	Path       string
 	ModTime    time.Time
 	RenderTime time.Time
@@ -32,9 +35,6 @@ type Page struct {
 type PageSlice []*Page
 
 func NewPage(site *Site, path string) *Page {
-	text, err := ioutil.ReadFile(path)
-	errhandle(err)
-
 	stat, err := os.Stat(path)
 	errhandle(err)
 
@@ -44,15 +44,38 @@ func NewPage(site *Site, path string) *Page {
 	pattern, rules := site.Rules.MatchedRules(path)
 
 	page := &Page{
-		Site:    site,
-		Pattern: pattern,
-		Rules:   rules,
-		Content: string(text),
-		Path:    relpath,
-		ModTime: stat.ModTime(),
+		Site:      site,
+		Pattern:   pattern,
+		Rules:     rules,
+		Processed: false,
+		Content:   "",
+		Source:    relpath,
+		Path:      relpath,
+		ModTime:   stat.ModTime(),
 	}
 	page.ReadConfig()
 	return page
+}
+
+func (page *Page) GetContent() string {
+	if len(page.Content) == 0 {
+		content, err := ioutil.ReadFile(page.SourcePath())
+		errhandle(err)
+		page.SetContent(string(content))
+	}
+	return page.Content
+}
+
+func (page *Page) SetContent(content string) {
+	page.Content = content
+}
+
+func (page *Page) SourcePath() string {
+	return filepath.Join(page.Site.Path, page.Source)
+}
+
+func (page *Page) Url() string {
+	return strings.Replace(page.Path, "/index.html", "/", 1)
 }
 
 func (page *Page) ReadConfig() {
@@ -60,23 +83,46 @@ func (page *Page) ReadConfig() {
 		return
 	}
 
-	parts := strings.SplitN(page.Content, "----\n", 2)
+	parts := strings.SplitN(page.GetContent(), "----\n", 2)
 	if len(parts) == 2 {
-		page.PageConfig = *ParseConfig(parts[0])
-		page.Content = parts[1]
+		page.PageConfig = *ParseConfig(string(parts[0]))
+		page.SetContent(parts[1])
 	} else {
 		page.PageConfig = *ParseConfig("")
 	}
 }
 
 func (page *Page) Process() {
-	for _, rule := range page.Rules {
-		ProcessRule(page, rule)
+	if page.Processed {
+		return
+	}
+
+	page.Processed = true
+	if page.Rules != nil {
+		for _, rule := range page.Rules {
+			ProcessRule(page, rule)
+		}
 	}
 }
 
-func (page *Page) Url() string {
-	return strings.Replace(page.Path, "/index.html", "/", 1)
+func (page *Page) WriteTo(writer io.Writer) (n int64, err error) {
+	if !page.Processed {
+		page.Process()
+	}
+
+	if page.Rules == nil {
+		file, err := os.Open(page.Source)
+		if err != nil {
+			n = 0
+		} else {
+			n, err = io.Copy(writer, file)
+		}
+	} else {
+		nint, werr := writer.Write([]byte(page.Content))
+		n = int64(nint)
+		err = werr
+	}
+	return n, err
 }
 
 // PageSlice manipulation
