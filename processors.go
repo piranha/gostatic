@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	blackfriday "github.com/russross/blackfriday"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -12,22 +13,22 @@ import (
 type Processor func(page *Page, args []string)
 
 var Processors = map[string]Processor{
-	":inner-template": ProcessInnerTemplate,
-	":template":       ProcessTemplate,
-	":markdown":       ProcessMarkdown,
-	":rename":         ProcessRename,
-	":ignore":         ProcessIgnore,
-	":directorify":    ProcessDirectorify,
+	"inner-template": ProcessInnerTemplate,
+	"template":       ProcessTemplate,
+	"markdown":       ProcessMarkdown,
+	"rename":         ProcessRename,
+	"ignore":         ProcessIgnore,
+	"directorify":    ProcessDirectorify,
+	"external":       ProcessExternal,
 }
 
 func ProcessRule(page *Page, rule string) {
-	bits := strings.Split(rule, " ")
-	if strings.HasPrefix(bits[0], ":") { // internal processing
-		processor := Processors[bits[0]]
-		processor(page, bits[1:])
-	} else { // external processing
-		println("no idea", rule)
+	if strings.HasPrefix(rule, ":") {
+		rule = "external " + rule[1:]
 	}
+	bits := strings.Split(rule, " ")
+	processor := Processors[bits[0]]
+	processor(page, bits[1:])
 }
 
 func ProcessInnerTemplate(page *Page, args []string) {
@@ -79,4 +80,16 @@ func ProcessDirectorify(page *Page, args []string) {
 	if filepath.Base(page.Path) != "index.html" {
 		page.Path = strings.Replace(page.Path, ".html", "/index.html", 1)
 	}
+}
+
+func ProcessExternal(page *Page, args []string) {
+	cmd := exec.Command(args[0], args[1:]...)
+	cmd.Stdin = strings.NewReader(page.GetContent())
+	var out bytes.Buffer
+	cmd.Stdout = &out
+
+	err := cmd.Run()
+	errhandle(err)
+
+	page.SetContent(out.String())
 }
