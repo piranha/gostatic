@@ -22,7 +22,7 @@ type Page struct {
 
 	Site      *Site
 	Pattern   string
-	Rules     []string
+	Rules     RuleList
 	Processed bool
 
 	Content    string
@@ -42,18 +42,20 @@ func NewPage(site *Site, path string) *Page {
 	errhandle(err)
 
 	pattern, rules := site.Rules.MatchedRules(path)
+	ruleCopy := make(RuleList, len(rules))
+	copy(ruleCopy, rules)
 
 	page := &Page{
 		Site:      site,
 		Pattern:   pattern,
-		Rules:     rules,
+		Rules:     ruleCopy,
 		Processed: false,
 		Content:   "",
 		Source:    relpath,
 		Path:      relpath,
 		ModTime:   stat.ModTime(),
 	}
-	page.ReadConfig()
+	page.Peek()
 	return page
 }
 
@@ -78,17 +80,17 @@ func (page *Page) Url() string {
 	return strings.Replace(page.Path, "/index.html", "/", 1)
 }
 
-func (page *Page) ReadConfig() {
-	if page.Rules == nil || page.Rules[0] == ":ignore" {
-		return
-	}
-
-	parts := strings.SplitN(page.GetContent(), "----\n", 2)
-	if len(parts) == 2 {
-		page.PageConfig = *ParseConfig(string(parts[0]))
-		page.SetContent(parts[1])
-	} else {
-		page.PageConfig = *ParseConfig("")
+// Peek is used to run those processors which should be done before others can
+// find out about us. Two actual examples include 'config' and 'rename'
+// processors right now.
+func (page *Page) Peek() {
+	for _, pat := range PreProcessors {
+		i := page.Rules.MatchedIndex(pat)
+		if i != -1 {
+			rule := page.Rules[i]
+			ProcessRule(page, rule)
+			page.Rules = append(page.Rules[:i], page.Rules[i + 1:]...)
+		}
 	}
 }
 

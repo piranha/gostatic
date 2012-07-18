@@ -23,8 +23,6 @@ var showVersion = goopt.Flag([]string{"-v", "--version"}, []string{},
 var showProcessors = goopt.Flag([]string{"--processors"}, []string{},
 	"show internal processors", "")
 
-type RuleMap map[string]([]string)
-
 type GlobalConfig struct {
 	Templates []string
 	Source    string
@@ -53,27 +51,6 @@ func RetrieveGlobalConfig(path string) *GlobalConfig {
 	return &config
 }
 
-func (rules RuleMap) MatchedRules(path string) (string, []string) {
-	if rules[path] != nil {
-		return path, rules[path]
-	}
-
-	_, name := filepath.Split(path)
-	if rules[name] != nil {
-		return name, rules[name]
-	}
-
-	for pat, rules := range rules {
-		matched, err := filepath.Match(pat, name)
-		errhandle(err)
-		if matched {
-			return pat, rules
-		}
-	}
-
-	return "", nil
-}
-
 func main() {
 	goopt.Version = Version
 	goopt.Summary = Summary
@@ -98,5 +75,6 @@ func main() {
 	config := RetrieveGlobalConfig(goopt.Args[0])
 
 	site := NewSite(config)
+	// site.Render()
 	site.Summary()
 }

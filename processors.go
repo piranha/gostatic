@@ -3,12 +3,13 @@ package main
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	blackfriday "github.com/russross/blackfriday"
 	"os/exec"
 	"path/filepath"
+	"sort"
 	"strings"
 	"text/template"
-	"fmt"
 )
 
 type Processor struct {
@@ -16,40 +17,59 @@ type Processor struct {
 	Desc string
 }
 
+// PreProcessors is a list of processor necessary to be executed beforehand to
+// fill out information, which can be required by fellow pages
+var PreProcessors = RuleList{"config", "rename", "directorify"}
+
 var Processors = map[string]*Processor{
 	"inner-template": &Processor{
 		ProcessInnerTemplate,
 		"process content as a Go template",
 	},
-	"template":       &Processor{
+	"template": &Processor{
 		ProcessTemplate,
 		"put content in a template (by default in 'page' template)",
 	},
-	"markdown":       &Processor{
+	"markdown": &Processor{
 		ProcessMarkdown,
 		"process content as a markdown",
 	},
-	"rename":         &Processor{
+	"rename": &Processor{
 		ProcessRename,
 		"rename resulting file",
 	},
-	"ignore":         &Processor{
+	"ignore": &Processor{
 		ProcessIgnore,
 		"ignore file",
 	},
-	"directorify":    &Processor{
+	"directorify": &Processor{
 		ProcessDirectorify,
 		"path/name.html -> path/name/index.html",
 	},
-	"external":       &Processor{
+	"external": &Processor{
 		ProcessExternal,
 		"run external command to process content (shortcut ':')",
+	},
+	"config": &Processor{
+		ProcessConfig,
+		"read config from content (separated by '----\\n')",
 	},
 }
 
 func ProcessorSummary() {
-	for k, p := range Processors {
-		fmt.Printf("%s\n\t%s\n", k, p.Desc)
+	keys := make([]string, 0)
+	for k := range Processors {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	for _, k := range keys {
+		p := Processors[k]
+		pre := ""
+		if PreProcessors.MatchedIndex(k) != -1 {
+			pre = "(preprocessor)"
+		}
+		fmt.Printf("%s %s\n\t%s\n", k, pre, p.Desc)
 	}
 }
 
@@ -104,7 +124,15 @@ func ProcessRename(page *Page, args []string) {
 }
 
 func ProcessIgnore(page *Page, args []string) {
-	page.Path = ""
+	var idx int
+	site := page.Site
+	for i, pg := range site.Pages {
+		if pg == page {
+			idx = i
+			break
+		}
+	}
+	site.Pages = append(site.Pages[:idx], site.Pages[idx + 1:]...)
 }
 
 func ProcessDirectorify(page *Page, args []string) {
@@ -123,4 +151,17 @@ func ProcessExternal(page *Page, args []string) {
 	errhandle(err)
 
 	page.SetContent(out.String())
+}
+
+func ProcessConfig(page *Page, args []string) {
+	parts := strings.SplitN(page.GetContent(), "----\n", 2)
+	if len(parts) != 2 {
+		errhandle(errors.New(fmt.Sprintf(
+			"page %s has no configuration in the head, while it is " +
+			"requested by the site configuration",
+			page.Path)))
+	}
+
+	page.PageConfig = *ParseConfig(string(parts[0]))
+	page.SetContent(parts[1])
 }

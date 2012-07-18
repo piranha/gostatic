@@ -71,11 +71,9 @@ func (site *Site) Summary() {
 	println("Total pages", len(site.Pages))
 	for _, page := range site.Pages {
 		page.Process()
+	}
 
-		if len(page.Path) == 0 {
-			continue
-		}
-
+	for _, page := range site.Pages {
 		fmt.Printf("%s - %s: %d chars; %s\n",
 			page.Path, page.Title, len(page.Content), page.Rules)
 		println("------------")
@@ -83,5 +81,26 @@ func (site *Site) Summary() {
 		errhandle(err)
 		println("------------")
 		println()
+	}
+}
+
+func (site *Site) Render() {
+	for _, page := range site.Pages {
+		page.Process()
+	}
+
+	// we are doing a second go here because certain processors can modify Pages
+	// list
+	fmt.Printf("Total pages: %d\n", len(site.Pages))
+	for _, page := range site.Pages {
+		path := filepath.Join(site.Output, page.Path)
+
+		err := os.MkdirAll(filepath.Dir(path), 0755)
+		errhandle(err)
+
+		file, err := os.Create(path)
+		errhandle(err)
+
+		page.WriteTo(file)
 	}
 }

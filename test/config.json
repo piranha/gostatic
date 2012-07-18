@@ -3,10 +3,8 @@
     "source": "site",
     "output": "out",
     "rules": {
-        "template.tmpl": ["ignore"],
-        "config.json": ["ignore"],
-        "*.md": ["rename *.html", "directorify", "inner-template"],
-        "*.md1": ["rename *.html", "directorify",
+        "*.md": ["config", "rename *.html", "directorify", "inner-template"],
+        "*.md1": ["config", "rename *.html", "directorify",
                  "inner-template", "markdown", "template"],
         "*.html": ["directorify", "template page"],
         "*.less": [":lessc -", "rename *.css"],
