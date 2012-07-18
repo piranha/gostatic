@@ -8,18 +8,49 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
+	"fmt"
 )
 
-type Processor func(page *Page, args []string)
+type Processor struct {
+	Func func(page *Page, args []string)
+	Desc string
+}
 
-var Processors = map[string]Processor{
-	"inner-template": ProcessInnerTemplate,
-	"template":       ProcessTemplate,
-	"markdown":       ProcessMarkdown,
-	"rename":         ProcessRename,
-	"ignore":         ProcessIgnore,
-	"directorify":    ProcessDirectorify,
-	"external":       ProcessExternal,
+var Processors = map[string]*Processor{
+	"inner-template": &Processor{
+		ProcessInnerTemplate,
+		"process content as a Go template",
+	},
+	"template":       &Processor{
+		ProcessTemplate,
+		"put content in a template (by default in 'page' template)",
+	},
+	"markdown":       &Processor{
+		ProcessMarkdown,
+		"process content as a markdown",
+	},
+	"rename":         &Processor{
+		ProcessRename,
+		"rename resulting file",
+	},
+	"ignore":         &Processor{
+		ProcessIgnore,
+		"ignore file",
+	},
+	"directorify":    &Processor{
+		ProcessDirectorify,
+		"path/name.html -> path/name/index.html",
+	},
+	"external":       &Processor{
+		ProcessExternal,
+		"run external command to process content (shortcut ':')",
+	},
+}
+
+func ProcessorSummary() {
+	for k, p := range Processors {
+		fmt.Printf("%s\n\t%s\n", k, p.Desc)
+	}
 }
 
 func ProcessRule(page *Page, rule string) {
@@ -28,7 +59,7 @@ func ProcessRule(page *Page, rule string) {
 	}
 	bits := strings.Split(rule, " ")
 	processor := Processors[bits[0]]
-	processor(page, bits[1:])
+	processor.Func(page, bits[1:])
 }
 
 func ProcessInnerTemplate(page *Page, args []string) {

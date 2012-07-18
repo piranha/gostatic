@@ -20,6 +20,8 @@ Build a site.
 
 var showVersion = goopt.Flag([]string{"-v", "--version"}, []string{},
 	"show version and exit", "")
+var showProcessors = goopt.Flag([]string{"--processors"}, []string{},
+	"show internal processors", "")
 
 type RuleMap map[string]([]string)
 
@@ -80,6 +82,11 @@ func main() {
 
 	if *showVersion {
 		fmt.Printf("gostatic %s\n", goopt.Version)
+		return
+	}
+
+	if *showProcessors {
+		ProcessorSummary()
 		return
 	}
 
