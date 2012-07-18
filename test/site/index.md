@@ -1,4 +1,4 @@
-title = Alexander Solovyov
+title: Alexander Solovyov
 
 ----
 

@@ -30,7 +30,7 @@ func (cfg *PageConfig) ParseLine(line string, elemptr *reflect.Value) {
 		return
 	}
 
-	parts := strings.SplitN(line, "=", 2)
+	parts := strings.SplitN(line, ":", 2)
 	name := strings.ToUpper(parts[0][0:1]) + strings.TrimSpace(parts[0][1:])
 	value := strings.TrimSpace(parts[1])
 

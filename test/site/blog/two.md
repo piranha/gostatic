@@ -1,4 +1,4 @@
-title = Second Post
+title: Second Post
 
 ----
 
