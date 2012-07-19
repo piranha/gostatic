@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"time"
 	"text/template"
 )
 
@@ -19,7 +20,7 @@ type Processor struct {
 
 // PreProcessors is a list of processor necessary to be executed beforehand to
 // fill out information, which can be required by fellow pages
-var PreProcessors = RuleList{"config", "rename", "directorify"}
+var PreProcessors = RuleList{"config", "rename", "directorify", "tags"}
 
 var Processors = map[string]*Processor{
 	"inner-template": &Processor{
@@ -36,7 +37,7 @@ var Processors = map[string]*Processor{
 	},
 	"rename": &Processor{
 		ProcessRename,
-		"rename resulting file",
+		"rename resulting file (argument - pattern for renaming)",
 	},
 	"ignore": &Processor{
 		ProcessIgnore,
@@ -53,6 +54,11 @@ var Processors = map[string]*Processor{
 	"config": &Processor{
 		ProcessConfig,
 		"read config from content (separated by '----\\n')",
+	},
+	"tags": &Processor{
+		ProcessTags,
+		("generate tags pages for tags mentioned in page header " +
+			"(argument - tag template)"),
 	},
 }
 
@@ -79,6 +85,9 @@ func ProcessRule(page *Page, rule string) {
 	}
 	bits := strings.Split(rule, " ")
 	processor := Processors[bits[0]]
+	if processor == nil {
+		errhandle(errors.New(fmt.Sprintf("processor '%s' not found", bits[0])))
+	}
 	processor.Func(page, bits[1:])
 }
 
@@ -115,7 +124,7 @@ func ProcessMarkdown(page *Page, args []string) {
 
 func ProcessRename(page *Page, args []string) {
 	if len(args) < 1 {
-		errhandle(errors.New(":rename rule needs an argument"))
+		errhandle(errors.New("'rename' rule needs an argument"))
 	}
 	dest := strings.Replace(args[0], "*", "", -1)
 	pattern := strings.Replace(page.Pattern, "*", "", -1)
@@ -164,4 +173,38 @@ func ProcessConfig(page *Page, args []string) {
 
 	page.PageConfig = *ParseConfig(string(parts[0]))
 	page.SetContent(parts[1])
+}
+
+func ProcessTags(page *Page, args []string) {
+	if len(args) < 1 {
+		errhandle(errors.New("'tags' rule needs an argument"))
+	}
+
+	if page.Tags == nil {
+		return
+	}
+
+	site := page.Site
+
+	for _, tag := range page.Tags {
+		if !site.Pages.HasPage(func (inner *Page) bool {
+			return inner.Title == tag
+		}) {
+			path := filepath.Join("tags", tag + ".tag")
+			pattern, rules := site.Rules.MatchedRules(path)
+			tagpage := &Page{
+				PageConfig: PageConfig{Title: tag},
+				Site: site,
+				Pattern: pattern,
+				Rules: rules,
+				Processed: false,
+				Content: "",
+				Source: args[0],
+				Path: path,
+				ModTime: time.Now(),
+			}
+			page.Site.Pages = append(page.Site.Pages, tagpage)
+			tagpage.Peek()
+		}
+	}
 }

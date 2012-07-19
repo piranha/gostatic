@@ -92,6 +92,7 @@ func (site *Site) Render() {
 	// we are doing a second go here because certain processors can modify Pages
 	// list
 	fmt.Printf("Total pages: %d\n", len(site.Pages))
+
 	for _, page := range site.Pages {
 		path := filepath.Join(site.Output, page.Path)
 
@@ -100,7 +101,7 @@ func (site *Site) Render() {
 
 		file, err := os.Create(path)
 		errhandle(err)
-
 		page.WriteTo(file)
+		file.Close()
 	}
 }

@@ -3,7 +3,10 @@
     "source": "site",
     "output": "out",
     "rules": {
-        "*.md": ["config", "rename *.html", "directorify", "inner-template"],
+        "tag.md": ["ignore"],
+        "*.tag": ["rename *.html", "directorify", "inner-template"],
+        "*.md": ["config", "rename *.html", "directorify", "tags tag.md",
+                 "inner-template"],
         "*.md1": ["config", "rename *.html", "directorify",
                  "inner-template", "markdown", "template"],
         "*.html": ["directorify", "template page"],

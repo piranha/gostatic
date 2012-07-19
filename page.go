@@ -42,13 +42,11 @@ func NewPage(site *Site, path string) *Page {
 	errhandle(err)
 
 	pattern, rules := site.Rules.MatchedRules(path)
-	ruleCopy := make(RuleList, len(rules))
-	copy(ruleCopy, rules)
 
 	page := &Page{
 		Site:      site,
 		Pattern:   pattern,
-		Rules:     ruleCopy,
+		Rules:     rules,
 		Processed: false,
 		Content:   "",
 		Source:    relpath,
@@ -157,4 +155,25 @@ func (pages PageSlice) Children(root string) *PageSlice {
 	}
 
 	return &children
+}
+
+func (pages PageSlice) HasPage(check func (page *Page) bool) bool {
+	for _, page := range pages {
+		if check(page) {
+			return true
+		}
+	}
+	return false
+}
+
+func (pages PageSlice) WithTag(tag string) *PageSlice {
+	tagged := make(PageSlice, 0)
+
+	for _, page := range pages {
+		if page.Tags != nil && SliceStringIndexOf(page.Tags, tag) != -1 {
+			tagged = append(tagged, page)
+		}
+	}
+
+	return &tagged
 }

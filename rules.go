@@ -21,7 +21,7 @@ func (rules RuleList) MatchedIndex(prefix string) int {
 	return -1
 }
 
-func (rules RuleMap) MatchedRules(path string) (string, []string) {
+func (rules RuleMap) innerMatchedRules(path string) (string, []string) {
 	if rules[path] != nil {
 		return path, rules[path]
 	}
@@ -40,4 +40,14 @@ func (rules RuleMap) MatchedRules(path string) (string, []string) {
 	}
 
 	return "", nil
+}
+
+func (ruls RuleMap) MatchedRules(path string) (string, []string) {
+	pat, rules := ruls.innerMatchedRules(path)
+	if rules == nil {
+		return pat, rules
+	}
+	ruleCopy := make(RuleList, len(rules))
+	copy(ruleCopy, rules)
+	return pat, ruleCopy
 }
