@@ -78,6 +78,11 @@ func (page *Page) Url() string {
 	return strings.Replace(page.Path, "/index.html", "/", 1)
 }
 
+func (page *Page) UrlTo(other *Page) string {
+	root := strings.Repeat("../", strings.Count(page.Url(), "/"))
+	return root + other.Url()
+}
+
 // Peek is used to run those processors which should be done before others can
 // find out about us. Two actual examples include 'config' and 'rename'
 // processors right now.

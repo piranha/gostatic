@@ -22,6 +22,8 @@ var showVersion = goopt.Flag([]string{"-v", "--version"}, []string{},
 	"show version and exit", "")
 var showProcessors = goopt.Flag([]string{"--processors"}, []string{},
 	"show internal processors", "")
+var showSummary = goopt.Flag([]string{"--summary"}, []string{},
+	"print everything on stdout", "")
 
 type GlobalConfig struct {
 	Templates []string
@@ -75,6 +77,9 @@ func main() {
 	config := RetrieveGlobalConfig(goopt.Args[0])
 
 	site := NewSite(config)
-	// site.Render()
-	site.Summary()
+	if *showSummary {
+		site.Summary()
+	} else {
+		site.Render()
+	}
 }

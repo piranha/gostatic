@@ -16,6 +16,10 @@ type PageConfig struct {
 	Other map[string]string
 }
 
+func NewPageConfig() *PageConfig {
+	return &PageConfig{Other: make(map[string]string)}
+}
+
 func (cfg *PageConfig) ParseLine(line string, elemptr *reflect.Value) {
 	var s reflect.Value
 	if elemptr != nil {
@@ -59,7 +63,7 @@ func (cfg *PageConfig) ParseLine(line string, elemptr *reflect.Value) {
 }
 
 func ParseConfig(source string) *PageConfig {
-	cfg := &PageConfig{}
+	cfg := NewPageConfig()
 	s := reflect.ValueOf(cfg).Elem()
 
 	// Set default values
