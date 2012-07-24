@@ -13,10 +13,6 @@ import (
 	"time"
 )
 
-// stuff to remember
-// - научиться парсить дату из файла (?) - забить пока не заработает всë
-// - решить что-то с тегами
-
 type Page struct {
 	PageConfig
 
@@ -29,7 +25,6 @@ type Page struct {
 	Source     string
 	Path       string
 	ModTime    time.Time
-	RenderTime time.Time
 }
 
 type PageSlice []*Page

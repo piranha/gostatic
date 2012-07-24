@@ -171,7 +171,7 @@ func ProcessConfig(page *Page, args []string) {
 			page.Path)))
 	}
 
-	page.PageConfig = *ParseConfig(string(parts[0]))
+	page.PageConfig = *ParseConfig(parts[0])
 	page.SetContent(parts[1])
 }
 
