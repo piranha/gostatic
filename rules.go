@@ -32,7 +32,11 @@ func (rules RuleMap) innerMatchedRules(path string) (string, []string) {
 	}
 
 	for pat, rules := range rules {
-		matched, err := filepath.Match(pat, name)
+		matched, err := filepath.Match(pat, path)
+		errhandle(err)
+		if !matched {
+			matched, err = filepath.Match(pat, name)
+		}
 		errhandle(err)
 		if matched {
 			return pat, rules

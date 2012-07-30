@@ -84,7 +84,9 @@ func (site *Site) Summary() {
 }
 
 func (site *Site) Render() {
-	for _, page := range site.Pages {
+	pages := make(PageSlice, len(site.Pages))
+	copy(pages, site.Pages)
+	for _, page := range pages {
 		page.Process()
 	}
 

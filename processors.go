@@ -112,7 +112,9 @@ func ProcessTemplate(page *Page, args []string) {
 
 	var buffer bytes.Buffer
 	err := page.Site.Template.ExecuteTemplate(&buffer, pagetype, page)
-	errhandle(err)
+	if err != nil {
+		errhandle(fmt.Errorf("%s: %s", page.Source, err))
+	}
 
 	page.SetContent(buffer.String())
 }
@@ -153,13 +155,14 @@ func ProcessDirectorify(page *Page, args []string) {
 func ProcessExternal(page *Page, args []string) {
 	cmd := exec.Command(args[0], args[1:]...)
 	cmd.Stdin = strings.NewReader(page.GetContent())
-	var out bytes.Buffer
-	cmd.Stdout = &out
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+	out, err := cmd.Output()
+	if err != nil {
+		errhandle(errors.New(stderr.String()))
+	}
 
-	err := cmd.Run()
-	errhandle(err)
-
-	page.SetContent(out.String())
+	page.SetContent(string(out))
 }
 
 func ProcessConfig(page *Page, args []string) {

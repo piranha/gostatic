@@ -36,7 +36,7 @@ func NewPage(site *Site, path string) *Page {
 	relpath, err := filepath.Rel(site.Path, path)
 	errhandle(err)
 
-	pattern, rules := site.Rules.MatchedRules(path)
+	pattern, rules := site.Rules.MatchedRules(relpath)
 
 	page := &Page{
 		Site:      site,
@@ -54,7 +54,7 @@ func NewPage(site *Site, path string) *Page {
 
 func (page *Page) GetContent() string {
 	if len(page.Content) == 0 {
-		content, err := ioutil.ReadFile(page.SourcePath())
+		content, err := ioutil.ReadFile(page.FullPath())
 		errhandle(err)
 		page.SetContent(string(content))
 	}
@@ -65,7 +65,7 @@ func (page *Page) SetContent(content string) {
 	page.Content = content
 }
 
-func (page *Page) SourcePath() string {
+func (page *Page) FullPath() string {
 	return filepath.Join(page.Site.Path, page.Source)
 }
 
@@ -115,7 +115,7 @@ func (page *Page) WriteTo(writer io.Writer) (n int64, err error) {
 	}
 
 	if page.Rules == nil {
-		file, err := os.Open(page.Source)
+		file, err := os.Open(page.FullPath())
 		if err != nil {
 			n = 0
 		} else {
