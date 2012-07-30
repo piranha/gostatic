@@ -74,8 +74,12 @@ func (page *Page) Url() string {
 }
 
 func (page *Page) UrlTo(other *Page) string {
-	root := strings.Repeat("../", strings.Count(page.Url(), "/"))
-	return root + other.Url()
+       return page.Rel(other.Url())
+}
+
+func (page *Page) Rel(path string) string {
+       root := strings.Repeat("../", strings.Count(page.Url(), "/"))
+       return root + path
 }
 
 // Peek is used to run those processors which should be done before others can
