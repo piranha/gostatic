@@ -14,7 +14,7 @@ import (
 )
 
 type Page struct {
-	PageConfig
+	PageHeader
 
 	Site      *Site
 	Pattern   string

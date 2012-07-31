@@ -74,6 +74,12 @@ func main() {
 		return
 	}
 
+	text, err := ioutil.ReadFile(goopt.Args[0])
+	errhandle(err)
+	cfg := NewSiteConfig(string(text))
+	println(cfg)
+	return
+
 	config := RetrieveGlobalConfig(goopt.Args[0])
 
 	site := NewSite(config)

@@ -1,3 +1,6 @@
+xrun:
+	go run *.go test/config --summary
+
 run:
 	go run *.go test/config.json --summary
 

@@ -174,7 +174,7 @@ func ProcessConfig(page *Page, args []string) {
 			page.Path)))
 	}
 
-	page.PageConfig = *ParseConfig(parts[0])
+	page.PageHeader = *ParseConfig(parts[0])
 	page.SetContent(parts[1])
 }
 
@@ -196,7 +196,7 @@ func ProcessTags(page *Page, args []string) {
 			path := filepath.Join("tags", tag + ".tag")
 			pattern, rules := site.Rules.MatchedRules(path)
 			tagpage := &Page{
-				PageConfig: PageConfig{Title: tag},
+				PageHeader: PageHeader{Title: tag},
 				Site: site,
 				Pattern: pattern,
 				Rules: rules,
