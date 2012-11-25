@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"text/template"
+	"strings"
 )
 
 type Site struct {
@@ -59,7 +60,7 @@ func (site *Site) walkFunc(errors chan<- error) filepath.WalkFunc {
 			return nil
 		}
 
-		if !fi.IsDir() {
+		if !fi.IsDir() && !strings.HasPrefix(filepath.Base(fn), ".") {
 			site.AddPage(fn)
 		}
 
@@ -92,7 +93,7 @@ func (site *Site) Render() {
 
 	// we are doing a second go here because certain processors can modify Pages
 	// list
-	fmt.Printf("Total pages: %d\n", len(site.Pages))
+	fmt.Printf("Total pages rendered: %d\n", len(site.Pages))
 
 	for _, page := range site.Pages {
 		path := filepath.Join(site.Output, page.Path)
