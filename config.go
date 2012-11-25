@@ -7,18 +7,27 @@ import (
 	"fmt"
 	"strings"
 	"regexp"
+    "path/filepath"
+	"io/ioutil"
 )
 
-type RuleDesc struct {
+type Command string
+
+type CommandList []Command
+
+type Rule struct {
 	Deps []string
-	Rules RuleList
+	Commands CommandList
 }
+
+
+type RuleMap map[string]*Rule
 
 type SiteConfig struct {
 	Templates []string
 	Source string
 	Output string
-	Rules map[string]*RuleDesc
+	Rules RuleMap
 }
 
 
@@ -42,16 +51,22 @@ func NonEmptySplit(s string, sep string) []string {
 }
 
 
-func NewSiteConfig(source string) (*SiteConfig, error) {
-	cfg := &SiteConfig{Rules: make(map[string]*RuleDesc)}
+func NewSiteConfig(path string) (*SiteConfig, error) {
+	source, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	basepath, _ := filepath.Split(path)
+	cfg := &SiteConfig{Rules: make(RuleMap)}
 
 	indent := 0
 	level := 0
 	prefix := regexp.MustCompile("^[ \t]*")
 
-	var current *RuleDesc
+	var current *Rule
 
-	for i, line := range strings.Split(source, "\n") {
+	for i, line := range strings.Split(string(source), "\n") {
 		// check indent
 		indnew := len(prefix.FindString(line))
 		switch {
@@ -76,13 +91,13 @@ func NewSiteConfig(source string) (*SiteConfig, error) {
 
 		// is this a constant declaration?
 		if level == 0 && strings.Index(line, "=") != -1 {
-			cfg.ParseVariable(line)
+			cfg.ParseVariable(basepath, line)
 			continue
 		}
 
-		// not a constant, then a RuleDesc start?
+		// not a constant, then a Rule start?
 		if level == 0 {
-			current = cfg.ParseRuleDesc(line)
+			current = cfg.ParseRule(line)
 			continue
 		}
 
@@ -90,7 +105,7 @@ func NewSiteConfig(source string) (*SiteConfig, error) {
 			if current == nil {
 				return nil, fmt.Errorf("Indent without rules, line %d", i + 1)
 			}
-			current.ParseRule(line)
+			current.ParseCommand(line)
 			continue
 		}
 
@@ -102,25 +117,30 @@ func NewSiteConfig(source string) (*SiteConfig, error) {
 }
 
 
-func (cfg *SiteConfig) ParseVariable(line string) {
+// *** Parsing methods
+
+func (cfg *SiteConfig) ParseVariable(base string, line string) {
 	bits := TrimSplitN(line, "=", 2)
 	switch bits[0] {
 	case "TEMPLATES":
 		cfg.Templates = strings.Split(bits[1], " ")
+		for i, template := range cfg.Templates {
+			cfg.Templates[i] = filepath.Join(base, template)
+		}
 	case "SOURCE":
-		cfg.Source = bits[1]
+		cfg.Source = filepath.Join(base, bits[1])
 	case "OUTPUT":
-		cfg.Output = bits[1]
+		cfg.Output = filepath.Join(base, bits[1])
 	}
 }
 
 
-func (cfg *SiteConfig) ParseRuleDesc(line string) *RuleDesc {
+func (cfg *SiteConfig) ParseRule(line string) *Rule {
 	bits := TrimSplitN(line, ":", 2)
 	deps := NonEmptySplit(bits[1], " ")
-	rd := &RuleDesc{
+	rd := &Rule{
 		Deps: deps,
-		Rules: make(RuleList, 0),
+		Commands: make(CommandList, 0),
 	}
 
 	cfg.Rules[bits[0]] = rd
@@ -129,6 +149,67 @@ func (cfg *SiteConfig) ParseRuleDesc(line string) *RuleDesc {
 }
 
 
-func (rd *RuleDesc) ParseRule(line string) {
-	rd.Rules = append(rd.Rules, line)
+func (rule *Rule) ParseCommand(line string) {
+	rule.Commands = append(rule.Commands, Command(line))
+}
+
+
+// *** Traversing methods
+
+func (cmd Command) Matches(prefix Command) bool {
+	return cmd == prefix || strings.HasPrefix(string(cmd), string(prefix) + " ")
+}
+
+func (cmd Command) MatchesAny(prefixes CommandList) bool {
+	for _, prefix := range prefixes {
+		if cmd.Matches(prefix) {
+			return true
+		}
+	}
+	return false
+}
+
+func (commands CommandList) MatchedIndex(prefix Command) int {
+	for i, cmd := range commands {
+		if cmd.Matches(prefix) {
+			return i
+		}
+	}
+	return -1
+}
+
+
+func (rule Rule) MatchedCommand(prefix Command) *Command {
+	i := rule.Commands.MatchedIndex(prefix)
+	if i == -1 {
+		return nil
+	}
+
+	return &rule.Commands[i]
+}
+
+
+func (rules RuleMap) MatchedRule(path string) (string, *Rule) {
+	if rules[path] != nil {
+		return path, rules[path]
+	}
+
+	_, name := filepath.Split(path)
+	if rules[name] != nil {
+		return name, rules[name]
+	}
+
+	for pat, rule := range rules {
+		matched, err := filepath.Match(pat, path)
+		errhandle(err)
+		if !matched {
+			matched, err = filepath.Match(pat, name)
+		}
+		errhandle(err)
+		if matched {
+			return pat, rule
+		}
+	}
+
+	return "", nil
 }

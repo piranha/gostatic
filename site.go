@@ -12,23 +12,19 @@ import (
 )
 
 type Site struct {
-	Path     string
-	Output   string
+	SiteConfig
 	Template *template.Template
-	Rules    RuleMap
 	Pages    PageSlice
 }
 
-func NewSite(config *GlobalConfig) *Site {
+func NewSite(config *SiteConfig) *Site {
 	template, err := template.ParseFiles(config.Templates...)
 	errhandle(err)
 
 	site := &Site{
-		Path:     config.Source,
-		Output:   config.Output,
-		Template: template,
-		Rules:    config.Rules,
-		Pages:    make(PageSlice, 0),
+		SiteConfig: *config,
+		Template:   template,
+		Pages:      make(PageSlice, 0),
 	}
 
 	site.Collect()
@@ -44,7 +40,7 @@ func (site *Site) AddPage(path string) {
 func (site *Site) Collect() {
 	errors := make(chan error)
 
-	filepath.Walk(site.Path, site.walkFunc(errors))
+	filepath.Walk(site.Source, site.walkFunc(errors))
 
 	select {
 	case err := <-errors:
@@ -76,7 +72,7 @@ func (site *Site) Summary() {
 
 	for _, page := range site.Pages {
 		fmt.Printf("%s - %s: %d chars; %s\n",
-			page.Path, page.Title, len(page.Content), page.Rules)
+			page.Path, page.Title, len(page.Content), page.Rule)
 		fmt.Println("------------")
 		_, err := page.WriteTo(os.Stdout)
 		errhandle(err)

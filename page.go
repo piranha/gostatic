@@ -17,8 +17,8 @@ type Page struct {
 	PageHeader
 
 	Site      *Site
+	Rule      *Rule
 	Pattern   string
-	Rules     RuleList
 	Processed bool
 
 	Content    string
@@ -33,15 +33,15 @@ func NewPage(site *Site, path string) *Page {
 	stat, err := os.Stat(path)
 	errhandle(err)
 
-	relpath, err := filepath.Rel(site.Path, path)
+	relpath, err := filepath.Rel(site.Source, path)
 	errhandle(err)
 
-	pattern, rules := site.Rules.MatchedRules(relpath)
+	pattern, rule := site.Rules.MatchedRule(relpath)
 
 	page := &Page{
 		Site:      site,
+		Rule:      rule,
 		Pattern:   pattern,
-		Rules:     rules,
 		Processed: false,
 		Content:   "",
 		Source:    relpath,
@@ -66,7 +66,7 @@ func (page *Page) SetContent(content string) {
 }
 
 func (page *Page) FullPath() string {
-	return filepath.Join(page.Site.Path, page.Source)
+	return filepath.Join(page.Site.Source, page.Source)
 }
 
 func (page *Page) Url() string {
@@ -86,12 +86,10 @@ func (page *Page) Rel(path string) string {
 // find out about us. Two actual examples include 'config' and 'rename'
 // processors right now.
 func (page *Page) Peek() {
-	for _, pat := range PreProcessors {
-		i := page.Rules.MatchedIndex(pat)
-		if i != -1 {
-			rule := page.Rules[i]
-			ProcessRule(page, rule)
-			page.Rules = append(page.Rules[:i], page.Rules[i + 1:]...)
+	for _, name := range PreProcessors {
+		cmd := page.Rule.MatchedCommand(name)
+		if cmd != nil {
+			ProcessCommand(page, cmd)
 		}
 	}
 }
@@ -102,9 +100,11 @@ func (page *Page) Process() {
 	}
 
 	page.Processed = true
-	if page.Rules != nil {
-		for _, rule := range page.Rules {
-			ProcessRule(page, rule)
+	if page.Rule.Commands != nil {
+		for _, cmd := range page.Rule.Commands {
+			if !cmd.MatchesAny(PreProcessors) {
+				ProcessCommand(page, &cmd)
+			}
 		}
 	}
 }
@@ -114,7 +114,7 @@ func (page *Page) WriteTo(writer io.Writer) (n int64, err error) {
 		page.Process()
 	}
 
-	if page.Rules == nil {
+	if page.Rule.Commands == nil {
 		file, err := os.Open(page.FullPath())
 		if err != nil {
 			n = 0

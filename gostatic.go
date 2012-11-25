@@ -4,10 +4,8 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	goopt "github.com/droundy/goopt"
-	"io/ioutil"
 	"path/filepath"
 	"github.com/howeyc/fsnotify"
 	"strings"
@@ -16,7 +14,7 @@ import (
 
 var Version = "0.1"
 
-var Summary = `gostatic path/to/config.json
+var Summary = `gostatic path/to/config
 
 Build a site.
 `
@@ -32,12 +30,6 @@ var doWatch = goopt.Flag([]string{"-w", "--watch"}, []string{},
 var port = goopt.String([]string{"-p", "--port"}, "8000",
 	"port to serve on")
 
-type GlobalConfig struct {
-	Templates []string
-	Source    string
-	Output    string
-	Rules     RuleMap
-}
 
 func main() {
 	goopt.Version = Version
@@ -64,16 +56,13 @@ func main() {
 		return
 	}
 
-	text, err := ioutil.ReadFile(goopt.Args[0])
+	config, err := NewSiteConfig(goopt.Args[0])
 	errhandle(err)
-	cfg, err := NewSiteConfig(string(text))
-	errhandle(err)
-	x, err := json.Marshal(cfg)
-	errhandle(err)
-	println(string(x))
-	return
 
-	config := RetrieveGlobalConfig(goopt.Args[0])
+	// x, err := json.Marshal(cfg)
+	// errhandle(err)
+	// println(string(x))
+	// return
 
 	site := NewSite(config)
 	if *showSummary {
@@ -91,28 +80,8 @@ func main() {
 	}
 }
 
-func RetrieveGlobalConfig(path string) *GlobalConfig {
-	conftext, err := ioutil.ReadFile(path)
-	errhandle(err)
 
-	var config GlobalConfig
-	err = json.Unmarshal(conftext, &config)
-	errhandle(err)
-
-	basepath, _ := filepath.Split(path)
-	config.Source = filepath.Join(basepath, config.Source)
-	config.Output = filepath.Join(basepath, config.Output)
-
-	templates := make([]string, len(config.Templates))
-	for i, template := range config.Templates {
-		templates[i] = filepath.Join(basepath, template)
-	}
-	config.Templates = templates
-
-	return &config
-}
-
-func StartWatcher(config *GlobalConfig) {
+func StartWatcher(config *SiteConfig) {
 	watcher, err := fsnotify.NewWatcher()
 	errhandle(err)
 

@@ -20,7 +20,7 @@ type Processor struct {
 
 // PreProcessors is a list of processor necessary to be executed beforehand to
 // fill out information, which can be required by fellow pages
-var PreProcessors = RuleList{"config", "rename", "directorify", "tags"}
+var PreProcessors = CommandList{"config", "rename", "directorify", "tags"}
 
 var Processors = map[string]*Processor{
 	"inner-template": &Processor{
@@ -72,21 +72,22 @@ func ProcessorSummary() {
 	for _, k := range keys {
 		p := Processors[k]
 		pre := ""
-		if PreProcessors.MatchedIndex(k) != -1 {
+		if PreProcessors.MatchedIndex(Command(k)) != -1 {
 			pre = "(preprocessor)"
 		}
 		fmt.Printf("%s %s\n\t%s\n", k, pre, p.Desc)
 	}
 }
 
-func ProcessRule(page *Page, rule string) {
-	if strings.HasPrefix(rule, ":") {
-		rule = "external " + rule[1:]
+func ProcessCommand(page *Page, cmd *Command) {
+	c := string(*cmd)
+	if strings.HasPrefix(c, ":") {
+		c = "external " + c[1:]
 	}
-	bits := strings.Split(rule, " ")
+	bits := strings.Split(c, " ")
 	processor := Processors[bits[0]]
 	if processor == nil {
-		errhandle(errors.New(fmt.Sprintf("processor '%s' not found", bits[0])))
+		errhandle(fmt.Errorf("processor '%s' not found", bits[0]))
 	}
 	processor.Func(page, bits[1:])
 }
@@ -194,12 +195,12 @@ func ProcessTags(page *Page, args []string) {
 			return inner.Title == tag
 		}) {
 			path := filepath.Join("tags", tag + ".tag")
-			pattern, rules := site.Rules.MatchedRules(path)
+			pattern, rule := site.Rules.MatchedRule(path)
 			tagpage := &Page{
 				PageHeader: PageHeader{Title: tag},
 				Site: site,
 				Pattern: pattern,
-				Rules: rules,
+				Rule: rule,
 				Processed: false,
 				Content: "",
 				Source: args[0],
