@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"text/template"
 	"strings"
+	"text/template"
 )
 
 type Site struct {

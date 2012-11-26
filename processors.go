@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
-	"time"
 	"text/template"
+	"time"
 )
 
 type Processor struct {
@@ -144,7 +144,7 @@ func ProcessIgnore(page *Page, args []string) {
 			break
 		}
 	}
-	site.Pages = append(site.Pages[:idx], site.Pages[idx + 1:]...)
+	site.Pages = append(site.Pages[:idx], site.Pages[idx+1:]...)
 }
 
 func ProcessDirectorify(page *Page, args []string) {
@@ -170,8 +170,8 @@ func ProcessConfig(page *Page, args []string) {
 	parts := strings.SplitN(page.GetContent(), "----\n", 2)
 	if len(parts) != 2 {
 		errhandle(errors.New(fmt.Sprintf(
-			"page %s has no configuration in the head, while it is " +
-			"requested by the site configuration",
+			"page %s has no configuration in the head, while it is "+
+				"requested by the site configuration",
 			page.Path)))
 	}
 
@@ -191,21 +191,21 @@ func ProcessTags(page *Page, args []string) {
 	site := page.Site
 
 	for _, tag := range page.Tags {
-		if !site.Pages.HasPage(func (inner *Page) bool {
+		if !site.Pages.HasPage(func(inner *Page) bool {
 			return inner.Title == tag
 		}) {
-			path := filepath.Join("tags", tag + ".tag")
+			path := filepath.Join("tags", tag+".tag")
 			pattern, rule := site.Rules.MatchedRule(path)
 			tagpage := &Page{
 				PageHeader: PageHeader{Title: tag},
-				Site: site,
-				Pattern: pattern,
-				Rule: rule,
-				Processed: false,
-				Content: "",
-				Source: args[0],
-				Path: path,
-				ModTime: time.Now(),
+				Site:       site,
+				Pattern:    pattern,
+				Rule:       rule,
+				Processed:  false,
+				Content:    "",
+				Source:     args[0],
+				Path:       path,
+				ModTime:    time.Now(),
 			}
 			page.Site.Pages = append(page.Site.Pages, tagpage)
 			tagpage.Peek()

@@ -4,10 +4,10 @@
 package main
 
 import (
-	"strings"
-	"reflect"
-	"time"
 	"fmt"
+	"reflect"
+	"strings"
+	"time"
 )
 
 type PageHeader struct {

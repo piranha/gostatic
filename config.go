@@ -5,10 +5,10 @@ package main
 
 import (
 	"fmt"
-	"strings"
-	"regexp"
-    "path/filepath"
 	"io/ioutil"
+	"path/filepath"
+	"regexp"
+	"strings"
 )
 
 type Command string
@@ -16,20 +16,18 @@ type Command string
 type CommandList []Command
 
 type Rule struct {
-	Deps []string
+	Deps     []string
 	Commands CommandList
 }
-
 
 type RuleMap map[string]*Rule
 
 type SiteConfig struct {
 	Templates []string
-	Source string
-	Output string
-	Rules RuleMap
+	Source    string
+	Output    string
+	Rules     RuleMap
 }
-
 
 func TrimSplitN(s string, sep string, n int) []string {
 	bits := strings.SplitN(s, sep, n)
@@ -49,7 +47,6 @@ func NonEmptySplit(s string, sep string) []string {
 	}
 	return out
 }
-
 
 func NewSiteConfig(path string) (*SiteConfig, error) {
 	source, err := ioutil.ReadFile(path)
@@ -103,19 +100,18 @@ func NewSiteConfig(path string) (*SiteConfig, error) {
 
 		if level == 1 {
 			if current == nil {
-				return nil, fmt.Errorf("Indent without rules, line %d", i + 1)
+				return nil, fmt.Errorf("Indent without rules, line %d", i+1)
 			}
 			current.ParseCommand(line)
 			continue
 		}
 
 		return nil, fmt.Errorf("Unhandled situation on line %d: %s",
-			i + 1, line)
+			i+1, line)
 	}
 
 	return cfg, nil
 }
-
 
 // *** Parsing methods
 
@@ -134,12 +130,11 @@ func (cfg *SiteConfig) ParseVariable(base string, line string) {
 	}
 }
 
-
 func (cfg *SiteConfig) ParseRule(line string) *Rule {
 	bits := TrimSplitN(line, ":", 2)
 	deps := NonEmptySplit(bits[1], " ")
 	rd := &Rule{
-		Deps: deps,
+		Deps:     deps,
 		Commands: make(CommandList, 0),
 	}
 
@@ -148,16 +143,14 @@ func (cfg *SiteConfig) ParseRule(line string) *Rule {
 	return rd
 }
 
-
 func (rule *Rule) ParseCommand(line string) {
 	rule.Commands = append(rule.Commands, Command(line))
 }
 
-
 // *** Traversing methods
 
 func (cmd Command) Matches(prefix Command) bool {
-	return cmd == prefix || strings.HasPrefix(string(cmd), string(prefix) + " ")
+	return cmd == prefix || strings.HasPrefix(string(cmd), string(prefix)+" ")
 }
 
 func (cmd Command) MatchesAny(prefixes CommandList) bool {
@@ -178,7 +171,6 @@ func (commands CommandList) MatchedIndex(prefix Command) int {
 	return -1
 }
 
-
 func (rule Rule) MatchedCommand(prefix Command) *Command {
 	i := rule.Commands.MatchedIndex(prefix)
 	if i == -1 {
@@ -187,7 +179,6 @@ func (rule Rule) MatchedCommand(prefix Command) *Command {
 
 	return &rule.Commands[i]
 }
-
 
 func (rules RuleMap) MatchedRule(path string) (string, *Rule) {
 	path = "/" + path // anchor path at beginning

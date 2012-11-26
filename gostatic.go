@@ -4,13 +4,13 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	goopt "github.com/droundy/goopt"
-	"path/filepath"
 	"github.com/howeyc/fsnotify"
-	"strings"
 	"net/http"
-	"encoding/json"
+	"path/filepath"
+	"strings"
 )
 
 var Version = "0.1"
@@ -32,7 +32,6 @@ var doWatch = goopt.Flag([]string{"-w", "--watch"}, []string{},
 	"watch for changes and serve them as http", "")
 var port = goopt.String([]string{"-p", "--port"}, "8000",
 	"port to serve on")
-
 
 func main() {
 	goopt.Version = Version
@@ -79,12 +78,11 @@ func main() {
 	if *doWatch {
 		StartWatcher(config)
 		fmt.Printf("Starting server at *:%s...\n", *port)
-		err := http.ListenAndServe(":" + *port,
+		err := http.ListenAndServe(":"+*port,
 			http.FileServer(http.Dir(config.Output)))
 		errhandle(err)
 	}
 }
-
 
 func StartWatcher(config *SiteConfig) {
 	watcher, err := fsnotify.NewWatcher()
@@ -93,12 +91,12 @@ func StartWatcher(config *SiteConfig) {
 	go func() {
 		for {
 			select {
-			case ev := <- watcher.Event:
+			case ev := <-watcher.Event:
 				if !strings.HasPrefix(filepath.Base(ev.Name), ".") {
 					site := NewSite(config)
 					site.Render()
 				}
-			case err := <- watcher.Error:
+			case err := <-watcher.Error:
 				errhandle(err)
 			}
 		}

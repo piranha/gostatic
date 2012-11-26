@@ -21,10 +21,10 @@ type Page struct {
 	Pattern   string
 	Processed bool
 
-	Content    string
-	Source     string
-	Path       string
-	ModTime    time.Time
+	Content string
+	Source  string
+	Path    string
+	ModTime time.Time
 }
 
 type PageSlice []*Page
@@ -74,12 +74,12 @@ func (page *Page) Url() string {
 }
 
 func (page *Page) UrlTo(other *Page) string {
-       return page.Rel(other.Url())
+	return page.Rel(other.Url())
 }
 
 func (page *Page) Rel(path string) string {
-       root := strings.Repeat("../", strings.Count(page.Url(), "/"))
-       return root + path
+	root := strings.Repeat("../", strings.Count(page.Url(), "/"))
+	return root + path
 }
 
 // Peek is used to run those processors which should be done before others can
@@ -165,7 +165,7 @@ func (pages PageSlice) Children(root string) *PageSlice {
 	return &children
 }
 
-func (pages PageSlice) HasPage(check func (page *Page) bool) bool {
+func (pages PageSlice) HasPage(check func(page *Page) bool) bool {
 	for _, page := range pages {
 		if check(page) {
 			return true
