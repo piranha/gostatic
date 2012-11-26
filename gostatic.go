@@ -10,6 +10,7 @@ import (
 	"github.com/howeyc/fsnotify"
 	"strings"
 	"net/http"
+	"encoding/json"
 )
 
 var Version = "0.1"
@@ -25,6 +26,8 @@ var showProcessors = goopt.Flag([]string{"--processors"}, []string{},
 	"show internal processors", "")
 var showSummary = goopt.Flag([]string{"--summary"}, []string{},
 	"print everything on stdout", "")
+var showConfig = goopt.Flag([]string{"--show-config"}, []string{},
+	"dump config as JSON on stdout", "")
 var doWatch = goopt.Flag([]string{"-w", "--watch"}, []string{},
 	"watch for changes and serve them as http", "")
 var port = goopt.String([]string{"-p", "--port"}, "8000",
@@ -59,10 +62,12 @@ func main() {
 	config, err := NewSiteConfig(goopt.Args[0])
 	errhandle(err)
 
-	// x, err := json.Marshal(config)
-	// errhandle(err)
-	// println(string(x))
-	// return
+	if *showConfig {
+		x, err := json.MarshalIndent(config, "", "  ")
+		errhandle(err)
+		println(string(x))
+		return
+	}
 
 	site := NewSite(config)
 	if *showSummary {
