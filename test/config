@@ -8,7 +8,7 @@ OUTPUT = out
 	config
 	rename *.html
 	directorify
-#	tags tag
+	tags tag.md
 	inner-template
 	markdown
 	template
@@ -29,6 +29,9 @@ OUTPUT = out
 	markdown
 	template
 
+/tag.md:
+	ignore
+
 *.less:
 	rename *.css
 	:lessc -
@@ -37,9 +40,9 @@ OUTPUT = out
 	directorify
 	template page
 
-*.tag:
+*.tag: blog/*.md
 	rename *.html
 	directorify
-	template tag
+	inner-template
 	markdown
-	template
+	template page
