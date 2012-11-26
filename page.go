@@ -86,6 +86,10 @@ func (page *Page) Rel(path string) string {
 // find out about us. Two actual examples include 'config' and 'rename'
 // processors right now.
 func (page *Page) Peek() {
+	if page.Rule == nil {
+		return
+	}
+
 	for _, name := range PreProcessors {
 		cmd := page.Rule.MatchedCommand(name)
 		if cmd != nil {
@@ -95,7 +99,7 @@ func (page *Page) Peek() {
 }
 
 func (page *Page) Process() {
-	if page.Processed {
+	if page.Processed || page.Rule == nil {
 		return
 	}
 
@@ -114,7 +118,7 @@ func (page *Page) WriteTo(writer io.Writer) (n int64, err error) {
 		page.Process()
 	}
 
-	if page.Rule.Commands == nil {
+	if page.Rule == nil {
 		file, err := os.Open(page.FullPath())
 		if err != nil {
 			n = 0

@@ -59,7 +59,7 @@ func main() {
 	config, err := NewSiteConfig(goopt.Args[0])
 	errhandle(err)
 
-	// x, err := json.Marshal(cfg)
+	// x, err := json.Marshal(config)
 	// errhandle(err)
 	// println(string(x))
 	// return

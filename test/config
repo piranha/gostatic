@@ -8,7 +8,7 @@ OUTPUT = out
 	config
 	rename *.html
 	directorify
-	tags tag
+#	tags tag
 	inner-template
 	markdown
 	template
@@ -41,6 +41,5 @@ OUTPUT = out
 	rename *.html
 	directorify
 	template tag
-	config
 	markdown
 	template

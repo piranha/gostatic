@@ -190,6 +190,8 @@ func (rule Rule) MatchedCommand(prefix Command) *Command {
 
 
 func (rules RuleMap) MatchedRule(path string) (string, *Rule) {
+	path = "/" + path // anchor path at beginning
+
 	if rules[path] != nil {
 		return path, rules[path]
 	}
