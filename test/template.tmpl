@@ -35,6 +35,7 @@
   </header>
 {{end}}
 
+
 {{define "footer"}}
   <footer>
     &#169; 2006&ndash;2012 Alexander Solovyov (<a href="/about/">about</a>)
@@ -43,7 +44,17 @@
 </html>
 {{end}}
 
+
 {{define "page"}}{{ template "header" . }}
   {{ .GetContent }}
   {{ template "footer" . }}
+{{end}}
+
+
+{{define "tag"}}
+# Pages tagged with {{ .Title }}
+
+{{ range .Site.Pages.WithTag .Title }}
+ - [{{ .Title }}]({{ .Url }})
+{{ end }}
 {{end}}
