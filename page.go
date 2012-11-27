@@ -20,6 +20,7 @@ type Page struct {
 	Rule      *Rule
 	Pattern   string
 	Processed bool
+	// Deps      []Page // ? is it so?
 
 	Content string
 	Source  string
@@ -96,6 +97,9 @@ func (page *Page) Peek() {
 			ProcessCommand(page, cmd)
 		}
 	}
+}
+
+func (page *Page) FindDeps() {
 }
 
 func (page *Page) Process() {

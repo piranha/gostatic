@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	goopt "github.com/droundy/goopt"
-	"github.com/howeyc/fsnotify"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -85,23 +84,16 @@ func main() {
 }
 
 func StartWatcher(config *SiteConfig) {
-	watcher, err := fsnotify.NewWatcher()
+	filemod, err := DirWatcher(config.Source)
 	errhandle(err)
 
 	go func() {
 		for {
-			select {
-			case ev := <-watcher.Event:
-				if !strings.HasPrefix(filepath.Base(ev.Name), ".") {
-					site := NewSite(config)
-					site.Render()
-				}
-			case err := <-watcher.Error:
-				errhandle(err)
+			fn := <-filemod
+			if !strings.HasPrefix(filepath.Base(fn), ".") {
+				site := NewSite(config)
+				site.Render()
 			}
 		}
 	}()
-
-	err = watcher.Watch(config.Source)
-	errhandle(err)
 }

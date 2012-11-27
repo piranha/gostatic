@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	blackfriday "github.com/russross/blackfriday"
 	"os/exec"
 	"path/filepath"
 	"sort"
@@ -121,8 +120,8 @@ func ProcessTemplate(page *Page, args []string) {
 }
 
 func ProcessMarkdown(page *Page, args []string) {
-	result := blackfriday.MarkdownCommon([]byte(page.GetContent()))
-	page.SetContent(string(result))
+	result := Markdown(page.GetContent())
+	page.SetContent(result)
 }
 
 func ProcessRename(page *Page, args []string) {

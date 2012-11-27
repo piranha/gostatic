@@ -64,11 +64,19 @@ func (site *Site) walkFunc(errors chan<- error) filepath.WalkFunc {
 	}
 }
 
-func (site *Site) Summary() {
-	println("Total pages", len(site.Pages))
+func (site *Site) Process() {
+	for _, page := range site.Pages {
+		page.FindDeps()
+	}
+
 	for _, page := range site.Pages {
 		page.Process()
 	}
+}
+
+func (site *Site) Summary() {
+	site.Process()
+	fmt.Printf("Total pages rendered: %d\n", len(site.Pages))
 
 	for _, page := range site.Pages {
 		fmt.Printf("%s - %s: %d chars; %s\n",
@@ -81,14 +89,7 @@ func (site *Site) Summary() {
 }
 
 func (site *Site) Render() {
-	pages := make(PageSlice, len(site.Pages))
-	copy(pages, site.Pages)
-	for _, page := range pages {
-		page.Process()
-	}
-
-	// we are doing a second go here because certain processors can modify Pages
-	// list
+	site.Process()
 	fmt.Printf("Total pages rendered: %d\n", len(site.Pages))
 
 	for _, page := range site.Pages {
