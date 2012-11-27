@@ -93,11 +93,15 @@ func ProcessCommand(page *Page, cmd *Command) {
 
 func ProcessInnerTemplate(page *Page, args []string) {
 	t, err := template.New("ad-hoc").Parse(page.GetContent())
-	errhandle(err)
+	if err != nil {
+		errhandle(fmt.Errorf("Page %s: %s", page.Source, err))
+	}
 
 	var buffer bytes.Buffer
 	err = t.Execute(&buffer, page)
-	errhandle(err)
+	if err != nil {
+		errhandle(fmt.Errorf("Page %s: %s", page.Source, err))
+	}
 
 	page.SetContent(buffer.String())
 }
@@ -174,7 +178,7 @@ func ProcessConfig(page *Page, args []string) {
 			page.Path)))
 	}
 
-	page.PageHeader = *ParseConfig(parts[0])
+	page.PageHeader = *ParseHeader(parts[0])
 	page.SetContent(parts[1])
 }
 

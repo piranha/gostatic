@@ -30,7 +30,7 @@ func SliceStringIndexOf(haystack []string, needle string) int {
 	return -1
 }
 
-func Markdown1(source string) string {
+func Markdown(source string) string {
 	// set up the HTML renderer
 	flags := 0
 	flags |= bf.HTML_USE_SMARTYPANTS
@@ -51,9 +51,10 @@ func Markdown1(source string) string {
 	return string(bf.Markdown([]byte(source), renderer, ext))
 }
 
-func Markdown(source string) string {
+func Markdown1(source string) string {
 	p := md.NewParser(&md.Extensions{
 		Smart: true,
+		Notes: true,
 		Dlists: true,
 	})
 

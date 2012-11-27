@@ -47,6 +47,8 @@ func (site *Site) Collect() {
 		errhandle(err)
 	default:
 	}
+
+	site.Pages.Sort()
 }
 
 func (site *Site) walkFunc(errors chan<- error) filepath.WalkFunc {

@@ -147,7 +147,10 @@ func (pages PageSlice) Len() int {
 	return len(pages)
 }
 func (pages PageSlice) Less(i, j int) bool {
-	return pages.Get(i).ModTime.Unix() < pages.Get(j).ModTime.Unix()
+	left := pages.Get(i)
+	right := pages.Get(j)
+	return left.Date.Unix() > right.Date.Unix()
+	// return left.ModTime.Unix() < right.ModTime.Unix()
 }
 func (pages PageSlice) Swap(i, j int) {
 	pages[i], pages[j] = pages[j], pages[i]
@@ -189,3 +192,11 @@ func (pages PageSlice) WithTag(tag string) *PageSlice {
 
 	return &tagged
 }
+
+// func (pages PageSlice) Reverse() *PageSlice {
+// 	rv := make(PageSlice, len(pages))
+// 	for i, p := range pages {
+// 		rv[len(pages) - i - 1] = p
+// 	}
+// 	return &rv
+// }

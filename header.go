@@ -81,7 +81,7 @@ func (cfg *PageHeader) SetValue(key string, value string, s *reflect.Value) {
 	}
 }
 
-func ParseConfig(source string) *PageHeader {
+func ParseHeader(source string) *PageHeader {
 	cfg := NewPageHeader()
 	s := reflect.ValueOf(cfg).Elem()
 
