@@ -35,7 +35,6 @@ func Markdown(source string) string {
 	flags := 0
 	flags |= bf.HTML_USE_SMARTYPANTS
 	flags |= bf.HTML_SMARTYPANTS_FRACTIONS
-	flags |= bf.HTML_SMARTYPANTS_LATEX_DASHES
 	renderer := bf.HtmlRenderer(flags, "", "")
 
 	// set up the parser
