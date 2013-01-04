@@ -22,7 +22,7 @@ type Page struct {
 	Processed bool
 	// Deps      []Page // ? is it so?
 
-	Content string
+	content string
 	Source  string
 	Path    string
 	ModTime time.Time
@@ -44,7 +44,7 @@ func NewPage(site *Site, path string) *Page {
 		Rule:      rule,
 		Pattern:   pattern,
 		Processed: false,
-		Content:   "",
+		content:   "",
 		Source:    relpath,
 		Path:      relpath,
 		ModTime:   stat.ModTime(),
@@ -53,17 +53,17 @@ func NewPage(site *Site, path string) *Page {
 	return page
 }
 
-func (page *Page) GetContent() string {
-	if len(page.Content) == 0 {
+func (page *Page) Content() string {
+	if len(page.content) == 0 {
 		content, err := ioutil.ReadFile(page.FullPath())
 		errhandle(err)
 		page.SetContent(string(content))
 	}
-	return page.Content
+	return page.content
 }
 
 func (page *Page) SetContent(content string) {
-	page.Content = content
+	page.content = content
 }
 
 func (page *Page) FullPath() string {
@@ -130,7 +130,7 @@ func (page *Page) WriteTo(writer io.Writer) (n int64, err error) {
 			n, err = io.Copy(writer, file)
 		}
 	} else {
-		nint, werr := writer.Write([]byte(page.Content))
+		nint, werr := writer.Write([]byte(page.Content()))
 		n = int64(nint)
 		err = werr
 	}

@@ -92,7 +92,7 @@ func ProcessCommand(page *Page, cmd *Command) {
 }
 
 func ProcessInnerTemplate(page *Page, args []string) {
-	t, err := template.New("ad-hoc").Funcs(funcMap).Parse(page.GetContent())
+	t, err := template.New("ad-hoc").Funcs(funcMap).Parse(page.Content())
 	if err != nil {
 		errhandle(fmt.Errorf("Page %s: %s", page.Source, err))
 	}
@@ -124,7 +124,7 @@ func ProcessTemplate(page *Page, args []string) {
 }
 
 func ProcessMarkdown(page *Page, args []string) {
-	result := Markdown(page.GetContent())
+	result := Markdown(page.Content())
 	page.SetContent(result)
 }
 
@@ -158,7 +158,7 @@ func ProcessDirectorify(page *Page, args []string) {
 
 func ProcessExternal(page *Page, args []string) {
 	cmd := exec.Command(args[0], args[1:]...)
-	cmd.Stdin = strings.NewReader(page.GetContent())
+	cmd.Stdin = strings.NewReader(page.Content())
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
 	out, err := cmd.Output()
@@ -170,7 +170,7 @@ func ProcessExternal(page *Page, args []string) {
 }
 
 func ProcessConfig(page *Page, args []string) {
-	parts := strings.SplitN(page.GetContent(), "----\n", 2)
+	parts := strings.SplitN(page.Content(), "----\n", 2)
 	if len(parts) != 2 {
 		errhandle(errors.New(fmt.Sprintf(
 			"page %s has no configuration in the head, while it is "+
@@ -205,7 +205,7 @@ func ProcessTags(page *Page, args []string) {
 				Pattern:    pattern,
 				Rule:       rule,
 				Processed:  false,
-				Content:    "",
+				content:    "",
 				Source:     args[0],
 				Path:       path,
 				ModTime:    time.Now(),
