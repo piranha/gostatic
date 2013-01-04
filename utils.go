@@ -5,7 +5,6 @@ package main
 
 import (
 	bf "github.com/russross/blackfriday"
-	md "github.com/knieriem/markdown"
 	"log"
 	"os"
 	"strings"
@@ -48,17 +47,4 @@ func Markdown(source string) string {
 	ext |= bf.EXTENSION_SPACE_HEADERS
 
 	return string(bf.Markdown([]byte(source), renderer, ext))
-}
-
-func Markdown1(source string) string {
-	p := md.NewParser(&md.Extensions{
-		Smart: true,
-		Notes: true,
-		Dlists: true,
-	})
-
-	var out bytes.Buffer
-	p.Markdown(strings.NewReader(source), md.ToHTML(&out))
-
-	return out.String()
 }
