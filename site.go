@@ -20,6 +20,7 @@ type Site struct {
 func NewSite(config *SiteConfig) *Site {
 	template, err := template.ParseFiles(config.Templates...)
 	errhandle(err)
+	template.Funcs(funcMap)
 
 	site := &Site{
 		SiteConfig: *config,

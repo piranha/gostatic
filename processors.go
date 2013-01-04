@@ -92,7 +92,7 @@ func ProcessCommand(page *Page, cmd *Command) {
 }
 
 func ProcessInnerTemplate(page *Page, args []string) {
-	t, err := template.New("ad-hoc").Parse(page.GetContent())
+	t, err := template.New("ad-hoc").Funcs(funcMap).Parse(page.GetContent())
 	if err != nil {
 		errhandle(fmt.Errorf("Page %s: %s", page.Source, err))
 	}
@@ -214,4 +214,25 @@ func ProcessTags(page *Page, args []string) {
 			tagpage.Peek()
 		}
 	}
+}
+
+
+// template utilities
+
+var inventory = map[string]interface{}{}
+
+func HasChanged(name string, value interface{}) bool {
+	changed := true
+
+	if inventory[name] == value {
+		changed = false
+	} else {
+		inventory[name] = value
+	}
+
+	return changed
+}
+
+var funcMap = template.FuncMap{
+	"HasChanged": HasChanged,
 }
