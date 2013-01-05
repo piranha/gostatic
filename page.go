@@ -143,9 +143,9 @@ func (page *Page) Changed() bool {
 	return page.state == StateChanged
 }
 
-func (page *Page) process() {
+func (page *Page) Process() *Page {
 	if page.processed || page.Rule == nil {
-		return
+		return page
 	}
 
 	page.processed = true
@@ -156,11 +156,13 @@ func (page *Page) process() {
 			}
 		}
 	}
+
+	return page
 }
 
 func (page *Page) WriteTo(writer io.Writer) (n int64, err error) {
 	if !page.processed {
-		page.process()
+		page.Process()
 	}
 
 	if page.Rule == nil {
@@ -183,6 +185,10 @@ func (page *Page) WriteTo(writer io.Writer) (n int64, err error) {
 func (pages PageSlice) Get(i int) *Page { return pages[i] }
 func (pages PageSlice) First() *Page    { return pages.Get(0) }
 func (pages PageSlice) Last() *Page     { return pages.Get(len(pages) - 1) }
+
+func (pages PageSlice) Slice(from int, to int) PageSlice {
+	return pages[from:to]
+}
 
 func (pages PageSlice) Len() int {
 	return len(pages)

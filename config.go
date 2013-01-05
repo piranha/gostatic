@@ -60,6 +60,7 @@ func NewSiteConfig(path string) (*SiteConfig, error) {
 	indent := 0
 	level := 0
 	prefix := regexp.MustCompile("^[ \t]*")
+	comment := regexp.MustCompile(`[^\\]#`)
 
 	var current *Rule
 
@@ -76,10 +77,11 @@ func NewSiteConfig(path string) (*SiteConfig, error) {
 
 		// remove useless stuff from line
 		line = line[indent:]
-		comment := strings.Index(line, "#")
-		if comment != -1 {
-			line = line[:comment]
+		commentloc := comment.FindIndex([]byte(line))
+		if commentloc != nil {
+			line = line[:commentloc[0]]
 		}
+		line = strings.Replace(line, "\\#", "#", -1)
 		line = strings.TrimSpace(line)
 
 		if len(line) == 0 {

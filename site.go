@@ -79,7 +79,7 @@ func (site *Site) Process() int {
 	processed := 0
 	for _, page := range site.Pages {
 		if page.Changed() {
-			page.process()
+			page.Process()
 			processed++
 		}
 	}
@@ -88,7 +88,7 @@ func (site *Site) Process() int {
 
 func (site *Site) ProcessAll() {
 	for _, page := range site.Pages {
-		page.process()
+		page.Process()
 	}
 }
 
