@@ -1,14 +1,15 @@
 # gostatic
 
 Gostatic is a static site generator. What differs it from most of other tools is
-that it's written in Go, which means it works reasonably fast.
+that it's written in Go and tracks changes, which means it should work
+reasonably [fast](#speed).
 
 Features include:
 
  - Dependency tracking and re-rendering only changed pages
  - Markdown support
- - Flexible filter system
- - Simple config syntax
+ - Flexible [filter system](#processors)
+ - Simple [config syntax](#configuration)
 
 ## Approach
 
@@ -19,7 +20,6 @@ output file, but filters can generate virtual input files.
 Each file can have dependencies, and will be rendered in case it does not exist,
 or its source is newer than output, or one of this is the case for one of its
 dependencies.
-
 
 ## Speed
 
@@ -138,7 +138,7 @@ properties and methods it can output or call to generate content, i.e. `{{
 
 ### Page interface
 
-- `.Site` - global site object.
+- `.Site` - global [site object](#site-interface).
 - `.Rule` - rule object, matched by page.
 - `.Pattern` - pattern, which matched this page.
 - `.Deps` - list of pages, which are dependencies for this page.
@@ -155,8 +155,8 @@ properties and methods it can output or call to generate content, i.e. `{{
 
 - `.Title` - page title.
 - `.Tags` - list of page tags.
-- `.Date` - page date, as defined in page header.
-- `.Other` - map of all other properties from page header.
+- `.Date` - page date, as defined in [page header](#page-header).
+- `.Other` - map of all other properties from [page header](#page-header).
 
 ----
 
@@ -166,7 +166,7 @@ properties and methods it can output or call to generate content, i.e. `{{
 
 ### Page list interface
 
-- `.Get <n>` - page number `<n>`.
+- `.Get <n>` - [page](#page-interface) number `<n>`.
 - `.First` - first page.
 - `.Last` - last page.
 - `.Len` - length of page list.
@@ -179,4 +179,4 @@ properties and methods it can output or call to generate content, i.e. `{{
 
 ### Site interface
 
-- `.Pages` - list of all pages.
+- `.Pages` - [list of all pages](#page-list-interface).
