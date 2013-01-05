@@ -102,45 +102,29 @@ Any other properties can be assigned too, but will be treated as a string.
 
 You can always check list of available processors with `gostatic --processors`.
 
-- `config`
+- `config` - reads config from content. Config should be in format "name: value"
+  and separated by four dashes on empty line (`----`) from content.
 
-Reads config from content. Config should be in format "name: value" and
-separated by four dashes on empty line (`----`) from content.
+- `ignore` - ignore file.
 
-- `ignore`
+- `rename <new-name>` - rename a file to `new-name`. New name can contain `*`,
+  then it will be replaced with whatever `*` captured in path match.
 
-Ignore file.
+- `directorify` - rename a file from `whatever/name.html` to
+  `whatever/name/index.html`.
 
-- `rename <new-name>`
+- `markdown` - process content as Markdown.
 
-Rename a file to `new-name`. New name can contain `*`, then it will be replaced
-with whatever `*` captured in path match.
+- `inner-template` - process content as Go template.
 
-- `directorify`
+- `template <name>` - pass page to a template named `<name>`.
 
-Rename a file from `whatever/name.html` to `whatever/name/index.html`.
+- `tags <name-pattern>` - generate (if not yet) virtual page for all tags of
+  current page. This tag page has path formed by replacing `*` in
+  `<name-pattern>` with a tag name.
 
-- `markdown`
-
-Process content as Markdown.
-
-- `inner-template`
-
-Process content as Go template.
-
-- `template <name>`
-
-Pass page to a template named `<name>`.
-
-- `tags <name-pattern>`
-
-Generate (if not yet) virtual page for all tags of current page. This tag page
-has path formed by replacing `*` in `<name-pattern>` with a tag name.
-
-- `external <command> <args...>`
-
-Call external command with content of a page as stdin and using stdout as a new
-content of a page.
+- `external <command> <args...>` - call external command with content of a page
+  as stdin and using stdout as a new content of a page.
 
 ## Templating
 
@@ -159,16 +143,22 @@ properties and methods it can output or call to generate content, i.e. `{{
 - `.Pattern` - pattern, which matched this page.
 - `.Deps` - list of pages, which are dependencies for this page.
 
+----
+
 - `.Source` - relative path to page source.
 - `.FullSource` - full path to page source.
 - `.Path` - relative path to page destination.
 - `.FullPath` - full path to page destination.
 - `.ModTime` - page last modification time.
 
+----
+
 - `.Title` - page title.
 - `.Tags` - list of page tags.
 - `.Date` - page date, as defined in page header.
 - `.Other` - map of all other properties from page header.
+
+----
 
 - `.Content` - page content.
 - `.Url` - page url (i.e. `.Path`, but with `index.html` stripped from the end).
@@ -180,6 +170,8 @@ properties and methods it can output or call to generate content, i.e. `{{
 - `.First` - first page.
 - `.Last` - last page.
 - `.Len` - length of page list.
+
+----
 
 - `.Children <prefix>` - list of pages, nested under `<prefix>`.
 - `.HasPage <page>` - if `<page>` is contained inside of current page list.
