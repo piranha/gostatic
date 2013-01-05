@@ -35,7 +35,7 @@ func NewSite(config *SiteConfig) *Site {
 
 func (site *Site) AddPage(path string) {
 	page := NewPage(site, path)
-	if page.State != StateIgnored {
+	if page.state != StateIgnored {
 		site.Pages = append(site.Pages, page)
 	}
 }
@@ -71,7 +71,7 @@ func (site *Site) collectFunc(errors chan<- error) filepath.WalkFunc {
 
 func (site *Site) FindDeps() {
 	for _, page := range site.Pages {
-		page.FindDeps()
+		page.findDeps()
 	}
 }
 
@@ -79,7 +79,7 @@ func (site *Site) Process() int {
 	processed := 0
 	for _, page := range site.Pages {
 		if page.Changed() {
-			page.Process()
+			page.process()
 			processed++
 		}
 	}
@@ -88,7 +88,7 @@ func (site *Site) Process() int {
 
 func (site *Site) ProcessAll() {
 	for _, page := range site.Pages {
-		page.Process()
+		page.process()
 	}
 }
 

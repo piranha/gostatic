@@ -12,7 +12,6 @@ import (
 
 type PageHeader struct {
 	Title string `default:"Unknown Title"`
-	Type  string `default:"page"`
 	Tags  []string
 	Date  time.Time
 	Other map[string]string

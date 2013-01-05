@@ -108,12 +108,10 @@ func ProcessInnerTemplate(page *Page, args []string) {
 }
 
 func ProcessTemplate(page *Page, args []string) {
-	var pagetype string
-	if len(args) > 0 {
-		pagetype = args[0]
-	} else {
-		pagetype = page.Type
+	if len(args) < 1 {
+		errhandle(errors.New("'template' rule needs an argument"))
 	}
+	pagetype := args[0]
 
 	var buffer bytes.Buffer
 	err := page.Site.Template.ExecuteTemplate(&buffer, pagetype, page)
@@ -140,7 +138,7 @@ func ProcessRename(page *Page, args []string) {
 }
 
 func ProcessIgnore(page *Page, args []string) {
-	page.State = StateIgnored
+	page.state = StateIgnored
 }
 
 func ProcessDirectorify(page *Page, args []string) {
@@ -190,23 +188,21 @@ func ProcessTags(page *Page, args []string) {
 		if !site.Pages.HasPage(func(inner *Page) bool {
 			return inner.Title == tag
 		}) {
-			path := filepath.Join("tags", tag+".tag")
+			path := strings.Replace(args[0], "*", tag, 1)
 			pattern, rule := site.Rules.MatchedRule(path)
 			tagpage := &Page{
 				PageHeader: PageHeader{Title: tag},
 				Site:       site,
 				Pattern:    pattern,
 				Rule:       rule,
-				Processed:  false,
-				content:    "",
-				Source:     args[0],
+				Source:     path,
 				Path:       path,
 				// tags are never new, because they only depend on pages and
 				// have not a bit of original content
 				ModTime:    time.Unix(0, 0),
 			}
 			page.Site.Pages = append(page.Site.Pages, tagpage)
-			tagpage.Peek()
+			tagpage.peek()
 		}
 	}
 

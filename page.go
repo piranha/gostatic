@@ -26,14 +26,15 @@ type Page struct {
 	Site      *Site
 	Rule      *Rule
 	Pattern   string
-	Processed bool
 	Deps      PageSlice
 
-	content string
 	Source  string
 	Path    string
 	ModTime time.Time
-	State int
+
+	processed bool
+	state     int
+	content   string
 }
 
 type PageSlice []*Page
@@ -51,13 +52,11 @@ func NewPage(site *Site, path string) *Page {
 		Site:      site,
 		Rule:      rule,
 		Pattern:   pattern,
-		Processed: false,
-		content:   "",
 		Source:    relpath,
 		Path:      relpath,
 		ModTime:   stat.ModTime(),
 	}
-	page.Peek()
+	page.peek()
 	return page
 }
 
@@ -98,7 +97,7 @@ func (page *Page) Rel(path string) string {
 // Peek is used to run those processors which should be done before others can
 // find out about us. Two actual examples include 'config' and 'rename'
 // processors right now.
-func (page *Page) Peek() {
+func (page *Page) peek() {
 	if page.Rule == nil {
 		return
 	}
@@ -111,7 +110,7 @@ func (page *Page) Peek() {
 	}
 }
 
-func (page *Page) FindDeps() {
+func (page *Page) findDeps() {
 	if page.Rule == nil {
 		return
 	}
@@ -126,30 +125,30 @@ func (page *Page) FindDeps() {
 }
 
 func (page *Page) Changed() bool {
-	if page.State == StateUnknown {
-		page.State = StateUnchanged
+	if page.state == StateUnknown {
+		page.state = StateUnchanged
 		dest, err := os.Stat(page.OutputPath())
 
 		if err != nil || dest.ModTime().Before(page.ModTime) {
-			page.State = StateChanged
+			page.state = StateChanged
 		} else {
 			for _, dep := range page.Deps {
 				if dep.Changed() {
-					page.State = StateChanged
+					page.state = StateChanged
 				}
 			}
 		}
 	}
 
-	return page.State == StateChanged
+	return page.state == StateChanged
 }
 
-func (page *Page) Process() {
-	if page.Processed || page.Rule == nil {
+func (page *Page) process() {
+	if page.processed || page.Rule == nil {
 		return
 	}
 
-	page.Processed = true
+	page.processed = true
 	if page.Rule.Commands != nil {
 		for _, cmd := range page.Rule.Commands {
 			if !cmd.MatchesAny(PreProcessors) {
@@ -160,8 +159,8 @@ func (page *Page) Process() {
 }
 
 func (page *Page) WriteTo(writer io.Writer) (n int64, err error) {
-	if !page.Processed {
-		page.Process()
+	if !page.processed {
+		page.process()
 	}
 
 	if page.Rule == nil {

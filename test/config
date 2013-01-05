@@ -8,10 +8,10 @@ OUTPUT = out
 	config
 	rename *.html
 	directorify
-	tags tag
+	tags tags/*.tag
 	inner-template
 	markdown
-	template
+	template page
 
 blog/index.md: blog/*/*.md
 	config
@@ -19,7 +19,7 @@ blog/index.md: blog/*/*.md
 	directorify
 	inner-template
 	markdown
-	template
+	template page
 
 index.md: blog/index.md
 	config
@@ -27,7 +27,7 @@ index.md: blog/index.md
 	directorify
 	inner-template
 	markdown
-	template
+	template page
 
 *.less:
 	rename *.css
