@@ -180,6 +180,16 @@ func (rule Rule) MatchedCommand(prefix Command) *Command {
 	return &rule.Commands[i]
 }
 
+func (rule *Rule) IsDep(page *Page) bool {
+	for _, dep := range rule.Deps {
+		matches, err := filepath.Match(dep, page.Source)
+		if err == nil && matches {
+			return true
+		}
+	}
+	return false
+}
+
 func (rules RuleMap) MatchedRule(path string) (string, *Rule) {
 	if rules[path] != nil {
 		return path, rules[path]

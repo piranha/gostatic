@@ -19,7 +19,7 @@ var Summary = `gostatic path/to/config
 Build a site.
 `
 
-var showVersion = goopt.Flag([]string{"-v", "--version"}, []string{},
+var showVersion = goopt.Flag([]string{"-V", "--version"}, []string{},
 	"show version and exit", "")
 var showProcessors = goopt.Flag([]string{"--processors"}, []string{},
 	"show internal processors", "")
@@ -31,6 +31,8 @@ var doWatch = goopt.Flag([]string{"-w", "--watch"}, []string{},
 	"watch for changes and serve them as http", "")
 var port = goopt.String([]string{"-p", "--port"}, "8000",
 	"port to serve on")
+var verbose = goopt.Flag([]string{"-v", "--verbose"}, []string{},
+	"enable verbose output", "")
 
 func main() {
 	goopt.Version = Version
@@ -43,7 +45,7 @@ func main() {
 	}
 
 	if *showVersion {
-		fmt.Printf("gostatic %s\n", goopt.Version)
+		out("gostatic %s\n", goopt.Version)
 		return
 	}
 
@@ -76,7 +78,7 @@ func main() {
 
 	if *doWatch {
 		StartWatcher(config)
-		fmt.Printf("Starting server at *:%s...\n", *port)
+		out("Starting server at *:%s...\n", *port)
 		err := http.ListenAndServe(":"+*port,
 			http.FileServer(http.Dir(config.Output)))
 		errhandle(err)

@@ -4,7 +4,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -29,19 +28,22 @@ func NewSite(config *SiteConfig) *Site {
 	}
 
 	site.Collect()
+	site.FindDeps()
 
 	return site
 }
 
 func (site *Site) AddPage(path string) {
 	page := NewPage(site, path)
-	site.Pages = append(site.Pages, page)
+	if page.State != StateIgnored {
+		site.Pages = append(site.Pages, page)
+	}
 }
 
 func (site *Site) Collect() {
 	errors := make(chan error)
 
-	filepath.Walk(site.Source, site.walkFunc(errors))
+	filepath.Walk(site.Source, site.collectFunc(errors))
 
 	select {
 	case err := <-errors:
@@ -52,7 +54,7 @@ func (site *Site) Collect() {
 	site.Pages.Sort()
 }
 
-func (site *Site) walkFunc(errors chan<- error) filepath.WalkFunc {
+func (site *Site) collectFunc(errors chan<- error) filepath.WalkFunc {
 	return func(fn string, fi os.FileInfo, err error) error {
 		if err != nil {
 			errors <- err
@@ -67,41 +69,58 @@ func (site *Site) walkFunc(errors chan<- error) filepath.WalkFunc {
 	}
 }
 
-func (site *Site) Process() {
+func (site *Site) FindDeps() {
 	for _, page := range site.Pages {
 		page.FindDeps()
 	}
+}
 
+func (site *Site) Process() int {
+	processed := 0
+	for _, page := range site.Pages {
+		if page.Changed() {
+			page.Process()
+			processed++
+		}
+	}
+	return processed
+}
+
+func (site *Site) ProcessAll() {
 	for _, page := range site.Pages {
 		page.Process()
 	}
 }
 
 func (site *Site) Summary() {
-	site.Process()
-	fmt.Printf("Total pages rendered: %d\n", len(site.Pages))
+	site.ProcessAll()
+	out("Total pages to render: %d\n", len(site.Pages))
 
 	for _, page := range site.Pages {
-		fmt.Printf("%s - %s: %d chars; %s\n",
+		out("%s - %s: %d chars; %s\n",
 			page.Path, page.Title, len(page.Content()), page.Rule)
-		fmt.Println("------------")
+		out("------------")
 		_, err := page.WriteTo(os.Stdout)
 		errhandle(err)
-		fmt.Println("------------\n")
+		out("------------\n")
 	}
 }
 
 func (site *Site) Render() {
-	site.Process()
-	fmt.Printf("Total pages rendered: %d\n", len(site.Pages))
+	processed := site.Process()
+	out("Total pages to render: %d\n", processed)
 
 	for _, page := range site.Pages {
-		path := filepath.Join(site.Output, page.Path)
+		if !page.Changed() {
+			continue
+		}
 
-		err := os.MkdirAll(filepath.Dir(path), 0755)
+		debug("Rendering %s...\n", page.OutputPath())
+
+		err := os.MkdirAll(filepath.Dir(page.OutputPath()), 0755)
 		errhandle(err)
 
-		file, err := os.Create(path)
+		file, err := os.Create(page.OutputPath())
 		errhandle(err)
 		page.WriteTo(file)
 		file.Close()

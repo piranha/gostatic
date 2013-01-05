@@ -7,8 +7,7 @@ import (
 	bf "github.com/russross/blackfriday"
 	"log"
 	"os"
-	"strings"
-	"bytes"
+	"fmt"
 )
 
 func errhandle(err error) {
@@ -18,6 +17,17 @@ func errhandle(err error) {
 	panic(err)
 	log.Fatalf("ERR %s\n", err)
 	os.Exit(1)
+}
+
+func out(format string, args... interface{}) {
+	fmt.Printf(format, args...)
+}
+
+func debug(format string, args...  interface{}) {
+	if !*verbose {
+		return
+	}
+	fmt.Printf(format, args...)
 }
 
 func SliceStringIndexOf(haystack []string, needle string) int {

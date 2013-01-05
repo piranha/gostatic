@@ -13,6 +13,13 @@ import (
 	"time"
 )
 
+const (
+	StateUnknown = iota
+	StateChanged
+	StateUnchanged
+	StateIgnored
+)
+
 type Page struct {
 	PageHeader
 
@@ -20,12 +27,13 @@ type Page struct {
 	Rule      *Rule
 	Pattern   string
 	Processed bool
-	// Deps      []Page // ? is it so?
+	Deps      PageSlice
 
 	content string
 	Source  string
 	Path    string
 	ModTime time.Time
+	State int
 }
 
 type PageSlice []*Page
@@ -70,6 +78,10 @@ func (page *Page) FullPath() string {
 	return filepath.Join(page.Site.Source, page.Source)
 }
 
+func (page *Page) OutputPath() string {
+	return filepath.Join(page.Site.Output, page.Path)
+}
+
 func (page *Page) Url() string {
 	return strings.Replace(page.Path, "/index.html", "/", 1)
 }
@@ -100,6 +112,36 @@ func (page *Page) Peek() {
 }
 
 func (page *Page) FindDeps() {
+	if page.Rule == nil {
+		return
+	}
+
+	deps := make(PageSlice, 0)
+	for _, other := range page.Site.Pages {
+		if other != page && page.Rule.IsDep(other) {
+			deps = append(deps, other)
+		}
+	}
+	page.Deps = deps
+}
+
+func (page *Page) Changed() bool {
+	if page.State == StateUnknown {
+		page.State = StateUnchanged
+		dest, err := os.Stat(page.OutputPath())
+
+		if err != nil || dest.ModTime().Before(page.ModTime) {
+			page.State = StateChanged
+		} else {
+			for _, dep := range page.Deps {
+				if dep.Changed() {
+					page.State = StateChanged
+				}
+			}
+		}
+	}
+
+	return page.State == StateChanged
 }
 
 func (page *Page) Process() {
@@ -192,11 +234,3 @@ func (pages PageSlice) WithTag(tag string) *PageSlice {
 
 	return &tagged
 }
-
-// func (pages PageSlice) Reverse() *PageSlice {
-// 	rv := make(PageSlice, len(pages))
-// 	for i, p := range pages {
-// 		rv[len(pages) - i - 1] = p
-// 	}
-// 	return &rv
-// }

@@ -19,7 +19,8 @@ type Processor struct {
 
 // PreProcessors is a list of processor necessary to be executed beforehand to
 // fill out information, which can be required by fellow pages
-var PreProcessors = CommandList{"config", "rename", "directorify", "tags"}
+var PreProcessors = CommandList{"config", "rename", "directorify", "tags",
+	"ignore"}
 
 var Processors = map[string]*Processor{
 	"inner-template": &Processor{
@@ -139,15 +140,7 @@ func ProcessRename(page *Page, args []string) {
 }
 
 func ProcessIgnore(page *Page, args []string) {
-	var idx int
-	site := page.Site
-	for i, pg := range site.Pages {
-		if pg == page {
-			idx = i
-			break
-		}
-	}
-	site.Pages = append(site.Pages[:idx], site.Pages[idx+1:]...)
+	page.State = StateIgnored
 }
 
 func ProcessDirectorify(page *Page, args []string) {
@@ -208,12 +201,15 @@ func ProcessTags(page *Page, args []string) {
 				content:    "",
 				Source:     args[0],
 				Path:       path,
-				ModTime:    time.Now(),
+				// tags are never new, because they only depend on pages and
+				// have not a bit of original content
+				ModTime:    time.Unix(0, 0),
 			}
 			page.Site.Pages = append(page.Site.Pages, tagpage)
 			tagpage.Peek()
 		}
 	}
+
 }
 
 
