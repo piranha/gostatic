@@ -53,7 +53,6 @@ func Markdown(source string) string {
 	ext |= bf.EXTENSION_FENCED_CODE
 	ext |= bf.EXTENSION_AUTOLINK
 	ext |= bf.EXTENSION_STRIKETHROUGH
-	ext |= bf.EXTENSION_LAX_HTML_BLOCKS
 	ext |= bf.EXTENSION_SPACE_HEADERS
 
 	return string(bf.Markdown([]byte(source), renderer, ext))
