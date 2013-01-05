@@ -13,18 +13,16 @@ OUTPUT = out
 	markdown
 	template page
 
-blog/index.md: blog/*/*.md
+blog/index.md: blog/*.md
 	config
-	rename *.html
-	directorify
+	rename blog/index.html
 	inner-template
 	markdown
 	template page
 
 index.md: blog/index.md
 	config
-	rename *.html
-	directorify
+	rename index.html
 	inner-template
 	markdown
 	template page
@@ -43,6 +41,3 @@ index.md: blog/index.md
 	template tag
 	markdown
 	template page
-
-shit.nax:
-	ignore
