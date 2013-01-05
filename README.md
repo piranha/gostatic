@@ -10,6 +10,7 @@ Features include:
  - Markdown support
  - Flexible [filter system](#processors)
  - Simple [config syntax](#configuration)
+ - HTTP server and watcher (instant rendering on changes)
 
 ## Approach
 
