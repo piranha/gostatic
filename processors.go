@@ -19,8 +19,8 @@ type Processor struct {
 
 // PreProcessors is a list of processor necessary to be executed beforehand to
 // fill out information, which can be required by fellow pages
-var PreProcessors = CommandList{"config", "rename", "directorify", "tags",
-	"ignore"}
+var PreProcessors = CommandList{"config", "rename", "ext", "directorify",
+	"tags", "ignore"}
 
 var Processors = map[string]*Processor{
 	"inner-template": &Processor{
@@ -38,6 +38,10 @@ var Processors = map[string]*Processor{
 	"rename": &Processor{
 		ProcessRename,
 		"rename resulting file (argument - pattern for renaming)",
+	},
+	"ext": &Processor{
+		ProcessExt,
+		"change extension",
 	},
 	"ignore": &Processor{
 		ProcessIgnore,
@@ -135,6 +139,19 @@ func ProcessRename(page *Page, args []string) {
 	pattern := strings.Replace(page.Pattern, "*", "", -1)
 
 	page.Path = strings.Replace(page.Path, pattern, dest, -1)
+}
+
+func ProcessExt(page *Page, args []string) {
+	if len(args) < 1 {
+		errhandle(errors.New(
+			"'ext' rule requires an extension prefixed with dot"))
+	}
+	ext := filepath.Ext(page.Path)
+	if ext == "" {
+		page.Path = page.Path + args[0]
+	} else {
+		page.Path = strings.Replace(page.Path, ext, args[0], 1)
+	}
 }
 
 func ProcessIgnore(page *Page, args []string) {
