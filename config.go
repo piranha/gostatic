@@ -27,25 +27,7 @@ type SiteConfig struct {
 	Source    string
 	Output    string
 	Rules     RuleMap
-}
-
-func TrimSplitN(s string, sep string, n int) []string {
-	bits := strings.SplitN(s, sep, n)
-	for i, bit := range bits {
-		bits[i] = strings.TrimSpace(bit)
-	}
-	return bits
-}
-
-func NonEmptySplit(s string, sep string) []string {
-	bits := strings.Split(s, sep)
-	out := make([]string, 0)
-	for _, x := range bits {
-		if len(x) != 0 {
-			out = append(out, x)
-		}
-	}
-	return out
+	Other map[string]string
 }
 
 func NewSiteConfig(path string) (*SiteConfig, error) {
@@ -55,7 +37,7 @@ func NewSiteConfig(path string) (*SiteConfig, error) {
 	}
 
 	basepath, _ := filepath.Split(path)
-	cfg := &SiteConfig{Rules: make(RuleMap)}
+	cfg := &SiteConfig{Rules: make(RuleMap), Other: make(map[string]string)}
 
 	indent := 0
 	level := 0
@@ -129,6 +111,8 @@ func (cfg *SiteConfig) ParseVariable(base string, line string) {
 		cfg.Source = filepath.Join(base, bits[1])
 	case "OUTPUT":
 		cfg.Output = filepath.Join(base, bits[1])
+	default:
+		cfg.Other[Capitalize(bits[0])] = bits[1]
 	}
 }
 
@@ -205,9 +189,13 @@ func (rules RuleMap) MatchedRule(path string) (string, *Rule) {
 	for pat, rule := range rules {
 		matched, err := filepath.Match(pat, path)
 		errhandle(err)
-		if !matched {
-			matched, err = filepath.Match(pat, name)
+		if matched {
+			return pat, rule
 		}
+	}
+
+	for pat, rule := range rules {
+		matched, err := filepath.Match(pat, name)
 		errhandle(err)
 		if matched {
 			return pat, rule

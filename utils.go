@@ -8,6 +8,8 @@ import (
 	"log"
 	"os"
 	"fmt"
+	"strings"
+	"unicode"
 )
 
 func errhandle(err error) {
@@ -56,4 +58,27 @@ func Markdown(source string) string {
 	ext |= bf.EXTENSION_SPACE_HEADERS
 
 	return string(bf.Markdown([]byte(source), renderer, ext))
+}
+
+func TrimSplitN(s string, sep string, n int) []string {
+	bits := strings.SplitN(s, sep, n)
+	for i, bit := range bits {
+		bits[i] = strings.TrimSpace(bit)
+	}
+	return bits
+}
+
+func NonEmptySplit(s string, sep string) []string {
+	bits := strings.Split(s, sep)
+	out := make([]string, 0)
+	for _, x := range bits {
+		if len(x) != 0 {
+			out = append(out, x)
+		}
+	}
+	return out
+}
+
+func Capitalize(s string) string {
+	return strings.ToUpper(s[0:1]) + strings.Map(unicode.ToLower, s[1:])
 }

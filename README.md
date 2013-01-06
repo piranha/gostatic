@@ -66,7 +66,10 @@ Here we have constants declaration (first three lines) and then three rules. One
 for any markdown file, one specifically for index.md and one for generated tags.
 
 Note: Specific rules override matching rules, but there is no very smart logic
-in place and matches comparisons are not strictly defined.
+in place and matches comparisons are not strictly defined, so if you have
+several matches you could end up with any of them. Though there is order: exact
+path match, exact name match, glob path match, glob name match. NOTE: this may
+change in future.
 
 Rules consist of path/match, list of dependencies (also paths and matches, the
 ones listed after colon) and commands.
@@ -80,6 +83,9 @@ There are three configuration constants. `SOURCE` and `OUTPUT` speak for
 themselves, and `TEMPLATES` is a list of files which will be parsed as Go
 templates. Each file can contain few templates.
 
+You can also use arbitrary names for constants to
+[access later](#site-interface) from templates.
+
 ## Page header
 
 Page header is in format `name: value`, for example:
@@ -90,14 +96,15 @@ tags: test
 date: 2013-01-05
 ```
 
-Predefined properties:
+Available properties:
 
 - `title` - page title.
 - `tags` - list of tags, separated by `,`.
 - `date` - page date, could be used for blog. Accepts formats from bigger to
   smaller (from `"2006-01-02 15:04:05 -07"` to `"2006-01-02"`)
 
-Any other properties can be assigned too, but will be treated as a string.
+You can also define arbitrary properties to access later from template, they
+will be treated as a string.
 
 ## Processors
 
@@ -196,3 +203,7 @@ expands on that a bit:
 ### Site interface
 
 - `.Pages` - [list of all pages](#page-list-interface).
+- `.Source` - path to site source.
+- `.Output` - path to site destination.
+- `.Templates` - list of template files used for the site.
+- `.Other` - any other properties defined in site config.
