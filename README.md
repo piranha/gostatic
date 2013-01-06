@@ -41,7 +41,7 @@ OUTPUT = site
 
 *.md:
     config
-    rename *.html
+    ext .html
     directorify
     tags tags/*.tag
     markdown
@@ -49,13 +49,13 @@ OUTPUT = site
 
 index.md: blog/*.md
     config
-    rename index.html
+    ext .html
     inner-template
     markdown
     template
 
 *.tag: blog/*.md
-    rename *.html
+    ext .html
     directorify
     template tag
     markdown
@@ -113,6 +113,9 @@ You can always check list of available processors with `gostatic --processors`.
   rename touches **whole** path, so be careful (you may need to include whole
   path in rename pattern) - *this may change in future*.
 
+- `ext <.ext>` - change file extension to a given one (which should be prefixed
+  with a dot).
+
 - `directorify` - rename a file from `whatever/name.html` to
   `whatever/name/index.html`.
 
@@ -138,6 +141,16 @@ on syntax.
 Each template is executed in context of a page. This means in has certain
 properties and methods it can output or call to generate content, i.e. `{{
 .Content }}` will output page content in place.
+
+### Global functions
+
+Go template system provides some convenient
+[functions](http://golang.org/pkg/text/template/#hdr-Functions), and gostatic
+expands on that a bit:
+
+ - `HasChanged <name> <value>` - checks if value has changed since previous call
+   with the same name. Storage, used for checking, is global over whole run of
+   gostatic, so choose unique names.
 
 ### Page interface
 
