@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 	"text/template"
 	"time"
-	"regexp"
 )
 
 type Processor struct {
@@ -217,7 +217,7 @@ func ProcessTags(page *Page, args []string) {
 				Path:       path,
 				// tags are never new, because they only depend on pages and
 				// have not a bit of original content
-				ModTime:    time.Unix(0, 0),
+				ModTime: time.Unix(0, 0),
 			}
 			page.Site.Pages = append(page.Site.Pages, tagpage)
 			tagpage.peek()
@@ -225,7 +225,6 @@ func ProcessTags(page *Page, args []string) {
 	}
 
 }
-
 
 // template utilities
 
@@ -245,9 +244,13 @@ func HasChanged(name string, value interface{}) bool {
 
 func Cut(value, begin, end string) (string, error) {
 	bre, err := regexp.Compile(begin)
-	if err != nil { return "", err }
+	if err != nil {
+		return "", err
+	}
 	ere, err := regexp.Compile(end)
-	if err != nil { return "", err }
+	if err != nil {
+		return "", err
+	}
 
 	bloc := bre.FindIndex([]byte(value))
 	eloc := ere.FindIndex([]byte(value))
@@ -257,5 +260,5 @@ func Cut(value, begin, end string) (string, error) {
 
 var funcMap = template.FuncMap{
 	"changed": HasChanged,
-	"cut": Cut,
+	"cut":     Cut,
 }

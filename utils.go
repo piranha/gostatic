@@ -4,10 +4,10 @@
 package main
 
 import (
+	"fmt"
 	bf "github.com/russross/blackfriday"
 	"log"
 	"os"
-	"fmt"
 	"strings"
 	"unicode"
 )
@@ -21,11 +21,11 @@ func errhandle(err error) {
 	os.Exit(1)
 }
 
-func out(format string, args... interface{}) {
+func out(format string, args ...interface{}) {
 	fmt.Printf(format, args...)
 }
 
-func debug(format string, args...  interface{}) {
+func debug(format string, args ...interface{}) {
 	if !*verbose {
 		return
 	}

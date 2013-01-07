@@ -11,7 +11,9 @@ import (
 
 func DirWatcher(path string) (chan string, error) {
 	watcher, err := fsnotify.NewWatcher()
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	ch := make(chan string, 10)
 

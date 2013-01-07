@@ -84,7 +84,7 @@ func main() {
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Cache-Control", "no-store")
 			fs.ServeHTTP(w, r)
-		});
+		})
 
 		err := http.ListenAndServe(":"+*port, nil)
 		errhandle(err)

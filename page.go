@@ -23,10 +23,10 @@ const (
 type Page struct {
 	PageHeader
 
-	Site      *Site
-	Rule      *Rule
-	Pattern   string
-	Deps      PageSlice
+	Site    *Site
+	Rule    *Rule
+	Pattern string
+	Deps    PageSlice
 
 	Source  string
 	Path    string
@@ -49,12 +49,12 @@ func NewPage(site *Site, path string) *Page {
 	pattern, rule := site.Rules.MatchedRule(relpath)
 
 	page := &Page{
-		Site:      site,
-		Rule:      rule,
-		Pattern:   pattern,
-		Source:    relpath,
-		Path:      relpath,
-		ModTime:   stat.ModTime(),
+		Site:    site,
+		Rule:    rule,
+		Pattern: pattern,
+		Source:  relpath,
+		Path:    relpath,
+		ModTime: stat.ModTime(),
 	}
 	page.peek()
 	return page

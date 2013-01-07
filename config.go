@@ -27,7 +27,7 @@ type SiteConfig struct {
 	Source    string
 	Output    string
 	Rules     RuleMap
-	Other map[string]string
+	Other     map[string]string
 }
 
 func NewSiteConfig(path string) (*SiteConfig, error) {
