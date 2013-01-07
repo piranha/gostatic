@@ -10,6 +10,7 @@ import (
 	"strings"
 	"text/template"
 	"time"
+	"regexp"
 )
 
 type Processor struct {
@@ -242,6 +243,19 @@ func HasChanged(name string, value interface{}) bool {
 	return changed
 }
 
+func Cut(value, begin, end string) (string, error) {
+	bre, err := regexp.Compile(begin)
+	if err != nil { return "", err }
+	ere, err := regexp.Compile(end)
+	if err != nil { return "", err }
+
+	bloc := bre.FindIndex([]byte(value))
+	eloc := ere.FindIndex([]byte(value))
+
+	return value[bloc[1]:eloc[0]], nil
+}
+
 var funcMap = template.FuncMap{
-	"HasChanged": HasChanged,
+	"changed": HasChanged,
+	"cut": Cut,
 }

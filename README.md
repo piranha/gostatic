@@ -155,9 +155,12 @@ Go template system provides some convenient
 [functions](http://golang.org/pkg/text/template/#hdr-Functions), and gostatic
 expands on that a bit:
 
- - `HasChanged <name> <value>` - checks if value has changed since previous call
+ - `changed <name> <value>` - checks if value has changed since previous call
    with the same name. Storage, used for checking, is global over whole run of
    gostatic, so choose unique names.
+
+ - `cut <value> <begin> <end>` - cut partial content from `<value>`, delimited
+   by regular expressions `<begin>` and `<end>`.
 
 ### Page interface
 
