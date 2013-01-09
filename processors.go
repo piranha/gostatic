@@ -170,6 +170,7 @@ func ProcessDirectorify(page *Page, args []string) {
 func ProcessExternal(page *Page, args []string) {
 	cmd := exec.Command(args[0], args[1:]...)
 	cmd.Stdin = strings.NewReader(page.Content())
+	cmd.Dir = page.Site.Source
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
 	out, err := cmd.Output()
