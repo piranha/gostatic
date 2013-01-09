@@ -17,3 +17,6 @@ fmt:
 
 gostatic-%: $(SOURCE)
 	CGO_ENABLED=0 GOOS=$* GOARCH=amd64 go build -o $@
+
+upload: $(ALL)
+	rsync -P $(ALL) $(UPLOAD_PATH)
