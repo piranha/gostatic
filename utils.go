@@ -16,7 +16,6 @@ func errhandle(err error) {
 	if err == nil {
 		return
 	}
-	panic(err)
 	log.Fatalf("ERR %s\n", err)
 	os.Exit(1)
 }
