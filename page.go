@@ -91,6 +91,9 @@ func (page *Page) UrlTo(other *Page) string {
 
 func (page *Page) Rel(path string) string {
 	root := strings.Repeat("../", strings.Count(page.Url(), "/"))
+	if path[0] == '/' {
+		return root + path[1:]
+	}
 	return root + path
 }
 
