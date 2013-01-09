@@ -174,7 +174,8 @@ func ProcessExternal(page *Page, args []string) {
 	cmd.Stderr = &stderr
 	out, err := cmd.Output()
 	if err != nil {
-		errhandle(errors.New(stderr.String()))
+		errhandle(fmt.Errorf("Error executing '%s': %s",
+			strings.Join(args, " "), stderr.String()))
 	}
 
 	page.SetContent(string(out))
