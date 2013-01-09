@@ -98,13 +98,15 @@ func ProcessCommand(page *Page, cmd *Command) {
 }
 
 func ProcessInnerTemplate(page *Page, args []string) {
-	t, err := template.New("ad-hoc").Funcs(funcMap).Parse(page.Content())
+	t, err := page.Site.Template.Clone()
+	errhandle(err)
+	t, err = t.New("ad-hoc").Parse(page.Content())
 	if err != nil {
 		errhandle(fmt.Errorf("Page %s: %s", page.Source, err))
 	}
 
 	var buffer bytes.Buffer
-	err = t.Execute(&buffer, page)
+	err = t.ExecuteTemplate(&buffer, "ad-hoc", page)
 	if err != nil {
 		errhandle(fmt.Errorf("Page %s: %s", page.Source, err))
 	}
