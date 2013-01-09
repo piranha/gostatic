@@ -183,10 +183,9 @@ func ProcessExternal(page *Page, args []string) {
 func ProcessConfig(page *Page, args []string) {
 	parts := strings.SplitN(page.Content(), "----\n", 2)
 	if len(parts) != 2 {
-		errhandle(errors.New(fmt.Sprintf(
-			"page %s has no configuration in the head, while it is "+
-				"requested by the site configuration",
-			page.Path)))
+		// no configuration, well then...
+		page.PageHeader = *NewPageHeader()
+		return
 	}
 
 	page.PageHeader = *ParseHeader(parts[0])
