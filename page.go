@@ -242,3 +242,21 @@ func (pages PageSlice) WithTag(tag string) *PageSlice {
 
 	return &tagged
 }
+
+func (pages PageSlice) BySource(s string) *Page {
+	for _, page := range pages {
+		if page.Source == s {
+			return page
+		}
+	}
+	return nil
+}
+
+func (pages PageSlice) ByPath(s string) *Page {
+	for _, page := range pages {
+		if page.Path == s {
+			return page
+		}
+	}
+	return nil
+}

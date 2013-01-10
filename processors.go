@@ -11,6 +11,8 @@ import (
 	"strings"
 	"text/template"
 	"time"
+	"hash/adler32"
+	"io"
 )
 
 type Processor struct {
@@ -261,7 +263,22 @@ func Cut(value, begin, end string) (string, error) {
 	return value[bloc[1]:eloc[0]], nil
 }
 
+func Hash(value string) string {
+	h := adler32.New()
+	io.WriteString(h, value)
+	return fmt.Sprintf("%x", h.Sum(nil))
+}
+
+func Versionize(current *Page, value string) string {
+	page := current.Site.Pages.ByPath(value)
+	c := page.Process().Content()
+	h := Hash(c)
+	return current.UrlTo(page) + "?v=" + h
+}
+
 var funcMap = template.FuncMap{
 	"changed": HasChanged,
 	"cut":     Cut,
+	"hash":    Hash,
+	"ver":     Versionize,
 }
