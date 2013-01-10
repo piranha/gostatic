@@ -77,6 +77,10 @@ ones listed after colon) and commands.
 Each command consists of a name of processor and (possibly) some
 arguments. Arguments are separated by spaces.
 
+Note: if a file has no rules whatsoever, it will be copied to exactly same
+location at destination as it was in source without being read into memory. So
+heavy images etc shouldn't be a problem.
+
 ### Constants
 
 There are three configuration constants. `SOURCE` and `OUTPUT` speak for
