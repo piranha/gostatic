@@ -33,6 +33,9 @@ var port = goopt.String([]string{"-p", "--port"}, "8000",
 	"port to serve on")
 var verbose = goopt.Flag([]string{"-v", "--verbose"}, []string{},
 	"enable verbose output", "")
+// used in Page.Changed()
+var force = goopt.Flag([]string{"-f", "--force"}, []string{},
+	"force building all pages", "")
 
 func main() {
 	goopt.Version = Version

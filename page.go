@@ -128,6 +128,10 @@ func (page *Page) findDeps() {
 }
 
 func (page *Page) Changed() bool {
+	if *force {
+		return true
+	}
+
 	if page.state == StateUnknown {
 		page.state = StateUnchanged
 		dest, err := os.Stat(page.OutputPath())
