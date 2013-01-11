@@ -170,7 +170,15 @@ func ProcessDirectorify(page *Page, args []string) {
 }
 
 func ProcessExternal(page *Page, args []string) {
-	cmd := exec.Command(args[0], args[1:]...)
+	path, err := exec.LookPath(args[0])
+	if err != nil {
+		path, err = exec.LookPath(filepath.Join(page.Site.Base, args[0]))
+		if err != nil {
+			errhandle(fmt.Errorf(
+				"command '%s' not found", args[0]))
+		}
+	}
+	cmd := exec.Command(path, args[1:]...)
 	cmd.Stdin = strings.NewReader(page.Content())
 	cmd.Dir = page.Site.Source
 	var stderr bytes.Buffer

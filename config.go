@@ -24,6 +24,7 @@ type RuleMap map[string]*Rule
 
 type SiteConfig struct {
 	Templates []string
+	Base      string
 	Source    string
 	Output    string
 	Rules     RuleMap
@@ -37,7 +38,11 @@ func NewSiteConfig(path string) (*SiteConfig, error) {
 	}
 
 	basepath, _ := filepath.Split(path)
-	cfg := &SiteConfig{Rules: make(RuleMap), Other: make(map[string]string)}
+	cfg := &SiteConfig{
+		Rules: make(RuleMap),
+		Other: make(map[string]string),
+		Base: basepath,
+	}
 
 	indent := 0
 	level := 0
