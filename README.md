@@ -12,6 +12,12 @@ Features include:
  - Simple [config syntax](#configuration)
  - HTTP server and watcher (instant rendering on changes)
 
+Binary builds:
+
+ - [Linux](http://solovyov.net/files/gostatic-linux)
+ - [OS X](http://solovyov.net/files/gostatic-darwin)
+ - [Windows](http://solovyov.net/files/gostatic-windows)
+
 ## Approach
 
 Each given file is processed through a pipeline of filters, which modify the
