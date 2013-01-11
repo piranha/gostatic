@@ -180,16 +180,16 @@ func ProcessExternal(page *Page, args []string) {
 	}
 	cmd := exec.Command(path, args[1:]...)
 	cmd.Stdin = strings.NewReader(page.Content())
-	cmd.Dir = page.Site.Source
+	cmd.Dir = page.Site.Base
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
-	out, err := cmd.Output()
+	data, err := cmd.Output()
 	if err != nil {
-		errhandle(fmt.Errorf("Error executing '%s': %s",
-			strings.Join(args, " "), stderr.String()))
+		errhandle(fmt.Errorf("Error executing '%s': %s\n%s",
+			strings.Join(args, " "), err, stderr.String()))
 	}
 
-	page.SetContent(string(out))
+	page.SetContent(string(data))
 }
 
 func ProcessConfig(page *Page, args []string) {
