@@ -178,6 +178,7 @@ func (page *Page) WriteTo(writer io.Writer) (n int64, err error) {
 			n = 0
 		} else {
 			n, err = io.Copy(writer, file)
+			file.Close()
 		}
 	} else {
 		nint, werr := writer.Write([]byte(page.Content()))
