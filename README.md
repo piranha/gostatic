@@ -38,6 +38,14 @@ generate a site of 250 pages. It costs `0.05s` to check there are no
 modifications and `0.1s` to re-render a single changed page (along with index
 and tag pages, coming to 77 pages in total).
 
+## External resources
+
+ - Jack Pearkes wrote [Heroku buildpack][] for gostatic and an
+   [article about it][].
+
+[Heroku buildpack]: https://github.com/pearkes/heroku-buildpack-gostatic
+[article about it]: http://pretengineer.com/post/gostatic-buildpack-for-heroku/
+
 ## Configuration
 
 Config syntax is Makefile-inspired with some simplifications, look at the
