@@ -132,7 +132,13 @@ func ProcessTemplate(page *Page, args []string) {
 }
 
 func ProcessMarkdown(page *Page, args []string) {
-	result := Markdown(page.Content())
+	reg, err := regexp.Compile(`\[(.*)\]\(/(.*)\)`)
+	if err != nil {
+		errhandle(fmt.Errorf("%s: %s", page.Source, err))
+	}
+	repl := "[$1](" + page.Rel("/") + "$2)"
+	relativized := reg.ReplaceAllString(page.Content(), repl)
+	result := Markdown(relativized)
 	page.SetContent(result)
 }
 
