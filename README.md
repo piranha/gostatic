@@ -31,6 +31,10 @@ Each file can have dependencies, and will be rendered in case it does not exist,
 or its source is newer than output, or one of this is the case for one of its
 dependencies.
 
+All read pages are sorted by date, found in their config (explained later) or,
+in case of their equality (which also happens when they do not have config), by
+modification time.
+
 ## Speed
 
 On late 2008 MacBook (2.4 GHz, 8 GB RAM, 5400 rpm HDD) it takes `0.3s` to
@@ -183,6 +187,12 @@ expands on that a bit:
  - `cut <value> <begin> <end>` - cut partial content from `<value>`, delimited
    by regular expressions `<begin>` and `<end>`.
 
+ - `hash <value>` - return 32-bit hash of a given value.
+
+ - `version <path>` - return relative url to a page with resulting path `<path>`
+   with `?v=<32-bit hash>` appended (used to override cache settings on static
+   files).
+
 ### Page interface
 
 - `.Site` - global [site object](#site-interface).
@@ -210,6 +220,7 @@ expands on that a bit:
 - `.Content` - page content.
 - `.Url` - page url (i.e. `.Path`, but with `index.html` stripped from the end).
 - `.UrlTo <other-page>` - relative url from current to some other page.
+- `.Rel <url>` - relative url to given absolute (anchored at `/`) url.
 
 ### Page list interface
 
@@ -221,8 +232,13 @@ expands on that a bit:
 ----
 
 - `.Children <prefix>` - list of pages, nested under `<prefix>`.
-- `.HasPage <page>` - if `<page>` is contained inside of current page list.
 - `.WithTag <tag-name>` - list of pages, tagged with `<tag-name>`.
+- `.HasPage <page>` - checks if page list contains a `<page>`.
+
+----
+
+- `.BySource <path>` - finds a page with source path `<path>`.
+- `.ByPath <path>` - finds a page with resulting path `<path>`.
 
 ### Site interface
 

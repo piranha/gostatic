@@ -288,5 +288,5 @@ var funcMap = template.FuncMap{
 	"changed": HasChanged,
 	"cut":     Cut,
 	"hash":    Hash,
-	"ver":     Versionize,
+	"version": Versionize,
 }
