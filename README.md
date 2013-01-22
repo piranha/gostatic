@@ -16,7 +16,7 @@ Binary builds:
 
  - [Linux](http://solovyov.net/files/gostatic-linux)
  - [OS X](http://solovyov.net/files/gostatic-osx)
- - [Windows](http://solovyov.net/files/gostatic-windows.exe)
+ - [Windows](http://solovyov.net/files/gostatic-win.exe)
 
 Examples of use: `test` directory in this repository and
 [my site](https://github.com/piranha/solovyov.net).
