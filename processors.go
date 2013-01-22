@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"hash/adler32"
+	"io"
 	"os/exec"
 	"path/filepath"
 	"regexp"
@@ -11,8 +13,6 @@ import (
 	"strings"
 	"text/template"
 	"time"
-	"hash/adler32"
-	"io"
 )
 
 type Processor struct {

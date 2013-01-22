@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -81,8 +82,11 @@ func (page *Page) OutputPath() string {
 	return filepath.Join(page.Site.Output, page.Path)
 }
 
+var indexRe = regexp.MustCompile("/index\\.html$")
+
 func (page *Page) Url() string {
-	return strings.Replace(page.Path, "/index.html", "/", 1)
+	url := strings.Replace(page.Path, string(filepath.Separator), "/", -1)
+	return indexRe.ReplaceAllString(url, "/")
 }
 
 func (page *Page) UrlTo(other *Page) string {

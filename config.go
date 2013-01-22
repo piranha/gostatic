@@ -41,7 +41,7 @@ func NewSiteConfig(path string) (*SiteConfig, error) {
 	cfg := &SiteConfig{
 		Rules: make(RuleMap),
 		Other: make(map[string]string),
-		Base: basepath,
+		Base:  basepath,
 	}
 
 	indent := 0
