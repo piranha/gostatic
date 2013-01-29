@@ -12,6 +12,7 @@ OUTPUT = out
 	inner-template
 	markdown
 	template page
+	relativize
 
 blog/index.md: blog/*.md
 	config
@@ -19,6 +20,7 @@ blog/index.md: blog/*.md
 	inner-template
 	markdown
 	template page
+	relativize
 
 index.md: blog/index.md
 	config
@@ -26,10 +28,10 @@ index.md: blog/index.md
 	inner-template
 	markdown
 	template page
+	relativize
 
 *.less:
-	rename *.css
-	:lessc -
+	ext .css
 
 *.html:
 	directorify
@@ -41,3 +43,4 @@ index.md: blog/index.md
 	template tag
 	markdown
 	template page
+	relativize
