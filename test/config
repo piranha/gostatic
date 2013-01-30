@@ -4,27 +4,14 @@ TEMPLATES = template.tmpl
 SOURCE = site
 OUTPUT = out
 
+blog/*.md:
+	rename *.md
+
 *.md:
 	config
-	rename *.html
+	ext .html
 	directorify
 	tags tags/*.tag
-	inner-template
-	markdown
-	template page
-	relativize
-
-blog/index.md: blog/*.md
-	config
-	rename blog/index.html
-	inner-template
-	markdown
-	template page
-	relativize
-
-index.md: blog/index.md
-	config
-	rename index.html
 	inner-template
 	markdown
 	template page

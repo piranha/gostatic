@@ -74,13 +74,8 @@ var Processors = map[string]*Processor{
 }
 
 func ProcessRelativize(page *Page, args []string) {
-	//reg, err := regexp.Compile(`\[(.*)\]\(/(.*)\)`)
-	reg, err := regexp.Compile(`<a href=\"/(.*)\">(.*)</a>`)
-	if err != nil {
-		errhandle(fmt.Errorf("%s: %s", page.Source, err))
-	}
-	//repl := "[$1](" + page.Rel("/") + "$2)"
-	repl := `<a href="` + page.Rel("/") + `$1">$2</a>`
+	reg := regexp.MustCompile(`([href|src])=[\"\']/(.*)[\"\']`)
+	repl := `$1="` + page.Rel("/") + `$2"`
 	relativized := reg.ReplaceAllString(page.Content(), repl)
 	page.SetContent(relativized)
 }
