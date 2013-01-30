@@ -1,3 +1,6 @@
 /gostatic
 /gostatic-*
 /test/out/
+
+/gostatic/*.exe
+*.exe

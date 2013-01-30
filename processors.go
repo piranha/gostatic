@@ -67,6 +67,17 @@ var Processors = map[string]*Processor{
 		("generate tags pages for tags mentioned in page header " +
 			"(argument - tag template)"),
 	},
+	"relativize": &Processor{
+		ProcessRelativize,
+		"Relativize URLs.",
+	},
+}
+
+func ProcessRelativize(page *Page, args []string) {
+	reg := regexp.MustCompile(`([href|src])=[\"\']/(.*)[\"\']`)
+	repl := `$1="` + page.Rel("/") + `$2"`
+	relativized := reg.ReplaceAllString(page.Content(), repl)
+	page.SetContent(relativized)
 }
 
 func ProcessorSummary() {
