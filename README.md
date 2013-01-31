@@ -157,9 +157,9 @@ You can always check list of available processors with `gostatic --processors`.
 
 - `template <name>` - pass page to a template named `<name>`.
 
-- `tags <name-pattern>` - generate (if not yet) virtual page for all tags of
+- `tags <path-pattern>` - create (if not yet) virtual page for all tags of a
   current page. This tag page has path formed by replacing `*` in
-  `<name-pattern>` with a tag name.
+  `<path-pattern>` with a tag name.
 
 - `relativize` - change all urls archored at `/` to be relative (i.e. add
   appropriate amount of `../`) so that generated content can be deployed in a

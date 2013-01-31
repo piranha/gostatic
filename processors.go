@@ -143,8 +143,9 @@ func ProcessMarkdown(page *Page, args []string) {
 
 func ProcessRename(page *Page, args []string) {
 	if len(args) < 1 {
-		errhandle(errors.New("'rename' rule needs an argument"))
+		errhandle(fmt.Errorf("'rename' rule needs an argument"))
 	}
+
 	dest := strings.Replace(args[0], "*", "", -1)
 	pattern := strings.Replace(page.Pattern, "*", "", -1)
 
