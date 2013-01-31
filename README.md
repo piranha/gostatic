@@ -161,6 +161,10 @@ You can always check list of available processors with `gostatic --processors`.
   current page. This tag page has path formed by replacing `*` in
   `<name-pattern>` with a tag name.
 
+- `relativize` - change all urls archored at `/` to be relative (i.e. add
+  appropriate amount of `../`) so that generated content can be deployed in a
+  subfolder of a site.
+
 - `external <command> <args...>` - call external command with content of a page
   as stdin and using stdout as a new content of a page.
 

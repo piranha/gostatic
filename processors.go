@@ -67,6 +67,11 @@ var Processors = map[string]*Processor{
 		("generate tags pages for tags mentioned in page header " +
 			"(argument - tag template)"),
 	},
+	"relativize": &Processor{
+		ProcessRelativize,
+		("make all urls bound at root relative " +
+			"(allows deploying resulting site in a subdirectory)"),
+	},
 }
 
 func ProcessorSummary() {
@@ -237,6 +242,20 @@ func ProcessTags(page *Page, args []string) {
 		}
 	}
 
+}
+
+var RelRe = regexp.MustCompile(`(href|src)=["']/([^"']*)["']`)
+var NonProtoRe = regexp.MustCompile(`(href|src)=["']//`)
+
+func ProcessRelativize(page *Page, args []string) {
+	repl := `$1="` + page.Rel("/") + `$2"`
+	rv := RelRe.ReplaceAllStringFunc(page.Content(), func (inp string) string {
+		if NonProtoRe.MatchString(inp) {
+			return inp
+		}
+		return RelRe.ReplaceAllString(inp, repl)
+	})
+	page.SetContent(rv)
 }
 
 // template utilities
