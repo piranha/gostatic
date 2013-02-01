@@ -75,6 +75,10 @@ func NewSiteConfig(path string) (*SiteConfig, error) {
 			continue
 		}
 
+		if strings.HasPrefix(line, "#") {
+			continue
+		}
+
 		// is this a constant declaration?
 		if level == 0 && strings.Index(line, "=") != -1 {
 			cfg.ParseVariable(basepath, line)
