@@ -63,6 +63,7 @@ func main() {
 		return
 	}
 
+	InitProcessors()
 	config, err := NewSiteConfig(goopt.Args[0])
 	errhandle(err)
 

@@ -25,53 +25,61 @@ type Processor struct {
 var PreProcessors = CommandList{"config", "rename", "ext", "directorify",
 	"tags", "ignore"}
 
-var Processors = map[string]*Processor{
-	"inner-template": &Processor{
-		ProcessInnerTemplate,
-		"process content as a Go template",
-	},
-	"template": &Processor{
-		ProcessTemplate,
-		"put content in a template (by default in 'page' template)",
-	},
-	"markdown": &Processor{
-		ProcessMarkdown,
-		"process content as a markdown",
-	},
-	"rename": &Processor{
-		ProcessRename,
-		"rename resulting file (argument - pattern for renaming)",
-	},
-	"ext": &Processor{
-		ProcessExt,
-		"change extension",
-	},
-	"ignore": &Processor{
-		ProcessIgnore,
-		"ignore file",
-	},
-	"directorify": &Processor{
-		ProcessDirectorify,
-		"path/name.html -> path/name/index.html",
-	},
-	"external": &Processor{
-		ProcessExternal,
-		"run external command to process content (shortcut ':')",
-	},
-	"config": &Processor{
-		ProcessConfig,
-		"read config from content (separated by '----\\n')",
-	},
-	"tags": &Processor{
-		ProcessTags,
-		("generate tags pages for tags mentioned in page header " +
-			"(argument - tag template)"),
-	},
-	"relativize": &Processor{
-		ProcessRelativize,
-		("make all urls bound at root relative " +
-			"(allows deploying resulting site in a subdirectory)"),
-	},
+var Processors map[string]*Processor
+
+// it is necessary to wrap assignment in a function since go compiler is strict
+// enough to throw error when there is an assignment loop, but not smart enough
+// to determine if it's actually truth (Processors definition loops with
+// ProcessTags, which is strange)
+func InitProcessors() {
+	Processors = map[string]*Processor{
+		"inner-template": &Processor{
+			ProcessInnerTemplate,
+			"process content as a Go template",
+		},
+		"template": &Processor{
+			ProcessTemplate,
+			"put content in a template (by default in 'page' template)",
+		},
+		"markdown": &Processor{
+			ProcessMarkdown,
+			"process content as a markdown",
+		},
+		"rename": &Processor{
+			ProcessRename,
+			"rename resulting file (argument - pattern for renaming)",
+		},
+		"ext": &Processor{
+			ProcessExt,
+			"change extension",
+		},
+		"ignore": &Processor{
+			ProcessIgnore,
+			"ignore file",
+		},
+		"directorify": &Processor{
+			ProcessDirectorify,
+			"path/name.html -> path/name/index.html",
+		},
+		"external": &Processor{
+			ProcessExternal,
+			"run external command to process content (shortcut ':')",
+		},
+		"config": &Processor{
+			ProcessConfig,
+			"read config from content (separated by '----\\n')",
+		},
+		"tags": &Processor{
+			ProcessTags,
+			("generate tags pages for tags mentioned in page header " +
+				"(argument - tag template)"),
+		},
+		"relativize": &Processor{
+			ProcessRelativize,
+			("make all urls bound at root relative " +
+				"(allows deploying resulting site in a subdirectory)"),
+		},
+	}
 }
 
 func ProcessorSummary() {
