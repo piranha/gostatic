@@ -47,7 +47,7 @@ func NewSiteConfig(path string) (*SiteConfig, error) {
 	indent := 0
 	level := 0
 	prefix := regexp.MustCompile("^[ \t]*")
-	comment := regexp.MustCompile(`[^\\]#`)
+	comment := regexp.MustCompile(`(^|[^\\])#`)
 
 	var current *Rule
 
@@ -72,10 +72,6 @@ func NewSiteConfig(path string) (*SiteConfig, error) {
 		line = strings.TrimSpace(line)
 
 		if len(line) == 0 {
-			continue
-		}
-
-		if strings.HasPrefix(line, "#") {
 			continue
 		}
 

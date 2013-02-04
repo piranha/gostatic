@@ -299,6 +299,11 @@ func Hash(value string) string {
 
 func Versionize(current *Page, value string) string {
 	page := current.Site.Pages.ByPath(value)
+	if page == nil {
+		errhandle(fmt.Errorf(
+			"trying to versionize page which does not exist: %s, current: %s",
+			value, current.Path))
+	}
 	c := page.Process().Content()
 	h := Hash(c)
 	return current.UrlTo(page) + "?v=" + h
