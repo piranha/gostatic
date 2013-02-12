@@ -12,7 +12,7 @@ Features include:
  - Simple [config syntax](#configuration)
  - HTTP server and watcher (instant rendering on changes)
 
-Binary builds:
+Binary builds (64 bit):
 
  - [Linux](http://solovyov.net/files/gostatic-linux)
  - [OS X](http://solovyov.net/files/gostatic-osx)
