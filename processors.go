@@ -248,10 +248,11 @@ func ProcessTags(page *Page, args []string) {
 	site := page.Site
 
 	for _, tag := range page.Tags {
+		path := strings.Replace(args[0], "*", tag, 1)
+
 		if !site.Pages.HasPage(func(inner *Page) bool {
-			return inner.Title == tag
+			return inner.Source == path
 		}) {
-			path := strings.Replace(args[0], "*", tag, 1)
 			pattern, rule := site.Rules.MatchedRule(path)
 			tagpage := &Page{
 				PageHeader: PageHeader{Title: tag},
