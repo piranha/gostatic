@@ -4,6 +4,7 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -205,6 +206,14 @@ func (page *Page) Render() (n int64, err error) {
 	defer file.Close()
 
 	return page.WriteTo(file)
+}
+
+func (page *Page) UrlMatches(regex string) bool {
+	re, err := regexp.Compile(regex)
+	if err != nil {
+		errhandle(fmt.Errorf("Incorrect regex given to Page.UrlMatches: '%s' ", regex))
+	}
+	return re.Match([]byte(page.Url()))
 }
 
 // PageSlice manipulation
