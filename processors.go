@@ -258,7 +258,7 @@ var NonProtoRe = regexp.MustCompile(`(href|src)=["']//`)
 
 func ProcessRelativize(page *Page, args []string) {
 	repl := `$1="` + page.Rel("/") + `$2"`
-	rv := RelRe.ReplaceAllStringFunc(page.Content(), func (inp string) string {
+	rv := RelRe.ReplaceAllStringFunc(page.Content(), func(inp string) string {
 		if NonProtoRe.MatchString(inp) {
 			return inp
 		}
