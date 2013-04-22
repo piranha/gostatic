@@ -54,6 +54,7 @@ func main() {
 	}
 
 	if *showProcessors {
+		InitProcessors()
 		ProcessorSummary()
 		return
 	}
