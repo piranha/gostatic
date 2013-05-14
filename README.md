@@ -166,7 +166,8 @@ You can always check list of available processors with `gostatic --processors`.
   subfolder of a site.
 
 - `external <command> <args...>` - call external command with content of a page
-  as stdin and using stdout as a new content of a page.
+  as stdin and using stdout as a new content of a page. Has a shortcut:
+  `:<command> <args...>` (`:` is replaced with `external `).
 
 ## Templating
 
