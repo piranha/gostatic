@@ -242,6 +242,8 @@ expands on that a bit:
 - `.Url` - page url (i.e. `.Path`, but with `index.html` stripped from the end).
 - `.UrlTo <other-page>` - relative url from current to some other page.
 - `.Rel <url>` - relative url to given absolute (anchored at `/`) url.
+- `.Is <url>` - checks if page is at passed url (or path) - use it for marking
+  active elements in menu, for example.
 
 ### Page list interface
 

@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -82,11 +81,15 @@ func (page *Page) OutputPath() string {
 	return filepath.Join(page.Site.Output, page.Path)
 }
 
-var indexRe = regexp.MustCompile("/index\\.html$")
-
 func (page *Page) Url() string {
 	url := strings.Replace(page.Path, string(filepath.Separator), "/", -1)
-	return indexRe.ReplaceAllString(url, "/")
+	if url == "index.html" {
+		return ""
+	}
+	if strings.HasSuffix(url, "/index.html") {
+		return strings.TrimSuffix(url, "/index.html") + "/"
+	}
+	return url
 }
 
 func (page *Page) UrlTo(other *Page) string {
@@ -99,6 +102,10 @@ func (page *Page) Rel(path string) string {
 		return root + path[1:]
 	}
 	return root + path
+}
+
+func (page *Page) Is(path string) bool {
+	return page.Url() == path || page.Path == path
 }
 
 // Peek is used to run those processors which should be done before others can
