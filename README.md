@@ -21,6 +21,22 @@ Binary builds (64 bit):
 Examples of use: `test` directory in this repository and
 [my site](https://github.com/piranha/solovyov.net).
 
+## Documentation index:
+
+- [Approach](#approach)
+- [Speed](#speed)
+- [External Resources](#external-resources)
+- [Configuration](#configuration)
+  - [Constants](#constants)
+- [Page Header](#page-header)
+- [Processors](#processors)
+- [Templating](#templating)
+  - [Global Functions](#global-functions)
+  - [Page interface](#page-interface)
+  - [Page list interface](#page-list-interface)
+  - [Site interface](#site-interface)
+
+
 ## Approach
 
 Each given file is processed through a pipeline of filters, which modify the
