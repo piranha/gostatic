@@ -1,5 +1,8 @@
 SOURCE = $(wildcard *.go)
-ALL = $(foreach suffix,win.exe linux osx,gostatic-$(suffix))
+ALL = \
+	$(foreach arch,32 64,\
+	$(foreach suffix,win.exe linux osx,\
+		gostatic-$(arch)-$(suffix)))
 
 all: $(ALL)
 
@@ -19,8 +22,15 @@ fmt:
 # suffix itself is taken
 win.exe = windows
 osx = darwin
-gostatic-%: $(SOURCE)
+gostatic-64-%: $(SOURCE)
 	CGO_ENABLED=0 GOOS=$(firstword $($*) $*) GOARCH=amd64 go build -o $@
 
+gostatic-32-%: $(SOURCE)
+	CGO_ENABLED=0 GOOS=$(firstword $($*) $*) GOARCH=386 go build -o $@
+
 upload: $(ALL)
+ifndef UPLOAD_PATH
+	@echo "Define UPLOAD_PATH to determine where files should be uploaded"
+else
 	rsync -P $(ALL) $(UPLOAD_PATH)
+endif
