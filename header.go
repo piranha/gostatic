@@ -49,7 +49,7 @@ func (cfg *PageHeader) ParseLine(line string, s *reflect.Value) {
 func (cfg *PageHeader) SetValue(key string, value string, s *reflect.Value) {
 	// put unknown fields into a map
 	if _, ok := s.Type().FieldByName(key); !ok {
-		cfg.Other[key] = strings.TrimSpace(value)
+		cfg.Other[Capitalize(key)] = strings.TrimSpace(value)
 		return
 	}
 

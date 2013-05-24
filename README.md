@@ -237,7 +237,8 @@ expands on that a bit:
 - `.Title` - page title.
 - `.Tags` - list of page tags.
 - `.Date` - page date, as defined in [page header](#page-header).
-- `.Other` - map of all other properties from [page header](#page-header).
+- `.Other` - map of all other properties (capitalized) from
+  [page header](#page-header).
 
 ----
 
@@ -272,4 +273,4 @@ expands on that a bit:
 - `.Source` - path to site source.
 - `.Output` - path to site destination.
 - `.Templates` - list of template files used for the site.
-- `.Other` - any other properties defined in site config.
+- `.Other` - any other properties (capitalized) defined in site config.
