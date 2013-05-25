@@ -39,7 +39,7 @@ func InitProcessors() {
 		},
 		"template": &Processor{
 			ProcessTemplate,
-			"put content in a template (by default in 'page' template)",
+			"put content in a template (argument - template name)",
 		},
 		"markdown": &Processor{
 			ProcessMarkdown,

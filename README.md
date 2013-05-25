@@ -92,7 +92,7 @@ index.md: blog/*.md
     ext .html
     inner-template
     markdown
-    template
+    template page
 
 *.tag: blog/*.md
     ext .html
