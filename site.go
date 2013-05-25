@@ -108,14 +108,14 @@ func (site *Site) Summary() {
 
 func (site *Site) Render() {
 	processed := site.Process()
-	out("Total pages to render: %d\n", processed)
+	out("Rendering %d changed pages of %d total\n", processed, len(site.Pages))
 
 	for _, page := range site.Pages {
 		if !page.Changed() {
 			continue
 		}
 
-		debug("Rendering %s...\n", page.OutputPath())
+		debug("Rendering %s -> %s\n", page.Source, page.OutputPath())
 
 		err := os.MkdirAll(filepath.Dir(page.OutputPath()), 0755)
 		errhandle(err)

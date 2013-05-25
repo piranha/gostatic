@@ -56,7 +56,7 @@ modification time.
 
 ## Speed
 
-On late 2008 MacBook (2.4 GHz, 8 GB RAM, 5400 rpm HDD) it takes `0.3s` to
+On late 2008 MacBook (C2D 2.4 GHz, 8 GB RAM, 5400 rpm HDD) it takes `0.3s` to
 generate a site of 250 pages. It costs `0.05s` to check there are no
 modifications and `0.1s` to re-render a single changed page (along with index
 and tag pages, coming to 77 pages in total).

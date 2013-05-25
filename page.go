@@ -57,6 +57,8 @@ func NewPage(site *Site, path string) *Page {
 		ModTime: stat.ModTime(),
 	}
 	page.peek()
+	debug("Found page: %s; rule: %v\n",
+		page.Source, page.Rule)
 	return page
 }
 
