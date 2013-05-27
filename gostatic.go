@@ -13,19 +13,19 @@ import (
 	"strings"
 )
 
-var Version = "1.0.0"
+var Version = "1.0.1"
 
 var opts struct {
-	ShowProcessors bool `long:"processors" description:"show page processors"`
-	ShowConfig bool `long:"show-config" description:"print config as JSON"`
-	ShowSummary bool `long:"summary" description:"print all pages on stdout"`
-	InitExample *string `short:"i" long:"init" description:"create example site"`
+	ShowProcessors bool    `long:"processors" description:"show page processors"`
+	ShowConfig     bool    `long:"show-config" description:"print config as JSON"`
+	ShowSummary    bool    `long:"summary" description:"print all pages on stdout"`
+	InitExample    *string `short:"i" long:"init" description:"create example site"`
 
 	// used in Page.Changed()
 	Force bool `short:"f" long:"force" description:"force building all pages"`
 
-	Watch bool `short:"w" long:"watch" description:"serve site on HTTP and rebuild on changes"`
-	Port string `short:"p" long:"port" default:"8000" description:"port to serve on"`
+	Watch bool   `short:"w" long:"watch" description:"serve site on HTTP and rebuild on changes"`
+	Port  string `short:"p" long:"port" default:"8000" description:"port to serve on"`
 
 	Verbose bool `short:"v" long:"verbose" description:"enable verbose output"`
 	Version bool `short:"V" long:"version" description:"show version and exit"`

@@ -181,24 +181,30 @@ func (page *Page) Process() *Page {
 }
 
 func (page *Page) WriteTo(writer io.Writer) (n int64, err error) {
+	if page.Rule == nil {
+		return 0, nil
+	}
+
 	if !page.processed {
 		page.Process()
 	}
 
+	nint, err := writer.Write([]byte(page.Content()))
+	return int64(nint), err
+}
+
+func (page *Page) Render() (n int64, err error) {
 	if page.Rule == nil {
-		file, err := os.Open(page.FullPath())
-		if err != nil {
-			n = 0
-		} else {
-			n, err = io.Copy(writer, file)
-			file.Close()
-		}
-	} else {
-		nint, werr := writer.Write([]byte(page.Content()))
-		n = int64(nint)
-		err = werr
+		return CopyFile(page.FullPath(), page.OutputPath())
 	}
-	return n, err
+
+	file, err := os.Create(page.OutputPath())
+	if err != nil {
+		return 0, err
+	}
+	defer file.Close()
+
+	return page.WriteTo(file)
 }
 
 // PageSlice manipulation

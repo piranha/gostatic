@@ -35,7 +35,7 @@ build/gostatic-$(TAG)-32-%: $(SOURCE)
 
 build/gostatic-%: build/gostatic-$(TAG)-%
 	@mkdir -p $(@D)
-	ln -sf $< $@
+	cd $(@D) && ln -sf $(<F) $(@F)
 
 upload: $(ALL)
 ifndef UPLOAD_PATH

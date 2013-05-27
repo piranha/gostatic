@@ -6,6 +6,7 @@ package main
 import (
 	"fmt"
 	bf "github.com/russross/blackfriday"
+	"io"
 	"log"
 	"os"
 	"strings"
@@ -80,4 +81,37 @@ func NonEmptySplit(s string, sep string) []string {
 
 func Capitalize(s string) string {
 	return strings.ToUpper(s[0:1]) + strings.Map(unicode.ToLower, s[1:])
+}
+
+func CopyFile(srcPath, dstPath string) (n int64, err error) {
+	fstat, err := os.Lstat(srcPath)
+
+	if fstat.Mode()&os.ModeSymlink != 0 {
+		target, err := os.Readlink(srcPath)
+		if err != nil {
+			return 0, err
+		}
+
+		err = os.Symlink(target, dstPath)
+		if err != nil {
+			return 0, err
+		}
+
+		return 1, nil
+	}
+
+	src, err := os.Open(srcPath)
+	if err != nil {
+		return 0, err
+	}
+	defer src.Close()
+
+	dst, err := os.Create(dstPath)
+	if err != nil {
+		return 0, err
+	}
+	defer dst.Close()
+
+	n, err = io.Copy(dst, src)
+	return n, err
 }

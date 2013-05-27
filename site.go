@@ -97,6 +97,11 @@ func (site *Site) Summary() {
 	out("Total pages to render: %d\n", len(site.Pages))
 
 	for _, page := range site.Pages {
+		// do not output static files in summary mode
+		if page.Rule == nil {
+			continue
+		}
+
 		out("%s - %s: %d chars; %s\n",
 			page.Path, page.Title, len(page.Content()), page.Rule)
 		out("------------")
@@ -120,9 +125,7 @@ func (site *Site) Render() {
 		err := os.MkdirAll(filepath.Dir(page.OutputPath()), 0755)
 		errhandle(err)
 
-		file, err := os.Create(page.OutputPath())
+		_, err = page.Render()
 		errhandle(err)
-		page.WriteTo(file)
-		file.Close()
 	}
 }
