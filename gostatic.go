@@ -8,35 +8,40 @@ import (
 	"fmt"
 	goopt "github.com/droundy/goopt"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 )
 
 var Version = "0.1"
 
-var Summary = `gostatic path/to/config
+var Summary = `gostatic [OPTIONS] path/to/config
 
 Build a site.
 `
 
-var showVersion = goopt.Flag([]string{"-V", "--version"}, []string{},
-	"show version and exit", "")
 var showProcessors = goopt.Flag([]string{"--processors"}, []string{},
 	"show internal processors", "")
-var showSummary = goopt.Flag([]string{"--summary"}, []string{},
-	"print everything on stdout", "")
 var showConfig = goopt.Flag([]string{"--show-config"}, []string{},
 	"dump config as JSON on stdout", "")
-var doWatch = goopt.Flag([]string{"-w", "--watch"}, []string{},
-	"watch for changes and serve them as http", "")
-var port = goopt.String([]string{"-p", "--port"}, "8000",
-	"port to serve on")
-var verbose = goopt.Flag([]string{"-v", "--verbose"}, []string{},
-	"enable verbose output", "")
+var showSummary = goopt.Flag([]string{"--summary"}, []string{},
+	"print everything on stdout", "")
+var initExample = goopt.Flag([]string{"--init"}, []string{},
+	"init example site", "")
 
 // used in Page.Changed()
 var force = goopt.Flag([]string{"-f", "--force"}, []string{},
 	"force building all pages", "")
+
+var doWatch = goopt.Flag([]string{"-w", "--watch"}, []string{},
+	"watch for changes and serve them as http", "")
+var port = goopt.String([]string{"-p", "--port"}, "8000",
+	"port to serve on")
+
+var verbose = goopt.Flag([]string{"-v", "--verbose"}, []string{},
+	"enable verbose output", "")
+var showVersion = goopt.Flag([]string{"-V", "--version"}, []string{},
+	"show version and exit", "")
 
 func main() {
 	goopt.Version = Version
@@ -56,6 +61,12 @@ func main() {
 	if *showProcessors {
 		InitProcessors()
 		ProcessorSummary()
+		return
+	}
+
+	if *initExample {
+		cwd, _ := os.Getwd()
+		WriteExample(cwd)
 		return
 	}
 
