@@ -1,8 +1,11 @@
 SOURCE = $(wildcard *.go)
+TAG = $(shell git describe --tags)
+# $(tag) here will contain either `-1.0-` or just `-`
 ALL = \
 	$(foreach arch,32 64,\
+    $(foreach tag,-$(TAG)- -,\
 	$(foreach suffix,win.exe linux osx,\
-		gostatic-$(arch)-$(suffix)))
+		build/gostatic$(tag)$(arch)-$(suffix))))
 
 all: $(ALL)
 
@@ -22,15 +25,21 @@ fmt:
 # suffix itself is taken
 win.exe = windows
 osx = darwin
-gostatic-64-%: $(SOURCE)
+build/gostatic-$(TAG)-64-%: $(SOURCE)
+	@mkdir -p $(@D)
 	CGO_ENABLED=0 GOOS=$(firstword $($*) $*) GOARCH=amd64 go build -o $@
 
-gostatic-32-%: $(SOURCE)
+build/gostatic-$(TAG)-32-%: $(SOURCE)
+	@mkdir -p $(@D)
 	CGO_ENABLED=0 GOOS=$(firstword $($*) $*) GOARCH=386 go build -o $@
+
+build/gostatic-%: build/gostatic-$(TAG)-%
+	@mkdir -p $(@D)
+	ln -sf $< $@
 
 upload: $(ALL)
 ifndef UPLOAD_PATH
 	@echo "Define UPLOAD_PATH to determine where files should be uploaded"
 else
-	rsync -P $(ALL) $(UPLOAD_PATH)
+	rsync -l -P $(ALL) $(UPLOAD_PATH)
 endif

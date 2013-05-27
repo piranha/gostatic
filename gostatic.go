@@ -13,7 +13,7 @@ import (
 	"strings"
 )
 
-var Version = "0.1"
+var Version = "1.0.0"
 
 var opts struct {
 	ShowProcessors bool `long:"processors" description:"show page processors"`
