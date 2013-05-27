@@ -141,7 +141,7 @@ func (page *Page) findDeps() {
 }
 
 func (page *Page) Changed() bool {
-	if *force {
+	if opts.Force {
 		return true
 	}
 

@@ -6,7 +6,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	goopt "github.com/droundy/goopt"
+	flags "github.com/piranha/go-flags"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -15,71 +15,66 @@ import (
 
 var Version = "0.1"
 
-var Summary = `gostatic [OPTIONS] path/to/config
+var opts struct {
+	ShowProcessors bool `long:"processors" description:"show page processors"`
+	ShowConfig bool `long:"show-config" description:"print config as JSON"`
+	ShowSummary bool `long:"summary" description:"print all pages on stdout"`
+	InitExample *string `short:"i" long:"init" description:"create example site"`
 
-Build a site.
-`
+	// used in Page.Changed()
+	Force bool `short:"f" long:"force" description:"force building all pages"`
 
-var showProcessors = goopt.Flag([]string{"--processors"}, []string{},
-	"show internal processors", "")
-var showConfig = goopt.Flag([]string{"--show-config"}, []string{},
-	"dump config as JSON on stdout", "")
-var showSummary = goopt.Flag([]string{"--summary"}, []string{},
-	"print everything on stdout", "")
-var initExample = goopt.Flag([]string{"--init"}, []string{},
-	"init example site", "")
+	Watch bool `short:"w" long:"watch" description:"serve site on HTTP and rebuild on changes"`
+	Port string `short:"p" long:"port" default:"8000" description:"port to serve on"`
 
-// used in Page.Changed()
-var force = goopt.Flag([]string{"-f", "--force"}, []string{},
-	"force building all pages", "")
-
-var doWatch = goopt.Flag([]string{"-w", "--watch"}, []string{},
-	"watch for changes and serve them as http", "")
-var port = goopt.String([]string{"-p", "--port"}, "8000",
-	"port to serve on")
-
-var verbose = goopt.Flag([]string{"-v", "--verbose"}, []string{},
-	"enable verbose output", "")
-var showVersion = goopt.Flag([]string{"-V", "--version"}, []string{},
-	"show version and exit", "")
+	Verbose bool `short:"v" long:"verbose" description:"enable verbose output"`
+	Version bool `short:"V" long:"version" description:"show version and exit"`
+}
 
 func main() {
-	goopt.Version = Version
-	goopt.Summary = Summary
+	argparser := flags.NewParser(&opts,
+		flags.PrintErrors|flags.PassDoubleDash|flags.HelpFlag)
+	argparser.Usage = "[OPTIONS] path/to/config\n\nBuild a site."
 
-	goopt.Parse(nil)
-
-	if *showSummary && *doWatch {
-		errhandle(fmt.Errorf("--summary and --watch do not mix together well"))
-	}
-
-	if *showVersion {
-		out("gostatic %s\n", goopt.Version)
+	args, err := argparser.Parse()
+	if err != nil {
 		return
 	}
 
-	if *showProcessors {
+	if opts.ShowSummary && opts.Watch {
+		errhandle(fmt.Errorf("--summary and --watch do not mix together well"))
+	}
+
+	if opts.Version {
+		out("gostatic %s\n", Version)
+		return
+	}
+
+	if opts.ShowProcessors {
 		InitProcessors()
 		ProcessorSummary()
 		return
 	}
 
-	if *initExample {
-		cwd, _ := os.Getwd()
-		WriteExample(cwd)
+	if opts.InitExample != nil {
+		target, _ := os.Getwd()
+		if len(*opts.InitExample) > 0 {
+			target = filepath.Join(target, *opts.InitExample)
+		}
+		WriteExample(target)
 		return
 	}
 
-	if len(goopt.Args) == 0 {
-		println(goopt.Usage())
+	if len(args) == 0 {
+		argparser.WriteHelp(os.Stdout)
 		return
 	}
 
 	InitProcessors()
-	config, err := NewSiteConfig(goopt.Args[0])
+	config, err := NewSiteConfig(args[0])
 	errhandle(err)
 
-	if *showConfig {
+	if opts.ShowConfig {
 		x, err := json.MarshalIndent(config, "", "  ")
 		errhandle(err)
 		println(string(x))
@@ -87,15 +82,15 @@ func main() {
 	}
 
 	site := NewSite(config)
-	if *showSummary {
+	if opts.ShowSummary {
 		site.Summary()
 	} else {
 		site.Render()
 	}
 
-	if *doWatch {
+	if opts.Watch {
 		StartWatcher(config)
-		out("Starting server at *:%s...\n", *port)
+		out("Starting server at *:%s...\n", opts.Port)
 
 		fs := http.FileServer(http.Dir(config.Output))
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -103,7 +98,7 @@ func main() {
 			fs.ServeHTTP(w, r)
 		})
 
-		err := http.ListenAndServe(":"+*port, nil)
+		err := http.ListenAndServe(":"+opts.Port, nil)
 		errhandle(err)
 	}
 }

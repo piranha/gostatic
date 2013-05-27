@@ -25,7 +25,7 @@ func out(format string, args ...interface{}) {
 }
 
 func debug(format string, args ...interface{}) {
-	if !*verbose {
+	if !opts.Verbose {
 		return
 	}
 	fmt.Printf(format, args...)
