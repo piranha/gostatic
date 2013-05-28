@@ -9,6 +9,8 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
+	"unicode"
 )
 
 var ExampleConfig = `
@@ -170,7 +172,8 @@ func WriteFile(dir string, fn string, content string) error {
 		return err
 	}
 
-	if err := ioutil.WriteFile(path, []byte(content), 0644); err != nil {
+	towrite := []byte(strings.TrimLeftFunc(content, unicode.IsSpace))
+	if err := ioutil.WriteFile(path, towrite, 0644); err != nil {
 		return err
 	}
 
