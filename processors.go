@@ -47,7 +47,8 @@ func InitProcessors() {
 		},
 		"rename": &Processor{
 			ProcessRename,
-			"rename resulting file (argument - pattern for renaming)",
+			"rename resulting file (argument - pattern for renaming, " +
+				"relative to current file location)",
 		},
 		"ext": &Processor{
 			ProcessExt,
@@ -154,10 +155,27 @@ func ProcessRename(page *Page, args []string) {
 		errhandle(fmt.Errorf("'rename' rule needs an argument"))
 	}
 
-	dest := strings.Replace(args[0], "*", "", -1)
-	pattern := strings.Replace(page.Pattern, "*", "", -1)
+	dest := args[0]
 
-	page.Path = strings.Replace(page.Path, pattern, dest, -1)
+	if strings.Contains(dest, "*") {
+		if !strings.Contains(page.Pattern, "*") {
+			errhandle(fmt.Errorf(
+				"'rename' rule cannot rename '%s' to '%s'",
+				page.Pattern, dest))
+		}
+
+		group := fmt.Sprintf("([^%c]*)", filepath.Separator)
+		base := filepath.Base(page.Pattern)
+		pat := strings.Replace(regexp.QuoteMeta(base), "\\*", group, 1)
+
+		re, err := regexp.Compile(pat)
+		errhandle(err)
+		m := re.FindStringSubmatch(filepath.Base(page.Path))
+
+		dest = strings.Replace(dest, "*", m[1], 1)
+	}
+
+	page.Path = filepath.Join(filepath.Dir(page.Path), dest)
 }
 
 func ProcessExt(page *Page, args []string) {

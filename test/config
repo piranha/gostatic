@@ -15,7 +15,7 @@ OUTPUT = out
 
 blog/index.md: blog/*.md
 	config
-	rename blog/index.html
+	rename index.html
 	inner-template
 	markdown
 	template page
