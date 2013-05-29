@@ -51,8 +51,8 @@ var ExampleTemplate = `
 <html>
 <head>
   <meta charset="utf-8">
-  <meta name="author" content="{{ .Site.Other.Author }}">
-  <link rel="alternate" type="application/atom+xml" title="{{ .Site.Other.Title }} feed" href="{{ .Rel "blog.atom" }}">
+  <meta name="author" content="{{ html .Site.Other.Author }}">
+  <link rel="alternate" type="application/atom+xml" title="{{ html .Site.Other.Title }} feed" href="{{ .Rel "blog.atom" }}">
   <title>{{ .Site.Other.Title }}{{ if .Title }}: {{ .Title }}{{ end }}</title>
   <link rel="stylesheet" type="text/css" href="{{ .Rel "static/style.css" }}">
 </head>
