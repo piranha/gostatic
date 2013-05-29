@@ -21,8 +21,11 @@ Binary builds:
  - [Windows 64 bit](http://solovyov.net/files/gostatic-64-win.exe)
  - [Windows 32 bit](http://solovyov.net/files/gostatic-32-win.exe)
 
-Examples of use: `test` directory in this repository and
-[my site](https://github.com/piranha/solovyov.net).
+If you want to download specific version, url pattern is
+`http://solovyov.net/files/gostatic-<version>-<32/64>-<win.exe/linux/osx>`.
+
+Examples of use: [my site](https://github.com/piranha/solovyov.net) or run
+`gostatic -i name` to generate example site in directory `name`.
 
 ## Documentation index:
 
