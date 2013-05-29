@@ -8,7 +8,6 @@ import (
 	bf "github.com/russross/blackfriday"
 	"io"
 	"log"
-	"os"
 	"strings"
 	"unicode"
 )
@@ -18,7 +17,6 @@ func errhandle(err error) {
 		return
 	}
 	log.Fatalf("ERR %s\n", err)
-	os.Exit(1)
 }
 
 func out(format string, args ...interface{}) {
