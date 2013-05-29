@@ -6,14 +6,14 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	flags "github.com/piranha/go-flags"
+	flags "github.com/jessevdk/go-flags"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 )
 
-var Version = "1.0.3"
+var Version = "1.0.4"
 
 var opts struct {
 	ShowProcessors bool    `long:"processors" description:"show page processors"`

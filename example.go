@@ -160,6 +160,7 @@ func WriteExample(dir string) error {
 	WriteFile(dir, "site.tmpl", ExampleTemplate)
 	WriteFile(dir, "src/index.html", ExampleIndex)
 	WriteFile(dir, "src/blog/first.md", ExamplePost)
+	WriteFile(dir, "src/blog.atom", ExampleFeed)
 	WriteFile(dir, "src/static/style.css", ExampleStyle)
 	return nil
 }
