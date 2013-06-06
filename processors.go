@@ -314,6 +314,13 @@ func Cut(value, begin, end string) (string, error) {
 	bloc := bre.FindIndex([]byte(value))
 	eloc := ere.FindIndex([]byte(value))
 
+	if bloc == nil {
+		bloc = []int{0}
+	}
+	if eloc == nil {
+		eloc = []int{len(value)}
+	}
+
 	return value[bloc[1]:eloc[0]], nil
 }
 
