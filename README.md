@@ -251,6 +251,8 @@ expands on that a bit:
 - `.Rel <url>` - relative url to given absolute (anchored at `/`) url.
 - `.Is <url>` - checks if page is at passed url (or path) - use it for marking
   active elements in menu, for example.
+- `.UrlMatches <pattern>` - checks if page url matches regular expression
+  `<pattern>`.
 
 ### Page list interface
 
