@@ -34,7 +34,7 @@ Examples of use: [my site](https://github.com/piranha/solovyov.net) or run
 - [External Resources](#external-resources)
 - [Configuration](#configuration)
   - [Constants](#constants)
-- [Page Header](#page-header)
+- [Page config](#page-config)
 - [Processors](#processors)
 - [Templating](#templating)
   - [Global Functions](#global-functions)
@@ -53,9 +53,9 @@ Each file can have dependencies, and will be rendered in case it does not exist,
 or its source is newer than output, or one of this is the case for one of its
 dependencies.
 
-All read pages are sorted by date, found in their config (explained later) or,
-in case of their equality (which also happens when they do not have config), by
-modification time.
+All read pages are sorted by date. This date is taken in their
+[config](#page-config) or, in case if config is absent or dates there are equal,
+by file modification time.
 
 ## Speed
 
@@ -133,9 +133,10 @@ templates. Each file can contain few templates.
 You can also use arbitrary names for constants to
 [access later](#site-interface) from templates.
 
-## Page header
+## Page config
 
-Page header is in format `name: value`, for example:
+Page config is only processed if you specify `config` processor for a page. It's
+format is `name: value`, for example:
 
 ```
 title: This is a page
@@ -143,15 +144,16 @@ tags: test
 date: 2013-01-05
 ```
 
-Available properties:
+Parsed properties:
 
 - `title` - page title.
 - `tags` - list of tags, separated by `,`.
 - `date` - page date, could be used for blog. Accepts formats from bigger to
   smaller (from `"2006-01-02 15:04:05 -07"` to `"2006-01-02"`)
 
-You can also define arbitrary properties to access later from template, they
-will be treated as a string.
+You can also define any other property you like, it's value will be treated as a
+string and it's key is capitalized and put on the `.Other`
+[page property](#page-interface).
 
 ## Processors
 
@@ -239,9 +241,9 @@ expands on that a bit:
 
 - `.Title` - page title.
 - `.Tags` - list of page tags.
-- `.Date` - page date, as defined in [page header](#page-header).
+- `.Date` - page date, as defined in [page config](#page-config).
 - `.Other` - map of all other properties (capitalized) from
-  [page header](#page-header).
+  [page config](#page-config).
 
 ----
 
