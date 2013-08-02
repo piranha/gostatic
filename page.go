@@ -37,6 +37,7 @@ type Page struct {
 	processed bool
 	state     int
 	content   string
+	wasread   bool // if content was read already
 }
 
 type PageSlice []*Page
@@ -65,10 +66,11 @@ func NewPage(site *Site, path string) *Page {
 }
 
 func (page *Page) Content() string {
-	if len(page.content) == 0 {
+	if !page.wasread {
 		content, err := ioutil.ReadFile(page.FullPath())
 		errhandle(err)
 		page.SetContent(string(content))
+		page.wasread = true
 	}
 	return page.content
 }

@@ -225,7 +225,7 @@ func ProcessExternal(page *Page, args []string) {
 }
 
 func ProcessConfig(page *Page, args []string) {
-	parts := strings.SplitN(page.Content(), "----\n", 2)
+	parts := TrimSplitN(page.Content(), "----\n", 2)
 	if len(parts) != 2 {
 		// no configuration, well then...
 		page.PageHeader = *NewPageHeader()
@@ -316,7 +316,7 @@ func Cut(value, begin, end string) (string, error) {
 	eloc := ere.FindIndex([]byte(value))
 
 	if bloc == nil {
-		bloc = []int{0}
+		bloc = []int{0, 0}
 	}
 	if eloc == nil {
 		eloc = []int{len(value)}
