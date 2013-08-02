@@ -83,13 +83,14 @@ TEMPLATES = site.tmpl
 SOURCE = src
 OUTPUT = site
 
+# this is a comment
 *.md:
     config
     ext .html
     directorify
     tags tags/*.tag
     markdown
-    template page
+    template page # yeah, this is a comment as well
 
 index.md: blog/*.md
     config
@@ -106,8 +107,9 @@ index.md: blog/*.md
     template page
 ```
 
-Here we have constants declaration (first three lines) and then three rules. One
-for any markdown file, one specifically for index.md and one for generated tags.
+Here we have constants declaration (first three lines), a comment and then three
+rules. One for any markdown file, one specifically for index.md and one for
+generated tags.
 
 Note: Specific rules override matching rules, but there is no very smart logic
 in place and matches comparisons are not strictly defined, so if you have

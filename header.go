@@ -31,19 +31,17 @@ func NewPageHeader() *PageHeader {
 }
 
 func (cfg *PageHeader) ParseLine(line string, s *reflect.Value) {
-	// Skip empty lines and comments
-	line = strings.SplitN(line, "//", 2)[0]
+	// Skip empty lines
 	line = strings.TrimSpace(line)
 	if len(line) == 0 {
 		return
 	}
 
 	// Split line in actual name and value
-	parts := strings.SplitN(line, ":", 2)
-	key := strings.ToUpper(parts[0][0:1]) + strings.TrimSpace(parts[0][1:])
-	value := strings.TrimSpace(parts[1])
+	bits := TrimSplitN(line, ":", 2)
+	key := strings.ToUpper(bits[0][0:1]) + bits[0][1:]
 
-	cfg.SetValue(key, value, s)
+	cfg.SetValue(key, bits[1], s)
 }
 
 func (cfg *PageHeader) SetValue(key string, value string, s *reflect.Value) {
