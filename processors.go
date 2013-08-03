@@ -261,6 +261,7 @@ func ProcessTags(page *Page, args []string) {
 				Rule:       rule,
 				Source:     path,
 				Path:       path,
+				wasread:    true,
 				// tags are never new, because they only depend on pages and
 				// have not a bit of original content
 				ModTime: time.Unix(0, 0),
