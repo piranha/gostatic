@@ -15,12 +15,17 @@ Features include:
 
 Binary builds:
 
- - [Linux 64 bit](http://solovyov.net/files/gostatic-64-linux)
- - [Linux 32 bit](http://solovyov.net/files/gostatic-32-linux)
- - [OS X 64 bit](http://solovyov.net/files/gostatic-64-osx)
- - [OS X 32 bit](http://solovyov.net/files/gostatic-32-osx)
- - [Windows 64 bit](http://solovyov.net/files/gostatic-64-win.exe)
- - [Windows 32 bit](http://solovyov.net/files/gostatic-32-win.exe)
+| Linux         | OS X          | Windows       |
+|---------------+---------------+---------------|
+| [64 bit][l64] | [64 bit][x64] | [64 bit][w64] |
+| [32 bit][l32] | [32 bit][x32] | [32 bit][w32] |
+
+[l64]: http://solovyov.net/files/gostatic-64-linux
+[l32]: http://solovyov.net/files/gostatic-32-linux
+[x64]: http://solovyov.net/files/gostatic-64-osx
+[x32]: http://solovyov.net/files/gostatic-32-osx
+[w64]: http://solovyov.net/files/gostatic-64-win.exe
+[w32]: http://solovyov.net/files/gostatic-32-win.exe
 
 If you want to download specific version, url pattern is
 `http://solovyov.net/files/gostatic-<version>-<32/64>-<win.exe/linux/osx>`.
