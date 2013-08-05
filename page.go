@@ -25,10 +25,10 @@ const (
 type Page struct {
 	PageHeader
 
-	Site    *Site
+	Site    *Site `json:"-"`
 	Rule    *Rule
 	Pattern string
-	Deps    PageSlice
+	Deps    PageSlice `json:"-"`
 
 	Source  string
 	Path    string

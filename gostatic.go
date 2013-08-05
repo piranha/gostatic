@@ -13,15 +13,16 @@ import (
 	"strings"
 )
 
-var Version = "1.3"
+var Version = "1.4"
 
 var opts struct {
 	ShowProcessors bool    `long:"processors" description:"show page processors"`
 	ShowConfig     bool    `long:"show-config" description:"print config as JSON"`
 	ShowSummary    bool    `long:"summary" description:"print all pages on stdout"`
 	InitExample    *string `short:"i" long:"init" description:"create example site"`
+	DumpPage       string  `short:"d" long:"dump" description:"print page metadata as JSON"`
 
-	// used in Page.Changed()
+	// checked in Page.Changed()
 	Force bool `short:"f" long:"force" description:"force building all pages"`
 
 	Watch bool   `short:"w" long:"watch" description:"serve site on HTTP and rebuild on changes"`
@@ -82,6 +83,22 @@ func main() {
 	}
 
 	site := NewSite(config)
+
+	if len(opts.DumpPage) > 0 {
+		page := site.PageBySomePath(opts.DumpPage)
+		if page == nil {
+			out("Page '%s' not found (supply source or destination path)\n",
+				opts.DumpPage)
+			return
+		}
+		opts.Force = true
+		page.Process()
+		dump, err := json.MarshalIndent(page, "", "  ")
+		errhandle(err)
+		out("%s\n", dump)
+		return
+	}
+
 	if opts.ShowSummary {
 		site.Summary()
 	} else {

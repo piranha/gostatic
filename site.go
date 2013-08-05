@@ -129,3 +129,24 @@ func (site *Site) Render() {
 		errhandle(err)
 	}
 }
+
+func (site *Site) PageBySomePath(s string) *Page {
+	if strings.HasPrefix(s, site.Source) {
+		rel, err := filepath.Rel(site.Source, s)
+		if err != nil {
+			return nil
+		}
+		return site.Pages.BySource(rel)
+	}
+	if strings.HasPrefix(s, site.Output) {
+		rel, err := filepath.Rel(site.Output, s)
+		if err != nil {
+			return nil
+		}
+		return site.Pages.ByPath(rel)
+	}
+	if page := site.Pages.BySource(s); page != nil {
+		return page
+	}
+	return site.Pages.ByPath(s)
+}
