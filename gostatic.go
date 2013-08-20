@@ -13,7 +13,7 @@ import (
 	"strings"
 )
 
-var Version = "1.4"
+var Version = "1.5"
 
 var opts struct {
 	ShowProcessors bool    `long:"processors" description:"show page processors"`
@@ -91,8 +91,6 @@ func main() {
 				opts.DumpPage)
 			return
 		}
-		opts.Force = true
-		page.Process()
 		dump, err := json.MarshalIndent(page, "", "  ")
 		errhandle(err)
 		out("%s\n", dump)

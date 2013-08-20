@@ -225,6 +225,30 @@ func (pages PageSlice) Get(i int) *Page { return pages[i] }
 func (pages PageSlice) First() *Page    { return pages.Get(0) }
 func (pages PageSlice) Last() *Page     { return pages.Get(len(pages) - 1) }
 
+func (pages PageSlice) Prev(cur *Page) *Page {
+	for i, page := range pages {
+		if page == cur {
+			if i == pages.Len() {
+				return nil
+			}
+			return pages[i+1]
+		}
+	}
+	return nil
+}
+
+func (pages PageSlice) Next(cur *Page) *Page {
+	for i, page := range pages {
+		if page == cur {
+			if i == 0 {
+				return nil
+			}
+			return pages[i-1]
+		}
+	}
+	return nil
+}
+
 func (pages PageSlice) Slice(from int, to int) PageSlice {
 	length := len(pages)
 
@@ -238,6 +262,7 @@ func (pages PageSlice) Slice(from int, to int) PageSlice {
 	return pages[from:to]
 }
 
+// Sorting interface
 func (pages PageSlice) Len() int {
 	return len(pages)
 }

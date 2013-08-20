@@ -270,12 +270,15 @@ expands on that a bit:
 - `.First` - first page.
 - `.Last` - last page.
 - `.Len` - length of page list.
+- `.Prev <page>` - return page with earlier date than given. Returns nil if no
+  earlier pages exist or page is not in page list.
+- `.Next <page>` - return page with later date than given. Returns nil if no
+  later pages exist or page is not in page list.
 
 ----
 
 - `.Children <prefix>` - list of pages, nested under `<prefix>`.
 - `.WithTag <tag-name>` - list of pages, tagged with `<tag-name>`.
-- `.HasPage <page>` - checks if page list contains a `<page>`.
 
 ----
 
