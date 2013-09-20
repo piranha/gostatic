@@ -228,7 +228,7 @@ func (pages PageSlice) Last() *Page     { return pages.Get(len(pages) - 1) }
 func (pages PageSlice) Prev(cur *Page) *Page {
 	for i, page := range pages {
 		if page == cur {
-			if i == pages.Len() {
+			if i == pages.Len() - 1 {
 				return nil
 			}
 			return pages[i+1]
