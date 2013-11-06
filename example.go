@@ -46,6 +46,16 @@ index.html: blog/*.md
 	template page
 `
 
+var ExampleMakefile = `
+GS ?= gostatic
+
+compile:
+	$(GS) config
+
+w:
+	$(GS) -w config
+`
+
 var ExampleTemplate = `
 {{ define "header" }}<!doctype html>
 <html>
@@ -54,6 +64,7 @@ var ExampleTemplate = `
   <meta name="author" content="{{ html .Site.Other.Author }}">
   <link rel="alternate" type="application/atom+xml" title="{{ html .Site.Other.Title }} feed" href="{{ .Rel "blog.atom" }}">
   <title>{{ .Site.Other.Title }}{{ if .Title }}: {{ .Title }}{{ end }}</title>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="{{ .Rel "static/style.css" }}">
 </head>
 <body>
@@ -157,6 +168,7 @@ var ExampleStyle = `
 
 func WriteExample(dir string) error {
 	WriteFile(dir, "config", ExampleConfig)
+	WriteFile(dir, "Makefile", ExampleMakefile)
 	WriteFile(dir, "site.tmpl", ExampleTemplate)
 	WriteFile(dir, "src/index.html", ExampleIndex)
 	WriteFile(dir, "src/blog/first.md", ExamplePost)
