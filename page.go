@@ -49,6 +49,9 @@ func NewPage(site *Site, path string) *Page {
 	relpath, err := filepath.Rel(site.Source, path)
 	errhandle(err)
 
+	// convert windows path separators to unix style
+	relpath = strings.Replace(relpath, "\\", "/", -1)
+
 	pattern, rule := site.Rules.MatchedRule(relpath)
 
 	page := &Page{
@@ -228,7 +231,7 @@ func (pages PageSlice) Last() *Page     { return pages.Get(len(pages) - 1) }
 func (pages PageSlice) Prev(cur *Page) *Page {
 	for i, page := range pages {
 		if page == cur {
-			if i == pages.Len() - 1 {
+			if i == pages.Len()-1 {
 				return nil
 			}
 			return pages[i+1]
