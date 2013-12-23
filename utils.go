@@ -7,7 +7,6 @@ import (
 	"fmt"
 	bf "github.com/russross/blackfriday"
 	"io"
-	"log"
 	"os"
 	"strings"
 	"unicode"
@@ -17,7 +16,7 @@ func errhandle(err error) {
 	if err == nil {
 		return
 	}
-	log.Fatalf("ERR %s\n", err)
+	fmt.Printf("Error: %s\n", err)
 }
 
 func out(format string, args ...interface{}) {

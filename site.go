@@ -41,7 +41,7 @@ func (site *Site) AddPage(path string) {
 }
 
 func (site *Site) Collect() {
-	errors := make(chan error)
+	errors := make(chan error, 10)
 
 	filepath.Walk(site.Source, site.collectFunc(errors))
 
