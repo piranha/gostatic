@@ -119,7 +119,7 @@ func main() {
 }
 
 func StartWatcher(config *SiteConfig) {
-	filemod, err := DirWatcher(config.Source)
+	filemod, err := Watcher(config)
 	errhandle(err)
 
 	go func() {

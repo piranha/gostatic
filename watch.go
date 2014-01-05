@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 )
 
-func DirWatcher(path string) (chan string, error) {
+func Watcher(config *SiteConfig) (chan string, error) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		return nil, err
@@ -31,7 +31,10 @@ func DirWatcher(path string) (chan string, error) {
 		}
 	}()
 
-	filepath.Walk(path, watchAll(watcher))
+	filepath.Walk(config.Output, watchAll(watcher))
+	for _, path := range config.Templates {
+		watcher.Watch(path)
+	}
 
 	return ch, nil
 }
