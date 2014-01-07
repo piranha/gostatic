@@ -31,7 +31,7 @@ func Watcher(config *SiteConfig) (chan string, error) {
 		}
 	}()
 
-	filepath.Walk(config.Output, watchAll(watcher))
+	filepath.Walk(config.Source, watchAll(watcher))
 	for _, path := range config.Templates {
 		watcher.Watch(path)
 	}
