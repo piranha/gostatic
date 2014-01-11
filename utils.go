@@ -54,6 +54,7 @@ func Markdown(source string) string {
 	ext |= bf.EXTENSION_AUTOLINK
 	ext |= bf.EXTENSION_STRIKETHROUGH
 	ext |= bf.EXTENSION_SPACE_HEADERS
+	ext |= bf.EXTENSION_FOOTNOTES
 
 	return string(bf.Markdown([]byte(source), renderer, ext))
 }
