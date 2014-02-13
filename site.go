@@ -79,6 +79,7 @@ func (site *Site) Process() int {
 	processed := 0
 	for _, page := range site.Pages {
 		if page.Changed() {
+			debug("Processing page %s\n", page.Source)
 			page.Process()
 			processed++
 		}

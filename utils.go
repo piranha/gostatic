@@ -28,6 +28,7 @@ func debug(format string, args ...interface{}) {
 		return
 	}
 	fmt.Printf(format, args...)
+	os.Stdout.Sync()
 }
 
 func SliceStringIndexOf(haystack []string, needle string) int {
