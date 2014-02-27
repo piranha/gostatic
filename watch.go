@@ -19,15 +19,13 @@ func Watcher(config *SiteConfig) (chan string, error) {
 
 	go func() {
 		for {
-			select {
-			case ev := <-watcher.Event:
-				if ev.IsCreate() {
-					watcher.Watch(ev.Name)
-				} else if ev.IsDelete() {
-					watcher.RemoveWatch(ev.Name)
-				}
-				ch <- ev.Name
+			ev := <-watcher.Event
+			if ev.IsCreate() {
+				watcher.Watch(ev.Name)
+			} else if ev.IsDelete() {
+				watcher.RemoveWatch(ev.Name)
 			}
+			ch <- ev.Name
 		}
 	}()
 
