@@ -56,6 +56,7 @@ func Markdown(source string) string {
 	ext |= bf.EXTENSION_STRIKETHROUGH
 	ext |= bf.EXTENSION_SPACE_HEADERS
 	ext |= bf.EXTENSION_FOOTNOTES
+	ext |= bf.EXTENSION_HEADER_IDS
 
 	return string(bf.Markdown([]byte(source), renderer, ext))
 }
