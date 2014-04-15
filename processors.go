@@ -217,7 +217,7 @@ func ProcessExternal(page *Page, args []string) {
 	cmd.Stderr = &stderr
 	data, err := cmd.Output()
 	if err != nil {
-		errhandle(fmt.Errorf("Error executing '%s': %s\n%s",
+		errhandle(fmt.Errorf("'%s' failed: %s\n%s",
 			strings.Join(args, " "), err, stderr.String()))
 	}
 
@@ -225,7 +225,7 @@ func ProcessExternal(page *Page, args []string) {
 }
 
 func ProcessConfig(page *Page, args []string) {
-	parts := TrimSplitN(page.Content(), "----\n", 2)
+	parts := TrimSplitN(page.Content(), "\n----\n", 2)
 	if len(parts) != 2 {
 		// no configuration, well then...
 		page.PageHeader = *NewPageHeader()

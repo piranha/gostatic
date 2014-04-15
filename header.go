@@ -39,8 +39,13 @@ func (cfg *PageHeader) ParseLine(line string, s *reflect.Value) {
 
 	// Split line in actual name and value
 	bits := TrimSplitN(line, ":", 2)
-	key := strings.ToUpper(bits[0][0:1]) + bits[0][1:]
+	if len(bits) < 2 {
+		errhandle(fmt.Errorf("could not parse '%s' as 'key: value' string",
+			line))
+		return
+	}
 
+	key := strings.ToUpper(bits[0][0:1]) + bits[0][1:]
 	cfg.SetValue(key, bits[1], s)
 }
 
@@ -80,6 +85,7 @@ func (cfg *PageHeader) SetValue(key string, value string, s *reflect.Value) {
 
 func ParseHeader(source string) *PageHeader {
 	cfg := NewPageHeader()
+
 	s := reflect.ValueOf(cfg).Elem()
 
 	// Set default values
