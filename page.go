@@ -91,6 +91,9 @@ func (page *Page) OutputPath() string {
 }
 
 func (page *Page) Url() string {
+	if page == nil {
+		panic(fmt.Errorf(".Url called on a Page which does not exist"))
+	}
 	url := strings.Replace(page.Path, string(filepath.Separator), "/", -1)
 	if url == "index.html" {
 		return ""

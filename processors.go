@@ -114,6 +114,12 @@ func ProcessCommand(page *Page, cmd *Command) {
 }
 
 func ProcessInnerTemplate(page *Page, args []string) {
+	defer func() {
+		if err := recover(); err != nil {
+			errhandle(fmt.Errorf("%s: %s", page.Source, err))
+		}
+	}()
+
 	t, err := page.Site.Template.Clone()
 	errhandle(err)
 	t, err = t.New("ad-hoc").Parse(page.Content())
@@ -135,6 +141,12 @@ func ProcessTemplate(page *Page, args []string) {
 		errhandle(errors.New("'template' rule needs an argument"))
 	}
 	pagetype := args[0]
+
+	defer func() {
+		if err := recover(); err != nil {
+			errhandle(fmt.Errorf("%s: %s", page.Source, err))
+		}
+	}()
 
 	var buffer bytes.Buffer
 	err := page.Site.Template.ExecuteTemplate(&buffer, pagetype, page)
