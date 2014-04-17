@@ -259,6 +259,10 @@ expands on that a bit:
 - `.Rule` - rule object, matched by page.
 - `.Pattern` - pattern, which matched this page.
 - `.Deps` - list of pages, which are dependencies for this page.
+- `.Next` - next page in a list of all site pages (use specific PageSlice's
+  `.Next` method if you need more precise matching).
+- `.Prev` - previous page in a list of all site pages (use specific PageSlice's
+  `.Prev` method if you need more precise matching).
 
 ----
 

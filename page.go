@@ -222,6 +222,14 @@ func (page *Page) UrlMatches(regex string) bool {
 	return re.Match([]byte(page.Url()))
 }
 
+func (page *Page) Prev() *Page {
+	return page.Site.Pages.Prev(page)
+}
+
+func (page *Page) Next() *Page {
+	return page.Site.Pages.Next(page)
+}
+
 // PageSlice manipulation
 
 func (pages PageSlice) Get(i int) *Page { return pages[i] }
