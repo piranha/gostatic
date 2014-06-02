@@ -4,14 +4,11 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"hash/adler32"
-	"io"
 	"os/exec"
 	"path/filepath"
 	"regexp"
 	"sort"
 	"strings"
-	"text/template"
 	"time"
 )
 
@@ -297,68 +294,4 @@ func ProcessRelativize(page *Page, args []string) {
 		return RelRe.ReplaceAllString(inp, repl)
 	})
 	page.SetContent(rv)
-}
-
-// template utilities
-
-var inventory = map[string]interface{}{}
-
-func HasChanged(name string, value interface{}) bool {
-	changed := true
-
-	if inventory[name] == value {
-		changed = false
-	} else {
-		inventory[name] = value
-	}
-
-	return changed
-}
-
-func Cut(value, begin, end string) (string, error) {
-	bre, err := regexp.Compile(begin)
-	if err != nil {
-		return "", err
-	}
-	ere, err := regexp.Compile(end)
-	if err != nil {
-		return "", err
-	}
-
-	bloc := bre.FindIndex([]byte(value))
-	eloc := ere.FindIndex([]byte(value))
-
-	if bloc == nil {
-		bloc = []int{0, 0}
-	}
-	if eloc == nil {
-		eloc = []int{len(value)}
-	}
-
-	return value[bloc[1]:eloc[0]], nil
-}
-
-func Hash(value string) string {
-	h := adler32.New()
-	io.WriteString(h, value)
-	return fmt.Sprintf("%x", h.Sum(nil))
-}
-
-func Versionize(current *Page, value string) string {
-	page := current.Site.Pages.ByPath(value)
-	if page == nil {
-		errhandle(fmt.Errorf(
-			"trying to versionize page which does not exist: %s, current: %s",
-			value, current.Path))
-	}
-	c := page.Process().Content()
-	h := Hash(c)
-	return current.UrlTo(page) + "?v=" + h
-}
-
-var funcMap = template.FuncMap{
-	"changed": HasChanged,
-	"cut":     Cut,
-	"hash":    Hash,
-	"version": Versionize,
 }

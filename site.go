@@ -17,7 +17,7 @@ type Site struct {
 }
 
 func NewSite(config *SiteConfig) *Site {
-	template := template.New("no-idea-what-to-pass-here").Funcs(funcMap)
+	template := template.New("no-idea-what-to-pass-here").Funcs(TemplateFuncMap)
 	template, err := template.ParseFiles(config.Templates...)
 	errhandle(err)
 

@@ -259,6 +259,11 @@ expands on that a bit:
    with `?v=<32-bit hash>` appended (used to override cache settings on static
    files).
 
+ - `truncate <length> <value>` - truncate string to given length if it's
+   longer. In other case, returns original string.
+
+ - `strip_html <value>` - remove all HTML tags from string.
+
 ### Page interface
 
 - `.Site` - global [site object](#site-interface).
