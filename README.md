@@ -93,6 +93,12 @@ generate a site of 250 pages. It costs `0.05s` to check there are no
 modifications and `0.1s` to re-render a single changed page (along with index
 and tag pages, coming to 77 pages in total).
 
+Same timings on late 2012 MacBook Air (i7 2.0, 8 GB RAM, SSD) - `0.18s`, `0.03s`
+and `0.08s`. Also note that if you're using various external post-processors
+(like uglifyjs or lessc) they tend to slow down things a bit (for my specific
+use case both uglifyjs and lessc add another `0.4s` when files they process
+change).
+
 ## External resources
 
  - Jack Pearkes wrote [Heroku buildpack][] for gostatic and an
