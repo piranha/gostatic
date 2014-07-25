@@ -13,22 +13,20 @@ Features include:
  - Simple [config syntax](#configuration)
  - HTTP server and watcher (instant rendering on changes)
 
-Binary builds:
+## Installation
 
-| Linux         | OS X          | Windows       |
-|:--------------|:--------------|:--------------|
-| [64 bit][l64] | [64 bit][x64] | [64 bit][w64] |
-| [32 bit][l32] | [32 bit][x32] | [32 bit][w32] |
+If you're Go user and want to install this from source, you know what to do (`go
+get` it).
 
-[l64]: http://solovyov.net/files/gostatic-64-linux
-[l32]: http://solovyov.net/files/gostatic-32-linux
-[x64]: http://solovyov.net/files/gostatic-64-osx
-[x32]: http://solovyov.net/files/gostatic-32-osx
-[w64]: http://solovyov.net/files/gostatic-64-win.exe
-[w32]: http://solovyov.net/files/gostatic-32-win.exe
+In other case, download a binary from
+[release page](https://github.com/piranha/gostatic/releases).
 
-If you want to download specific version, url pattern is
-`http://solovyov.net/files/gostatic-<version>-<32/64>-<win.exe/linux/osx>`.
+If you need to automate downloading latest release, I use this script:
+
+```
+LATEST=$(curl -s https://api.github.com/repos/piranha/gostatic/releases | awk '/"name": / { gsub(/[\",]/, ""); print $2; exit }')
+wget https://github.com/piranha/gostatic/releases/download/$LATEST/gostatic-64-linux -O gostatic -q
+```
 
 ## Quick Start
 
