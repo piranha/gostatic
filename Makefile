@@ -1,13 +1,12 @@
 SOURCE = $(wildcard *.go)
-TAG = $(shell git describe --tags)
+TAG ?= $(shell git describe --tags)
 GOBUILD = go build -ldflags '-w'
 
 # $(tag) here will contain either `-1.0-` or just `-`
 ALL = \
-	$(foreach arch,32 64,\
-    $(foreach tag,-$(TAG)- -,\
-	$(foreach suffix,win.exe linux osx,\
-		build/gostatic$(tag)$(arch)-$(suffix))))
+	$(foreach arch,64 32,\
+	$(foreach suffix,linux osx win.exe,\
+		build/gostatic-$(arch)-$(suffix)))
 
 all: $(ALL)
 
@@ -27,21 +26,25 @@ fmt:
 # suffix itself is taken
 win.exe = windows
 osx = darwin
-build/gostatic-$(TAG)-64-%: $(SOURCE)
+build/gostatic-64-%: $(SOURCE)
 	@mkdir -p $(@D)
 	CGO_ENABLED=0 GOOS=$(firstword $($*) $*) GOARCH=amd64 $(GOBUILD) -o $@
 
-build/gostatic-$(TAG)-32-%: $(SOURCE)
+build/gostatic-32-%: $(SOURCE)
 	@mkdir -p $(@D)
 	CGO_ENABLED=0 GOOS=$(firstword $($*) $*) GOARCH=386 $(GOBUILD) -o $@
 
-build/gostatic-%: build/gostatic-$(TAG)-%
-	@mkdir -p $(@D)
-	cd $(@D) && ln -sf $(<F) $(@F)
-
-upload: $(ALL)
-ifndef UPLOAD_PATH
-	@echo "Define UPLOAD_PATH to determine where files should be uploaded"
+release: $(ALL)
+ifndef desc
+	@echo "Run it as 'make release desc=tralala'"
 else
-	rsync -l -P $(ALL) $(UPLOAD_PATH)
+	github-release release -u piranha -r gostatic -t "$(TAG)" -n "$(TAG)" --description "$(desc)"
+	@for x in $(ALL); do \
+		github-release upload -u piranha \
+                              -r gostatic \
+                              -t $(TAG) \
+                              -f "$$x" \
+                              -n "$$(basename $$x)" \
+		&& echo "Uploaded $$x"; \
+	done
 endif
