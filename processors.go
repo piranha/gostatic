@@ -257,19 +257,19 @@ func ProcessTags(page *Page, args []string) {
 	site := page.Site
 
 	for _, tag := range page.Tags {
-		path := strings.Replace(args[0], "*", tag, 1)
+		tagpath := strings.Replace(args[0], "*", tag, 1)
 
 		if !site.Pages.HasPage(func(inner *Page) bool {
-			return inner.Source == path
+			return inner.Source == tagpath
 		}) {
-			pattern, rule := site.Rules.MatchedRule(path)
+			pattern, rule := site.Rules.MatchedRule(tagpath)
 			tagpage := &Page{
 				PageHeader: PageHeader{Title: tag},
 				Site:       site,
 				Pattern:    pattern,
 				Rule:       rule,
-				Source:     path,
-				Path:       path,
+				Source:     tagpath,
+				Path:       tagpath,
 				wasread:    true,
 				// tags are never new, because they only depend on pages and
 				// have not a bit of original content
