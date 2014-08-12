@@ -14,6 +14,7 @@ type PageHeader struct {
 	Title string
 	Tags  []string
 	Date  time.Time
+	Hide  bool
 	Other map[string]string
 }
 
@@ -49,6 +50,13 @@ func (cfg *PageHeader) ParseLine(line string, s *reflect.Value) {
 	cfg.SetValue(key, bits[1], s)
 }
 
+var FalsyValues = map[string]bool {
+	"false": true,
+	"False": true,
+	"FALSE": true,
+	"f": true,
+}
+
 func (cfg *PageHeader) SetValue(key string, value string, s *reflect.Value) {
 	// put unknown fields into a map
 	if _, ok := s.Type().FieldByName(key); !ok {
@@ -63,6 +71,9 @@ func (cfg *PageHeader) SetValue(key string, value string, s *reflect.Value) {
 		errhandle(fmt.Errorf("Unknown type of field %s", key))
 	case string:
 		f.SetString(value)
+	case bool:
+		_, ok := FalsyValues[value]
+		f.SetBool(!ok)
 	case []string:
 		values := strings.Split(value, ",")
 		for i, v := range values {

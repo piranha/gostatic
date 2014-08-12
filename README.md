@@ -185,6 +185,8 @@ Parsed properties:
 - `tags` - list of tags, separated by `,`.
 - `date` - page date, could be used for blog. Accepts formats from bigger to
   smaller (from `"2006-01-02 15:04:05 -07"` to `"2006-01-02"`)
+- `hide` - false if not specified or is one of `f`, `false`, `False`,
+  `FALSE`. True in other cases. Hides page from children and tag lists when true.
 
 You can also define any other property you like, it's value will be treated as a
 string and it's key is capitalized and put on the `.Other`
@@ -286,8 +288,10 @@ expands on that a bit:
 - `.Title` - page title.
 - `.Tags` - list of page tags.
 - `.Date` - page date, as defined in [page config](#page-config).
+- `.Hide` - boolean if page is going to be absent from `{{ .Children }}` or `{{
+  .WithTag }}` lists.
 - `.Other` - map of all other properties (capitalized) from
-  [page config](#page-config).
+  [page config](#page-config), like `{{ .Other.Author }}`.
 
 ----
 
