@@ -38,7 +38,7 @@ release: $(ALL)
 ifndef desc
 	@echo "Run it as 'make release desc=tralala'"
 else
-	github-release release -u piranha -r gostatic -t "$(TAG)" -n "$(TAG)" --description "$(desc)"
+	github-release release -u piranha -r gostatic -t "$(TAG)" -n "$(TAG)" --description '$(desc)'
 	@for x in $(ALL); do \
 		github-release upload -u piranha \
                               -r gostatic \
