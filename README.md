@@ -236,9 +236,9 @@ Templating is provided using
 [Go templates](http://golang.org/pkg/text/template/). See link for documentation
 on syntax.
 
-Each template is executed in context of a page. This means it has certain
-properties and methods it can output or call to generate content, i.e. `{{
-.Content }}` will output page content in place.
+Each template is executed in context of a [page](#page-interface). This means it
+has certain properties and methods it can output or call to generate content,
+i.e. `{{ .Content }}` will output page content in place.
 
 ### Global functions
 
