@@ -20,7 +20,7 @@ get` it).
 
 In other case, download a binary from
 [releases page](https://github.com/piranha/gostatic/releases) - which also
-servers as **CHANGELOG**.
+serves as **CHANGELOG**.
 
 If you need to automate downloading latest release, I use this script:
 
@@ -248,8 +248,8 @@ Go template system provides some convenient
 expands on that a bit:
 
  - `changed <name> <value>` - checks if value has changed since previous call
-   with the same name. Storage, used for checking, is global over whole run of
-   gostatic, so choose unique names.
+   with the same name. Storage used for checking is global over the whole run of
+   gostatic, so choose unique names for different places.
 
  - `cut <value> <begin> <end>` - cut partial content from `<value>`, delimited
    by regular expressions `<begin>` and `<end>`.
