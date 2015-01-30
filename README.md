@@ -42,7 +42,7 @@ create new blog posts or new pages. All files, which are not mentioned in
 `config`, are just copied over. Run `gostatic -fv config` to see how your `src`
 is processed.
 
-`site.html` is a file that defines templates your are able to use for your
+`site.tmpl` is a file that defines templates your are able to use for your
 pages. You can see those templates mentioned in `config`.
 
 And, finally, there is a `Makefile`, just for convenience. Run `make` to build
