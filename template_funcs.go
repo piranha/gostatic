@@ -6,6 +6,7 @@ import (
 	"io"
 	"regexp"
 	"text/template"
+	"strings"
 )
 
 var inventory = map[string]interface{}{}
@@ -73,10 +74,11 @@ func StripHTML(value string) string {
 }
 
 var TemplateFuncMap = template.FuncMap{
-	"changed": HasChanged,
-	"cut":     Cut,
-	"hash":    Hash,
-	"version": Versionize,
-	"truncate": Truncate,
-	"strip_html": StripHTML,
+	"changed":		HasChanged,
+	"cut":			Cut,
+	"hash":			Hash,
+	"version":		Versionize,
+	"truncate":		Truncate,
+	"strip_html":	StripHTML,
+	"split":		strings.Split,
 }

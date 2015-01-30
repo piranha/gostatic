@@ -19,7 +19,8 @@ If you're Go user and want to install this from source, you know what to do (`go
 get` it).
 
 In other case, download a binary from
-[release page](https://github.com/piranha/gostatic/releases).
+[releases page](https://github.com/piranha/gostatic/releases) - which also
+servers as **CHANGELOG**.
 
 If you need to automate downloading latest release, I use this script:
 
