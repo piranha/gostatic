@@ -265,6 +265,9 @@ expands on that a bit:
 
  - `strip_html <value>` - remove all HTML tags from string.
 
+ - `split <value> <separator>` - split string by separator, generating an array
+   (you can use `range` with result of this function).
+
 ### Page interface
 
 - `.Site` - global [site object](#site-interface).
