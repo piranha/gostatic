@@ -112,7 +112,7 @@ Config syntax is Makefile-inspired with some simplifications, look at the
 example:
 
 ```Makefile
-TEMPLATES = site.tmpl
+TEMPLATES = site.tmpl templates-folder
 SOURCE = src
 OUTPUT = site
 
@@ -144,11 +144,11 @@ Here we have constants declaration (first three lines), a comment and then three
 rules. One for any markdown file, one specifically for index.md and one for
 generated tags.
 
-Note: Specific rules override matching rules, but there is no very smart logic
-in place and matches comparisons are not strictly defined, so if you have
-several matches you could end up with any of them. Though there is order: exact
-path match, exact name match, glob path match, glob name match. NOTE: this may
-change in future.
+Note: Specific rules override generic matching rules, but logic is not exactly
+very smart, and there is no real precedence defined, so if you have several
+matches for a single file you could end up with any of them. Note that there is
+some order: exact path match, exact name match, glob path match, glob name
+match. NOTE: this may change in future.
 
 Rules consist of path/match, list of dependencies (also paths and matches, the
 ones listed after colon) and commands.
@@ -162,12 +162,18 @@ heavy images etc shouldn't be a problem.
 
 ### Constants
 
-There are three configuration constants. `SOURCE` and `OUTPUT` speak for
-themselves, and `TEMPLATES` is a list of files which will be parsed as Go
-templates. Each file can contain few templates.
+There are three configuration constants:
+
+- `SOURCE` - sources to read (relative to location of config)
+- `OUTPUT` - directory for output (relative to location of config)
+- `TEMPLATES` - list of files and/or directories (containing `*.tmpl` files),
+which will be parsed as Go templates. Each file can contain more than one
+template (see [docs](http://golang.org/pkg/text/template/#hdr-Nested_template_definitions)
+on that).
 
 You can also use arbitrary names for constants to
-[access later](#site-interface) from templates.
+[access later](#site-interface) from templates - just use any other name
+(`AUTHOR` could be one).
 
 ## Page config
 

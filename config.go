@@ -108,9 +108,23 @@ func (cfg *SiteConfig) ParseVariable(base string, line string) {
 	bits := TrimSplitN(line, "=", 2)
 	switch bits[0] {
 	case "TEMPLATES":
-		cfg.Templates = strings.Split(bits[1], " ")
-		for i, template := range cfg.Templates {
-			cfg.Templates[i] = filepath.Join(base, template)
+		templates := strings.Split(bits[1], " ")
+		for _, template := range templates {
+			path := filepath.Join(base, template)
+			isDir, err := IsDir(path)
+
+			if err != nil {
+				errexit(fmt.Errorf("Template does not exist: %s", err))
+			}
+
+			if isDir {
+				files, _ := filepath.Glob(filepath.Join(path, "*.tmpl"))
+                for _, fn := range files {
+                    cfg.Templates = append(cfg.Templates, fn)
+                }
+            } else {
+				cfg.Templates = append(cfg.Templates, path)
+			}
 		}
 	case "SOURCE":
 		cfg.Source = filepath.Join(base, bits[1])

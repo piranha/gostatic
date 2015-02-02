@@ -19,6 +19,14 @@ func errhandle(err error) {
 	fmt.Printf("Error: %s\n", err)
 }
 
+func errexit(err error) {
+	if err == nil {
+		return
+	}
+	fmt.Printf("Error: %s\n", err)
+	os.Exit(1)
+}
+
 func out(format string, args ...interface{}) {
 	fmt.Printf(format, args...)
 }
@@ -29,6 +37,16 @@ func debug(format string, args ...interface{}) {
 	}
 	fmt.Printf(format, args...)
 	os.Stdout.Sync()
+}
+
+func IsDir(path string) (bool, error) {
+	file, err := os.Open(path)
+	if err != nil { return false, err }
+
+	stat, err := file.Stat()
+	if err != nil { return false, err }
+
+	return stat.IsDir(), nil
 }
 
 func SliceStringIndexOf(haystack []string, needle string) int {

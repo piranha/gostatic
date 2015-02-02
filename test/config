@@ -1,6 +1,6 @@
 # -*- mode: makefile -*-
 
-TEMPLATES = template.tmpl
+TEMPLATES = template.tmpl templates
 SOURCE = site
 OUTPUT = out
 
