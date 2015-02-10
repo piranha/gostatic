@@ -4,9 +4,9 @@
 package main
 
 import (
-	"github.com/howeyc/fsnotify"
 	"os"
 	"path/filepath"
+	"gopkg.in/fsnotify.v1"
 )
 
 func Watcher(config *SiteConfig) (chan string, error) {
@@ -15,26 +15,31 @@ func Watcher(config *SiteConfig) (chan string, error) {
 		return nil, err
 	}
 
-	ch := make(chan string, 10)
+	evs := make(chan string, 10)
 
 	go func() {
 		for {
-			ev := <-watcher.Event
-			if ev.IsCreate() {
-				watcher.Watch(ev.Name)
-			} else if ev.IsDelete() {
-				watcher.RemoveWatch(ev.Name)
+			select {
+			case ev := <-watcher.Events:
+				if ev.Op == fsnotify.Create {
+					watcher.Add(ev.Name)
+				} else if ev.Op == fsnotify.Remove {
+					watcher.Remove(ev.Name)
+				}
+
+				evs <- ev.Name
+			case err := <-watcher.Errors:
+				errhandle(err)
 			}
-			ch <- ev.Name
 		}
 	}()
 
 	filepath.Walk(config.Source, watchAll(watcher))
 	for _, path := range config.Templates {
-		watcher.Watch(path)
+		watcher.Add(path)
 	}
 
-	return ch, nil
+	return evs, nil
 }
 
 func watchAll(watcher *fsnotify.Watcher) filepath.WalkFunc {
@@ -43,7 +48,7 @@ func watchAll(watcher *fsnotify.Watcher) filepath.WalkFunc {
 			return nil
 		}
 
-		watcher.Watch(fn)
+		watcher.Add(fn)
 		return nil
 	}
 }

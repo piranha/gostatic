@@ -22,11 +22,12 @@ In other case, download a binary from
 [releases page](https://github.com/piranha/gostatic/releases) - which also
 serves as **CHANGELOG**.
 
-If you need to automate downloading latest release, I use this script:
+If you need to automate downloading latest release, I use this script (change
+`64-linux` to the type you need):
 
 ```
-LATEST=$(curl -s https://api.github.com/repos/piranha/gostatic/releases | awk '/"name": / { gsub(/[\",]/, ""); print $2; exit }')
-wget https://github.com/piranha/gostatic/releases/download/$LATEST/gostatic-64-linux -O gostatic -q
+URL=$(curl -s https://api.github.com/repos/piranha/gostatic/releases | awk '/download_url.*64-linux/ { print $2; exit }')
+curl -s $(URL) -o gostatic
 ```
 
 ## Quick Start

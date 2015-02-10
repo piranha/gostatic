@@ -39,6 +39,16 @@ func debug(format string, args ...interface{}) {
 	os.Stdout.Sync()
 }
 
+func drainchannel(out chan string) {
+	for {
+		select {
+		case <-out:
+		default:
+			return
+		}
+	}
+}
+
 func IsDir(path string) (bool, error) {
 	file, err := os.Open(path)
 	if err != nil { return false, err }
