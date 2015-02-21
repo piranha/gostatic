@@ -101,11 +101,9 @@ change).
 
 ## External resources
 
- - Jack Pearkes wrote [Heroku buildpack][] for gostatic and an
-   [article about it][].
+ - Jack Pearkes made a [Heroku buildpack][] for gostatic.
 
 [Heroku buildpack]: https://github.com/pearkes/heroku-buildpack-gostatic
-[article about it]: http://pretengineer.com/post/gostatic-buildpack-for-heroku/
 
 ## Configuration
 
