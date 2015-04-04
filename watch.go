@@ -4,9 +4,9 @@
 package main
 
 import (
+	"gopkg.in/fsnotify.v1"
 	"os"
 	"path/filepath"
-	"gopkg.in/fsnotify.v1"
 )
 
 func Watcher(config *SiteConfig) (chan string, error) {
@@ -21,9 +21,9 @@ func Watcher(config *SiteConfig) (chan string, error) {
 		for {
 			select {
 			case ev := <-watcher.Events:
-				if ev.Op & fsnotify.Create == fsnotify.Create {
+				if ev.Op&fsnotify.Create == fsnotify.Create {
 					watcher.Add(ev.Name)
-				} else if ev.Op & fsnotify.Remove == fsnotify.Remove {
+				} else if ev.Op&fsnotify.Remove == fsnotify.Remove {
 					watcher.Remove(ev.Name)
 				}
 

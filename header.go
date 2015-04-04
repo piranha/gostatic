@@ -55,11 +55,11 @@ func (cfg *PageHeader) ParseLine(line string, s *reflect.Value) {
 	cfg.SetValue(key, bits[1], s)
 }
 
-var FalsyValues = map[string]bool {
+var FalsyValues = map[string]bool{
 	"false": true,
 	"False": true,
 	"FALSE": true,
-	"f": true,
+	"f":     true,
 }
 
 func (cfg *PageHeader) SetValue(key string, value string, s *reflect.Value) {

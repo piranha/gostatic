@@ -5,8 +5,8 @@ import (
 	"hash/adler32"
 	"io"
 	"regexp"
-	"text/template"
 	"strings"
+	"text/template"
 )
 
 var inventory = map[string]interface{}{}
@@ -65,7 +65,9 @@ func Versionize(current *Page, value string) string {
 }
 
 func Truncate(length int, value string) string {
-	if length > len(value) { length = len(value) }
+	if length > len(value) {
+		length = len(value)
+	}
 	return value[0:length]
 }
 
@@ -74,11 +76,11 @@ func StripHTML(value string) string {
 }
 
 var TemplateFuncMap = template.FuncMap{
-	"changed":		HasChanged,
-	"cut":			Cut,
-	"hash":			Hash,
-	"version":		Versionize,
-	"truncate":		Truncate,
-	"strip_html":	StripHTML,
-	"split":		strings.Split,
+	"changed":    HasChanged,
+	"cut":        Cut,
+	"hash":       Hash,
+	"version":    Versionize,
+	"truncate":   Truncate,
+	"strip_html": StripHTML,
+	"split":      strings.Split,
 }
