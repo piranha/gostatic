@@ -19,6 +19,11 @@ type PageHeader struct {
 }
 
 var DATEFORMATS = []string{
+	time.RFC3339,
+	time.RFC3339Nano,
+	"2006-01-02T15:04:05Z-07:00", // ISO 8601
+	"2006-01-02T15:04:05Z",       // ISO 8601
+	"2006-01-02 15:04:05 -0700",
 	"2006-01-02 15:04:05 -07",
 	"2006-01-02 15:04:05",
 	"2006-01-02 15:04",
@@ -50,11 +55,11 @@ func (cfg *PageHeader) ParseLine(line string, s *reflect.Value) {
 	cfg.SetValue(key, bits[1], s)
 }
 
-var FalsyValues = map[string]bool {
+var FalsyValues = map[string]bool{
 	"false": true,
 	"False": true,
 	"FALSE": true,
-	"f": true,
+	"f":     true,
 }
 
 func (cfg *PageHeader) SetValue(key string, value string, s *reflect.Value) {

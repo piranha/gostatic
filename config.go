@@ -119,10 +119,10 @@ func (cfg *SiteConfig) ParseVariable(base string, line string) {
 
 			if isDir {
 				files, _ := filepath.Glob(filepath.Join(path, "*.tmpl"))
-                for _, fn := range files {
-                    cfg.Templates = append(cfg.Templates, fn)
-                }
-            } else {
+				for _, fn := range files {
+					cfg.Templates = append(cfg.Templates, fn)
+				}
+			} else {
 				cfg.Templates = append(cfg.Templates, path)
 			}
 		}

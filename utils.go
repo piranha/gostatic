@@ -51,10 +51,14 @@ func drainchannel(out chan string) {
 
 func IsDir(path string) (bool, error) {
 	file, err := os.Open(path)
-	if err != nil { return false, err }
+	if err != nil {
+		return false, err
+	}
 
 	stat, err := file.Stat()
-	if err != nil { return false, err }
+	if err != nil {
+		return false, err
+	}
 
 	return stat.IsDir(), nil
 }
