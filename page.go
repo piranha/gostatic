@@ -128,11 +128,8 @@ func (page *Page) peek() {
 		return
 	}
 
-	for _, name := range PreProcessors {
-		cmd := page.Rule.MatchedCommand(name)
-		if cmd != nil {
-			ProcessCommand(page, cmd)
-		}
+	for _, cmd := range page.Rule.Commands {
+		ProcessCommand(page, &cmd, true)
 	}
 }
 
@@ -181,9 +178,7 @@ func (page *Page) Process() *Page {
 	page.processed = true
 	if page.Rule.Commands != nil {
 		for _, cmd := range page.Rule.Commands {
-			if !cmd.MatchesAny(PreProcessors) {
-				ProcessCommand(page, &cmd)
-			}
+			ProcessCommand(page, &cmd, false)
 		}
 	}
 

@@ -158,33 +158,6 @@ func (cmd Command) Matches(prefix Command) bool {
 	return cmd == prefix || strings.HasPrefix(string(cmd), string(prefix)+" ")
 }
 
-func (cmd Command) MatchesAny(prefixes CommandList) bool {
-	for _, prefix := range prefixes {
-		if cmd.Matches(prefix) {
-			return true
-		}
-	}
-	return false
-}
-
-func (commands CommandList) MatchedIndex(prefix Command) int {
-	for i, cmd := range commands {
-		if cmd.Matches(prefix) {
-			return i
-		}
-	}
-	return -1
-}
-
-func (rule Rule) MatchedCommand(prefix Command) *Command {
-	i := rule.Commands.MatchedIndex(prefix)
-	if i == -1 {
-		return nil
-	}
-
-	return &rule.Commands[i]
-}
-
 func (rule *Rule) IsDep(page *Page) bool {
 	for _, dep := range rule.Deps {
 		matches, err := filepath.Match(dep, page.Source)

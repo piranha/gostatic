@@ -15,67 +15,76 @@ import (
 type Processor struct {
 	Func func(page *Page, args []string)
 	Desc string
+	// Preprocessor is a processor which will be executed during initialization
+	// stage
+	Pre bool
 }
-
-// PreProcessors is a list of processor necessary to be executed beforehand to
-// fill out information, which can be required by fellow pages
-var PreProcessors = CommandList{"config", "rename", "ext", "directorify",
-	"tags", "ignore"}
 
 var Processors map[string]*Processor
 
 // it is necessary to wrap assignment in a function since go compiler is strict
-// enough to throw error when there is an assignment loop, but not smart enough
-// to determine if it's actually truth (Processors definition loops with
+// enough to throw error when there can be an assignment loop, but not smart
+// enough to determine if it's actually truth (Processors definition loops with
 // ProcessTags, which is strange)
 func InitProcessors() {
 	Processors = map[string]*Processor{
 		"inner-template": &Processor{
 			ProcessInnerTemplate,
 			"process content as a Go template",
+			false,
 		},
 		"template": &Processor{
 			ProcessTemplate,
 			"put content in a template (argument - template name)",
+			false,
 		},
 		"markdown": &Processor{
 			ProcessMarkdown,
 			"process content as a markdown",
+			false,
 		},
 		"rename": &Processor{
 			ProcessRename,
 			"rename resulting file (argument - pattern for renaming, " +
 				"relative to current file location)",
+			true,
 		},
 		"ext": &Processor{
 			ProcessExt,
 			"change extension",
+			true,
 		},
 		"ignore": &Processor{
 			ProcessIgnore,
 			"ignore file",
+			true,
 		},
 		"directorify": &Processor{
 			ProcessDirectorify,
 			"path/name.html -> path/name/index.html",
+			false,
 		},
 		"external": &Processor{
 			ProcessExternal,
 			"run external command to process content (shortcut ':')",
+			false,
 		},
 		"config": &Processor{
 			ProcessConfig,
 			"read config from content (separated by '----\\n')",
+			true,
 		},
 		"tags": &Processor{
 			ProcessTags,
-			("generate tags pages for tags mentioned in page header " +
-				"(argument - tag template)"),
+			"generate tags pages for tags mentioned in page header " +
+				"(argument - tag template)",
+			true,
 		},
 		"relativize": &Processor{
 			ProcessRelativize,
-			("make all urls bound at root relative " +
-				"(allows deploying resulting site in a subdirectory)"),
+			"make all urls bound at root relative " +
+				"(allows deploying resulting site in a subdirectory)",
+			false,
 		},
 	}
 }
@@ -90,20 +99,24 @@ func ProcessorSummary() {
 	for _, k := range keys {
 		p := Processors[k]
 		pre := ""
-		if PreProcessors.MatchedIndex(Command(k)) != -1 {
+		if p.Pre {
 			pre = "(preprocessor)"
 		}
 		fmt.Printf("%s %s\n\t%s\n", k, pre, p.Desc)
 	}
 }
 
-func ProcessCommand(page *Page, cmd *Command) {
+func ProcessCommand(page *Page, cmd *Command, pre bool) {
 	c := string(*cmd)
 	if strings.HasPrefix(c, ":") {
 		c = "external " + c[1:]
 	}
 	bits := strings.Split(c, " ")
+
 	processor := Processors[bits[0]]
+	if processor.Pre != pre {
+		return
+	}
 	if processor == nil {
 		errhandle(fmt.Errorf("processor '%s' not found", bits[0]))
 	}
