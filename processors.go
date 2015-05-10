@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"strconv"
 	"time"
 )
 
@@ -86,6 +87,12 @@ func InitProcessors() {
 				"(allows deploying resulting site in a subdirectory)",
 			false,
 		},
+		"paginate": &Processor{
+			ProcessPaginate,
+			"partition lists of pages " +
+				"(arguments - amount to partition by, list page template)",
+			true,
+		},
 	}
 }
 
@@ -148,7 +155,7 @@ func ProcessInnerTemplate(page *Page, args []string) {
 
 func ProcessTemplate(page *Page, args []string) {
 	if len(args) < 1 {
-		errhandle(errors.New("'template' rule needs an argument"))
+		errexit(errors.New("'template' rule needs an argument"))
 	}
 	pagetype := args[0]
 
@@ -174,7 +181,7 @@ func ProcessMarkdown(page *Page, args []string) {
 
 func ProcessRename(page *Page, args []string) {
 	if len(args) < 1 {
-		errhandle(fmt.Errorf("'rename' rule needs an argument"))
+		errexit(fmt.Errorf("'rename' rule needs an argument"))
 	}
 	dest := args[0]
 
@@ -201,7 +208,7 @@ func ProcessRename(page *Page, args []string) {
 
 func ProcessExt(page *Page, args []string) {
 	if len(args) < 1 {
-		errhandle(errors.New(
+		errexit(errors.New(
 			"'ext' rule requires an extension prefixed with dot"))
 	}
 	newExt := args[0]
@@ -226,7 +233,7 @@ func ProcessDirectorify(page *Page, args []string) {
 
 func ProcessExternal(page *Page, args []string) {
 	if len(args) < 1 {
-		errhandle(errors.New("'external' rule needs a command name"))
+		errexit(errors.New("'external' rule needs a command name"))
 	}
 	cmdName := args[0]
 	cmdArgs := args[1:]
@@ -267,7 +274,7 @@ func ProcessConfig(page *Page, args []string) {
 
 func ProcessTags(page *Page, args []string) {
 	if len(args) < 1 {
-		errhandle(errors.New("'tags' rule needs an argument"))
+		errexit(errors.New("'tags' rule needs an argument"))
 	}
 	pathTemplate := args[0]
 
@@ -280,10 +287,12 @@ func ProcessTags(page *Page, args []string) {
 	for _, tag := range page.Tags {
 		tagpath := strings.Replace(pathTemplate, "*", tag, 1)
 
-		if !site.Pages.HasPage(func(inner *Page) bool {
-			return inner.Source == tagpath
-		}) {
+		if site.Pages.BySource(tagpath) == nil {
 			pattern, rule := site.Rules.MatchedRule(tagpath)
+			if rule == nil {
+				errexit(fmt.Errorf("Tag path '%s' does not match any rule",
+					tagpath))
+			}
 			tagpage := &Page{
 				PageHeader: PageHeader{Title: tag},
 				Site:       site,
@@ -294,7 +303,7 @@ func ProcessTags(page *Page, args []string) {
 				wasread:    true,
 				// tags are never new, because they only depend on pages and
 				// have not a bit of original content
-				ModTime: time.Unix(0, 0),
+				ModTime:    time.Unix(0, 0),
 			}
 			page.Site.Pages = append(page.Site.Pages, tagpage)
 			tagpage.peek()
@@ -315,4 +324,54 @@ func ProcessRelativize(page *Page, args []string) {
 		return RelRe.ReplaceAllString(inp, repl)
 	})
 	page.SetContent(rv)
+}
+
+var PageCounter = map[string]int{}
+var Paginated = map[string]PageSlice{}
+
+func ProcessPaginate(page *Page, args []string) {
+	if len(args) < 2 {
+		errexit(errors.New("'paginate' rule needs two arguments"))
+	}
+	length, err := strconv.Atoi(args[0])
+	if err != nil { errexit(err) }
+	pathTemplate := args[1]
+
+	if val, ok := PageCounter[pathTemplate]; ok {
+		PageCounter[pathTemplate] = val + 1
+	} else {
+		PageCounter[pathTemplate] = 1
+	}
+
+	site := page.Site
+
+	// page number, 1-based
+	n := strconv.Itoa(1 + ((PageCounter[pathTemplate] - 1) / length))
+	println(page.Source, n)
+	listpath := strings.Replace(pathTemplate, "*", n, 1)
+	listpage := site.Pages.BySource(listpath)
+
+	if listpage == nil {
+		pattern, rule := site.Rules.MatchedRule(listpath)
+		if rule == nil {
+			errexit(fmt.Errorf("Paginated path '%s' does not match any rule",
+				listpath))
+		}
+		listpage = &Page{
+			PageHeader: PageHeader{Title: n},
+			Site:		site,
+			Pattern:	pattern,
+			Rule:		rule,
+			Source:		listpath,
+			Path:		listpath,
+			wasread:	true,
+			ModTime:	time.Unix(0, 0),
+		}
+		page.Site.Pages = append(page.Site.Pages, listpage)
+		listpage.peek()
+
+		Paginated[listpath] = make(PageSlice, 0)
+	}
+
+	Paginated[listpath] = append(Paginated[listpath], page)
 }

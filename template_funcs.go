@@ -75,6 +75,11 @@ func StripHTML(value string) string {
 	return regexp.MustCompile("<[^>]+>").ReplaceAllString(value, "")
 }
 
+func Paginator(current *Page) PageSlice {
+	// from processors.go
+	return Paginated[current.Source]
+}
+
 var TemplateFuncMap = template.FuncMap{
 	"changed":    HasChanged,
 	"cut":        Cut,
@@ -83,4 +88,5 @@ var TemplateFuncMap = template.FuncMap{
 	"truncate":   Truncate,
 	"strip_html": StripHTML,
 	"split":      strings.Split,
+	"paginator":  Paginator,
 }

@@ -58,3 +58,11 @@
 - [{{ .Title }}]({{ .Url }})
 {{ end }}
 {{end}}
+
+{{define "listpage"}}
+# Page list index {{ .Title }}
+
+{{range paginator .}}
+- [{{ .Title }}]({{ $.UrlTo . }})
+{{end}}
+{{end}}

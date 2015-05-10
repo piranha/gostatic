@@ -224,9 +224,10 @@ You can always check list of available processors with `gostatic --processors`.
 
 - `template <name>` - pass page to a template named `<name>`.
 
-- `tags <path-pattern>` - create (if not yet) virtual page for all tags of a
-  current page. This tag page has path formed by replacing `*` in
-  `<path-pattern>` with a tag name.
+- `tags <path-pattern>` - create a virtual page for all tags of a current
+  page. This tag page has path formed by replacing `*` in `<path-pattern>` with
+  a tag name and has a tag as its `.Title` (use `{{ range .Site.Pages.WithTag
+  .Title }}...{{end}}` to get a list of tagged pages.
 
 - `relativize` - change all urls archored at `/` to be relative (i.e. add
   appropriate amount of `../`) so that generated content can be deployed in a
@@ -235,6 +236,12 @@ You can always check list of available processors with `gostatic --processors`.
 - `external <command> <args...>` - call external command with content of a page
   as stdin and using stdout as a new content of a page. Has a shortcut:
   `:<command> <args...>` (`:` is replaced with `external `).
+
+- `paginate <n> <path-pattern>` - create a virtual page for each `n` of pages
+  (grouped by `path-pattern`, so you can paginate few groups of pages as a
+  single one). `path-pattern` has `*` replaced by an index of this virtual page
+  (1-based), and you can get a list of pages with `{{ range paginator
+  .}}...{{end}}`.
 
 ## Templating
 
@@ -261,9 +268,9 @@ expands on that a bit:
 
  - `hash <value>` - return 32-bit hash of a given value.
 
- - `version <path>` - return relative url to a page with resulting path `<path>`
-   with `?v=<32-bit hash>` appended (used to override cache settings on static
-   files).
+ - `version <page> <path>` - return relative url to a page with resulting path
+   `<path>` with `?v=<32-bit hash>` appended (used to override cache settings
+   for static files).
 
  - `truncate <length> <value>` - truncate string to given length if it's
    longer. In other case, returns original string.
@@ -272,6 +279,9 @@ expands on that a bit:
 
  - `split <value> <separator>` - split string by separator, generating an array
    (you can use `range` with result of this function).
+
+ - `paginator <page>` - get a list of pages for current paginator page (only
+   works on pages created by `paginate` processor).
 
 ### Page interface
 
