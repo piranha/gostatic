@@ -280,8 +280,8 @@ expands on that a bit:
  - `split <value> <separator>` - split string by separator, generating an array
    (you can use `range` with result of this function).
 
- - `paginator <page>` - get a list of pages for current paginator page (only
-   works on pages created by `paginate` processor).
+ - `paginator <page>` - get a [list of pages](#page-list-interface) for current
+   paginator page (only works on pages created by `paginate` processor).
 
 ### Page interface
 
