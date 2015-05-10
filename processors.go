@@ -90,7 +90,7 @@ func InitProcessors() {
 }
 
 func ProcessorSummary() {
-	keys := make([]string, 0)
+	keys := make([]string, 0, len(Processors))
 	for k := range Processors {
 		keys = append(keys, k)
 	}
@@ -176,7 +176,6 @@ func ProcessRename(page *Page, args []string) {
 	if len(args) < 1 {
 		errhandle(fmt.Errorf("'rename' rule needs an argument"))
 	}
-
 	dest := args[0]
 
 	if strings.Contains(dest, "*") {
@@ -205,11 +204,13 @@ func ProcessExt(page *Page, args []string) {
 		errhandle(errors.New(
 			"'ext' rule requires an extension prefixed with dot"))
 	}
+	newExt := args[0]
+
 	ext := filepath.Ext(page.Path)
 	if ext == "" {
-		page.Path = page.Path + args[0]
+		page.Path = page.Path + newExt
 	} else {
-		page.Path = strings.Replace(page.Path, ext, args[0], 1)
+		page.Path = page.Path[0:len(page.Path) - len(ext)] + newExt
 	}
 }
 
@@ -224,15 +225,21 @@ func ProcessDirectorify(page *Page, args []string) {
 }
 
 func ProcessExternal(page *Page, args []string) {
-	path, err := exec.LookPath(args[0])
+	if len(args) < 1 {
+		errhandle(errors.New("'external' rule needs a command name"))
+	}
+	cmdName := args[0]
+	cmdArgs := args[1:]
+
+	path, err := exec.LookPath(cmdName)
 	if err != nil {
-		path, err = exec.LookPath(filepath.Join(page.Site.Base, args[0]))
+		path, err = exec.LookPath(filepath.Join(page.Site.Base, cmdName))
 		if err != nil {
-			errhandle(fmt.Errorf(
-				"command '%s' not found", args[0]))
+			errhandle(fmt.Errorf("command '%s' not found", cmdName))
 		}
 	}
-	cmd := exec.Command(path, args[1:]...)
+
+	cmd := exec.Command(path, cmdArgs...)
 	cmd.Stdin = strings.NewReader(page.Content())
 	cmd.Dir = page.Site.Base
 	var stderr bytes.Buffer
@@ -262,6 +269,7 @@ func ProcessTags(page *Page, args []string) {
 	if len(args) < 1 {
 		errhandle(errors.New("'tags' rule needs an argument"))
 	}
+	pathTemplate := args[0]
 
 	if page.Tags == nil {
 		return
@@ -270,7 +278,7 @@ func ProcessTags(page *Page, args []string) {
 	site := page.Site
 
 	for _, tag := range page.Tags {
-		tagpath := strings.Replace(args[0], "*", tag, 1)
+		tagpath := strings.Replace(pathTemplate, "*", tag, 1)
 
 		if !site.Pages.HasPage(func(inner *Page) bool {
 			return inner.Source == tagpath
