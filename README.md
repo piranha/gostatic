@@ -241,7 +241,10 @@ You can always check list of available processors with `gostatic --processors`.
   (grouped by `path-pattern`, so you can paginate few groups of pages as a
   single one). `path-pattern` has `*` replaced by an index of this virtual page
   (1-based), and you can get a list of pages with `{{ range paginator
-  .}}...{{end}}`.
+  .}}...{{end}}`. Using `paginate` with the same `path-pattern` on different
+  types of pages will group them in same paginated list (*request*: please open
+  an [issue](https://github.com/piranha/gostatic/issues/new) if you have an idea
+  how to phrase this better).
 
 ## Templating
 
@@ -326,8 +329,8 @@ expands on that a bit:
 ### Paginator interface
 
 - `.Number` - number of paginator page, first is 1
-- `.PathPattern` - whatever was passed as `<path-pattern>` to `paginate`
-  processor
+- `.PathPattern` - whatever was passed as `path-pattern` to `paginate`
+  (processor)[#processors]
 - `.Page` - paginator's own [page](#page-interface)
 - `.Pages` - [list of pages](#page-list-interface)
 - `.Prev` - previous paginator object (if current is first, then `nil`)
