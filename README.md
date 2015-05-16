@@ -280,8 +280,8 @@ expands on that a bit:
  - `split <value> <separator>` - split string by separator, generating an array
    (you can use `range` with result of this function).
 
- - `paginator <page>` - get a [list of pages](#page-list-interface) for current
-   paginator page (only works on pages created by `paginate` processor).
+ - `paginator <page>` - get a [paginator](#paginator-interface) object for
+   current page (only works on pages created by `paginate` processor).
 
 ### Page interface
 
@@ -322,6 +322,16 @@ expands on that a bit:
   active elements in menu, for example.
 - `.UrlMatches <pattern>` - checks if page url matches regular expression
   `<pattern>`.
+
+### Paginator interface
+
+- `.Number` - number of paginator page, first is 1
+- `.PathPattern` - whatever was passed as `<path-pattern>` to `paginate`
+  processor
+- `.Page` - paginator's own [page](#page-interface)
+- `.Pages` - [list of pages](#page-list-interface)
+- `.Prev` - previous paginator object (if current is first, then `nil`)
+- `.Next` - next paginator object (if current is last, then `nil`)
 
 ### Page list interface
 

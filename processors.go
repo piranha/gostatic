@@ -13,85 +13,95 @@ import (
 	"time"
 )
 
+const (
+	// Preprocessor is a processor which will be executed during initialization
+	// stage
+	Pre    = 1 << iota
+	Hidden = 1 << iota
+)
+
 type Processor struct {
 	Func func(page *Page, args []string)
 	Desc string
-	// Preprocessor is a processor which will be executed during initialization
-	// stage
-	Pre bool
+	Mode int
 }
 
 var Processors map[string]*Processor
 
 // it is necessary to wrap assignment in a function since go compiler is strict
-// enough to throw error when there can be an assignment loop, but not smart
-// enough to determine if it's actually truth (Processors definition loops with
-// ProcessTags, which is strange)
+// enough to throw error when there may be an assignment loop, but not smart
+// enough to determine if there is one (Processors definition loops with
+// ProcessTags)
 func InitProcessors() {
 	Processors = map[string]*Processor{
 		"inner-template": &Processor{
 			ProcessInnerTemplate,
 			"process content as a Go template",
-			false,
+			0,
 		},
 		"template": &Processor{
 			ProcessTemplate,
 			"put content in a template (argument - template name)",
-			false,
+			0,
 		},
 		"markdown": &Processor{
 			ProcessMarkdown,
 			"process content as a markdown",
-			false,
+			0,
 		},
 		"rename": &Processor{
 			ProcessRename,
 			"rename resulting file (argument - pattern for renaming, " +
 				"relative to current file location)",
-			true,
+			Pre,
 		},
 		"ext": &Processor{
 			ProcessExt,
 			"change extension",
-			true,
+			Pre,
 		},
 		"ignore": &Processor{
 			ProcessIgnore,
 			"ignore file",
-			true,
+			Pre,
 		},
 		"directorify": &Processor{
 			ProcessDirectorify,
 			"path/name.html -> path/name/index.html",
-			false,
+			Pre,
 		},
 		"external": &Processor{
 			ProcessExternal,
 			"run external command to process content (shortcut ':')",
-			false,
+			0,
 		},
 		"config": &Processor{
 			ProcessConfig,
 			"read config from content (separated by '----\\n')",
-			true,
+			Pre,
 		},
 		"tags": &Processor{
 			ProcessTags,
 			"generate tags pages for tags mentioned in page header " +
 				"(argument - tag template)",
-			true,
+			Pre,
 		},
 		"relativize": &Processor{
 			ProcessRelativize,
 			"make all urls bound at root relative " +
 				"(allows deploying resulting site in a subdirectory)",
-			false,
+			0,
 		},
 		"paginate": &Processor{
 			ProcessPaginate,
 			"partition lists of pages " +
 				"(arguments - amount to partition by, list page template)",
-			true,
+			Pre,
+		},
+		"paginate-collect-pages": &Processor{
+			ProcessPaginateCollectPages,
+			"collects pages for paginator",
+			Hidden,
 		},
 	}
 }
@@ -105,8 +115,11 @@ func ProcessorSummary() {
 
 	for _, k := range keys {
 		p := Processors[k]
+		if p.Mode & Hidden != 0 {
+			continue
+		}
 		pre := ""
-		if p.Pre {
+		if p.Mode & Pre != 0 {
 			pre = "(preprocessor)"
 		}
 		fmt.Printf("%s %s\n\t%s\n", k, pre, p.Desc)
@@ -121,7 +134,7 @@ func ProcessCommand(page *Page, cmd *Command, pre bool) {
 	bits := strings.Split(c, " ")
 
 	processor := Processors[bits[0]]
-	if processor.Pre != pre {
+	if (processor.Mode & Pre != 0) != pre {
 		return
 	}
 	if processor == nil {
@@ -276,7 +289,7 @@ func ProcessTags(page *Page, args []string) {
 	if len(args) < 1 {
 		errexit(errors.New("'tags' rule needs an argument"))
 	}
-	pathTemplate := args[0]
+	pathPattern := args[0]
 
 	if page.Tags == nil {
 		return
@@ -285,7 +298,7 @@ func ProcessTags(page *Page, args []string) {
 	site := page.Site
 
 	for _, tag := range page.Tags {
-		tagpath := strings.Replace(pathTemplate, "*", tag, 1)
+		tagpath := strings.Replace(pathPattern, "*", tag, 1)
 
 		if site.Pages.BySource(tagpath) == nil {
 			pattern, rule := site.Rules.MatchedRule(tagpath)
@@ -326,8 +339,33 @@ func ProcessRelativize(page *Page, args []string) {
 	page.SetContent(rv)
 }
 
-var PageCounter = map[string]int{}
+//================ Pagination start
+
+type Paginator struct {
+	Number int
+	PathPattern string
+	Page *Page
+	Pages PageSlice
+}
+
 var Paginated = map[string]PageSlice{}
+var Paginators = map[string]*Paginator{}
+
+func (pagi Paginator) Prev() *Paginator {
+	src := strings.Replace(pagi.PathPattern, "*", strconv.Itoa(pagi.Number - 1), 1)
+	if prev, ok := Paginators[src]; ok {
+		return prev
+	}
+	return nil
+}
+
+func (pagi Paginator) Next() *Paginator {
+	src := strings.Replace(pagi.PathPattern, "*", strconv.Itoa(pagi.Number + 1), 1)
+	if next, ok := Paginators[src]; ok {
+		return next
+	}
+	return nil
+}
 
 func ProcessPaginate(page *Page, args []string) {
 	if len(args) < 2 {
@@ -335,43 +373,80 @@ func ProcessPaginate(page *Page, args []string) {
 	}
 	length, err := strconv.Atoi(args[0])
 	if err != nil { errexit(err) }
-	pathTemplate := args[1]
+	pathPattern := args[1]
 
-	if val, ok := PageCounter[pathTemplate]; ok {
-		PageCounter[pathTemplate] = val + 1
+	if pages, ok := Paginated[pathPattern]; ok {
+		Paginated[pathPattern] = append(pages, page)
 	} else {
-		PageCounter[pathTemplate] = 1
+		Paginated[pathPattern] = PageSlice{page}
 	}
 
 	site := page.Site
 
 	// page number, 1-based
-	n := strconv.Itoa(1 + ((PageCounter[pathTemplate] - 1) / length))
-	println(page.Source, n)
-	listpath := strings.Replace(pathTemplate, "*", n, 1)
+	n := 1 + ((len(Paginated[pathPattern]) - 1) / length)
+	listpath := strings.Replace(pathPattern, "*", strconv.Itoa(n), 1)
 	listpage := site.Pages.BySource(listpath)
 
-	if listpage == nil {
-		pattern, rule := site.Rules.MatchedRule(listpath)
-		if rule == nil {
-			errexit(fmt.Errorf("Paginated path '%s' does not match any rule",
-				listpath))
-		}
-		listpage = &Page{
-			PageHeader: PageHeader{Title: n},
-			Site:		site,
-			Pattern:	pattern,
-			Rule:		rule,
-			Source:		listpath,
-			Path:		listpath,
-			wasread:	true,
-			ModTime:	time.Unix(0, 0),
-		}
-		page.Site.Pages = append(page.Site.Pages, listpage)
-		listpage.peek()
-
-		Paginated[listpath] = make(PageSlice, 0)
+	if listpage != nil {
+		return
 	}
 
-	Paginated[listpath] = append(Paginated[listpath], page)
+	pattern, rule := site.Rules.MatchedRule(listpath)
+	if rule == nil {
+		errexit(fmt.Errorf("Paginators path '%s' does not match any rule",
+			listpath))
+	}
+
+	if !strings.HasPrefix(string(rule.Commands[0]), "paginate-collect-pages") {
+			rule.Commands = append(
+				CommandList{Command("paginate-collect-pages " + args[0])},
+				rule.Commands...)
+	}
+
+	listpage = &Page{
+		PageHeader: PageHeader{Title: strconv.Itoa(n)},
+		Site:		site,
+		Pattern:	pattern,
+		Rule:		rule,
+		Source:		listpath,
+		Path:		listpath,
+		wasread:	true,
+		ModTime:	time.Unix(int64(n), 0),
+	}
+	page.Site.Pages = append(page.Site.Pages, listpage)
+	listpage.peek()
+
+	Paginators[listpath] = &Paginator{
+		Number: n,
+		PathPattern: pathPattern,
+		Page: listpage,
+		Pages: make(PageSlice, 0),
+	}
 }
+
+func MinInt(a, b int) int {
+	if a > b {
+		return b
+	}
+	return a
+}
+
+func ProcessPaginateCollectPages(page *Page, args[]string) {
+	length, err := strconv.Atoi(args[0])
+	if err != nil { errexit(err) }
+
+	pagi := Paginators[page.Source]
+	paginated := Paginated[pagi.PathPattern]
+	// NOTE: this hack for calling .Sort only once relies on the fact that
+	// site.Pages are sorted by .ModTime (if they don't have .Date), and
+	// .ModTime depends on a pagi.Number.
+	if pagi.Number == 1 {
+		paginated.Sort()
+	}
+
+	pagi.Pages = paginated[(pagi.Number - 1) * length:
+		MinInt(len(paginated), pagi.Number * length)]
+}
+
+//================ Pagination end

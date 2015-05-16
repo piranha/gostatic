@@ -62,7 +62,13 @@
 {{define "listpage"}}
 # Page list index {{ .Title }}
 
-{{range paginator .}}
+{{with paginator .}}
+{{range .Pages}}
 - [{{ .Title }}]({{ $.UrlTo . }})
 {{end}}
+{{ if .Prev }}<a href="{{ $.UrlTo .Prev.Page }}">prev</a>{{end}}
+{{ if .Next }}<a href="{{ $.UrlTo .Next.Page }}">next</a>{{end}}
+
+{{end}}
+
 {{end}}
