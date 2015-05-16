@@ -75,18 +75,29 @@ func StripHTML(value string) string {
 	return regexp.MustCompile("<[^>]+>").ReplaceAllString(value, "")
 }
 
+func StripNewlines(value string) string {
+	return regexp.MustCompile("[\r\n]").ReplaceAllString(value, "")
+}
+
+func Replace(value, old, new string) string {
+	return strings.Replace(value, old, new, -1)
+}
+
 func CurrentPaginator(current *Page) *Paginator {
 	// from processors.go
 	return Paginators[current.Source]
 }
 
 var TemplateFuncMap = template.FuncMap{
-	"changed":    HasChanged,
-	"cut":        Cut,
-	"hash":       Hash,
-	"version":    Versionize,
-	"truncate":   Truncate,
-	"strip_html": StripHTML,
-	"split":      strings.Split,
-	"paginator":  CurrentPaginator,
+	"changed":        HasChanged,
+	"cut":            Cut,
+	"hash":           Hash,
+	"version":        Versionize,
+	"truncate":       Truncate,
+	"strip_html":     StripHTML,
+	"strip_newlines": StripNewlines,
+	"replace":        Replace,
+	"replacen":       strings.Replace,
+	"split":          strings.Split,
+	"paginator":      CurrentPaginator,
 }

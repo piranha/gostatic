@@ -122,7 +122,7 @@ func ProcessorSummary() {
 		if p.Mode & Pre != 0 {
 			pre = "(preprocessor)"
 		}
-		fmt.Printf("%s %s\n\t%s\n", k, pre, p.Desc)
+		fmt.Printf("- %s %s\n\t%s\n", k, pre, p.Desc)
 	}
 }
 

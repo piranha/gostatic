@@ -262,29 +262,35 @@ Go template system provides some convenient
 [functions](http://golang.org/pkg/text/template/#hdr-Functions), and gostatic
 expands on that a bit:
 
- - `changed <name> <value>` - checks if value has changed since previous call
-   with the same name. Storage used for checking is global over the whole run of
-   gostatic, so choose unique names for different places.
+- `changed <name> <value>` - checks if value has changed since previous call
+  with the same name. Storage used for checking is global over the whole run of
+  gostatic, so choose unique names for different places.
 
- - `cut <value> <begin> <end>` - cut partial content from `<value>`, delimited
-   by regular expressions `<begin>` and `<end>`.
+- `cut <value> <begin> <end>` - cut partial content from `<value>`, delimited
+  by regular expressions `<begin>` and `<end>`.
 
- - `hash <value>` - return 32-bit hash of a given value.
+- `hash <value>` - return 32-bit hash of a given value.
 
- - `version <page> <path>` - return relative url to a page with resulting path
-   `<path>` with `?v=<32-bit hash>` appended (used to override cache settings
-   for static files).
+- `version <page> <path>` - return relative url to a page with resulting path
+  `<path>` with `?v=<32-bit hash>` appended (used to override cache settings
+  for static files).
 
- - `truncate <length> <value>` - truncate string to given length if it's
-   longer. In other case, returns original string.
+- `truncate <length> <value>` - truncate string to given length (if it's
+  longer).
 
- - `strip_html <value>` - remove all HTML tags from string.
+- `strip_html <value>` - remove all HTML tags from string.
 
- - `split <value> <separator>` - split string by separator, generating an array
-   (you can use `range` with result of this function).
+- `strip_newlines <value>` - remove all line breaks and newlines from string.
 
- - `paginator <page>` - get a [paginator](#paginator-interface) object for
-   current page (only works on pages created by `paginate` processor).
+- `replace <value> <old> <new>` - replace all occurences of `old` with `new`.
+
+- `replacen <value> <old> <new> <n>` - same as above, but only `n` times.
+
+- `split <value> <separator>` - split string by separator, generating an array
+  (you can use `range` with result of this function).
+
+- `paginator <page>` - get a [paginator](#paginator-interface) object for
+  current page (only works on pages created by `paginate` processor).
 
 ### Page interface
 
