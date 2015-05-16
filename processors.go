@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
-	"strings"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -115,11 +115,11 @@ func ProcessorSummary() {
 
 	for _, k := range keys {
 		p := Processors[k]
-		if p.Mode & Hidden != 0 {
+		if p.Mode&Hidden != 0 {
 			continue
 		}
 		pre := ""
-		if p.Mode & Pre != 0 {
+		if p.Mode&Pre != 0 {
 			pre = "(preprocessor)"
 		}
 		fmt.Printf("- %s %s\n\t%s\n", k, pre, p.Desc)
@@ -134,7 +134,7 @@ func ProcessCommand(page *Page, cmd *Command, pre bool) {
 	bits := strings.Split(c, " ")
 
 	processor := Processors[bits[0]]
-	if (processor.Mode & Pre != 0) != pre {
+	if (processor.Mode&Pre != 0) != pre {
 		return
 	}
 	if processor == nil {
@@ -230,7 +230,7 @@ func ProcessExt(page *Page, args []string) {
 	if ext == "" {
 		page.Path = page.Path + newExt
 	} else {
-		page.Path = page.Path[0:len(page.Path) - len(ext)] + newExt
+		page.Path = page.Path[0:len(page.Path)-len(ext)] + newExt
 	}
 }
 
@@ -316,7 +316,7 @@ func ProcessTags(page *Page, args []string) {
 				wasread:    true,
 				// tags are never new, because they only depend on pages and
 				// have not a bit of original content
-				ModTime:    time.Unix(0, 0),
+				ModTime: time.Unix(0, 0),
 			}
 			page.Site.Pages = append(page.Site.Pages, tagpage)
 			tagpage.peek()
@@ -342,17 +342,17 @@ func ProcessRelativize(page *Page, args []string) {
 //================ Pagination start
 
 type Paginator struct {
-	Number int
+	Number      int
 	PathPattern string
-	Page *Page
-	Pages PageSlice
+	Page        *Page
+	Pages       PageSlice
 }
 
 var Paginated = map[string]PageSlice{}
 var Paginators = map[string]*Paginator{}
 
 func (pagi Paginator) Prev() *Paginator {
-	src := strings.Replace(pagi.PathPattern, "*", strconv.Itoa(pagi.Number - 1), 1)
+	src := strings.Replace(pagi.PathPattern, "*", strconv.Itoa(pagi.Number-1), 1)
 	if prev, ok := Paginators[src]; ok {
 		return prev
 	}
@@ -360,7 +360,7 @@ func (pagi Paginator) Prev() *Paginator {
 }
 
 func (pagi Paginator) Next() *Paginator {
-	src := strings.Replace(pagi.PathPattern, "*", strconv.Itoa(pagi.Number + 1), 1)
+	src := strings.Replace(pagi.PathPattern, "*", strconv.Itoa(pagi.Number+1), 1)
 	if next, ok := Paginators[src]; ok {
 		return next
 	}
@@ -372,7 +372,9 @@ func ProcessPaginate(page *Page, args []string) {
 		errexit(errors.New("'paginate' rule needs two arguments"))
 	}
 	length, err := strconv.Atoi(args[0])
-	if err != nil { errexit(err) }
+	if err != nil {
+		errexit(err)
+	}
 	pathPattern := args[1]
 
 	if pages, ok := Paginated[pathPattern]; ok {
@@ -399,29 +401,29 @@ func ProcessPaginate(page *Page, args []string) {
 	}
 
 	if !strings.HasPrefix(string(rule.Commands[0]), "paginate-collect-pages") {
-			rule.Commands = append(
-				CommandList{Command("paginate-collect-pages " + args[0])},
-				rule.Commands...)
+		rule.Commands = append(
+			CommandList{Command("paginate-collect-pages " + args[0])},
+			rule.Commands...)
 	}
 
 	listpage = &Page{
 		PageHeader: PageHeader{Title: strconv.Itoa(n)},
-		Site:		site,
-		Pattern:	pattern,
-		Rule:		rule,
-		Source:		listpath,
-		Path:		listpath,
-		wasread:	true,
-		ModTime:	time.Unix(int64(n), 0),
+		Site:       site,
+		Pattern:    pattern,
+		Rule:       rule,
+		Source:     listpath,
+		Path:       listpath,
+		wasread:    true,
+		ModTime:    time.Unix(int64(n), 0),
 	}
 	page.Site.Pages = append(page.Site.Pages, listpage)
 	listpage.peek()
 
 	Paginators[listpath] = &Paginator{
-		Number: n,
+		Number:      n,
 		PathPattern: pathPattern,
-		Page: listpage,
-		Pages: make(PageSlice, 0),
+		Page:        listpage,
+		Pages:       make(PageSlice, 0),
 	}
 }
 
@@ -432,9 +434,11 @@ func MinInt(a, b int) int {
 	return a
 }
 
-func ProcessPaginateCollectPages(page *Page, args[]string) {
+func ProcessPaginateCollectPages(page *Page, args []string) {
 	length, err := strconv.Atoi(args[0])
-	if err != nil { errexit(err) }
+	if err != nil {
+		errexit(err)
+	}
 
 	pagi := Paginators[page.Source]
 	paginated := Paginated[pagi.PathPattern]
@@ -445,8 +449,7 @@ func ProcessPaginateCollectPages(page *Page, args[]string) {
 		paginated.Sort()
 	}
 
-	pagi.Pages = paginated[(pagi.Number - 1) * length:
-		MinInt(len(paginated), pagi.Number * length)]
+	pagi.Pages = paginated[(pagi.Number-1)*length : MinInt(len(paginated), pagi.Number*length)]
 }
 
 //================ Pagination end
