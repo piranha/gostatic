@@ -30,6 +30,12 @@ blog/page*.page: blog/*.md
 	markdown
 	template page
 
+blog/page1.page: blog/*.md blog/page*.page
+	rename almost-index.html
+	template listpage
+	markdown
+	template page
+
 blog/index.md: blog/*.md
 	config
 	rename index.html
