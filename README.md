@@ -289,6 +289,9 @@ expands on that a bit:
 - `split <value> <separator>` - split string by separator, generating an array
   (you can use `range` with result of this function).
 
+- `contains <needle> <value>` - check if a string (`value`) contains another one
+  (`needle`).
+
 - `paginator <page>` - get a [paginator](#paginator-interface) object for
   current page (only works on pages created by `paginate` processor).
 

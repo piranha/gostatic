@@ -83,6 +83,10 @@ func Replace(value, old, new string) string {
 	return strings.Replace(value, old, new, -1)
 }
 
+func Contains(needle, value string) bool {
+	return strings.Contains(value, needle)
+}
+
 func CurrentPaginator(current *Page) *Paginator {
 	// from processors.go
 	return Paginators[current.Source]
@@ -99,5 +103,6 @@ var TemplateFuncMap = template.FuncMap{
 	"replace":        Replace,
 	"replacen":       strings.Replace,
 	"split":          strings.Split,
+	"contains":       Contains,
 	"paginator":      CurrentPaginator,
 }
