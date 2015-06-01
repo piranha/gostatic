@@ -36,6 +36,7 @@ type Page struct {
 
 	processed bool
 	state     int
+	raw       string
 	content   string
 	wasread   bool // if content was read already
 }
@@ -68,12 +69,19 @@ func NewPage(site *Site, path string) *Page {
 	return page
 }
 
-func (page *Page) Content() string {
+func (page *Page) Raw() string {
 	if !page.wasread {
-		content, err := ioutil.ReadFile(page.FullPath())
+		data, err := ioutil.ReadFile(page.FullPath())
 		errhandle(err)
-		page.SetContent(string(content))
+		page.raw = string(data)
 		page.wasread = true
+	}
+	return page.raw
+}
+
+func (page *Page) Content() string {
+	if page.content == "" {
+		return page.Raw()
 	}
 	return page.content
 }
