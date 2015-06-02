@@ -326,7 +326,8 @@ expands on that a bit:
 
 ----
 
-- `.Raw` - unprocessed page content, that was originally read from the disk.
+- `.Raw` - page content after preprocessors (i.e. after `config` has stripped it
+  part), that was originally read from the disk.
 - `.Content` - page content.
 - `.Url` - page url (i.e. `.Path`, but with `index.html` stripped from the end).
 - `.UrlTo <other-page>` - relative url from current to some other page.

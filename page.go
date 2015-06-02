@@ -139,6 +139,11 @@ func (page *Page) peek() {
 	for _, cmd := range page.Rule.Commands {
 		ProcessCommand(page, &cmd, true)
 	}
+
+	// Raw is something we have after all preprocessors have finished
+	if page.content != "" {
+		page.raw = page.content
+	}
 }
 
 func (page *Page) findDeps() {
