@@ -105,4 +105,5 @@ var TemplateFuncMap = template.FuncMap{
 	"split":          strings.Split,
 	"contains":       Contains,
 	"paginator":      CurrentPaginator,
+	"markdown":       Markdown,
 }
