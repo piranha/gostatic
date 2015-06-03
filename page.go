@@ -366,7 +366,6 @@ func (pages PageSlice) GlobSource(pattern string) *PageSlice {
 	return &found
 }
 
-
 func (pages PageSlice) ByPath(s string) *Page {
 	for _, page := range pages {
 		if page.Path == s {

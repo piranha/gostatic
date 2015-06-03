@@ -364,6 +364,7 @@ expands on that a bit:
   earlier pages exist or page is not in page list.
 - `.Next <page>` - return page with later date than given. Returns nil if no
   later pages exist or page is not in page list.
+- `.Slice <from> <to>` - return pages from `from` to `to` (i.e. from 0 to 10).
 
 ----
 
