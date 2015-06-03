@@ -8,6 +8,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"path"
 	"path/filepath"
 	"regexp"
 	"sort"
@@ -354,7 +355,7 @@ func (pages PageSlice) GlobSource(pattern string) *PageSlice {
 	found := make(PageSlice, 0)
 
 	for _, page := range pages {
-		if path.Match(pattern, page.Source) {
+		if matched, _ := path.Match(pattern, page.Source); matched {
 			found = append(found, page)
 		}
 	}
