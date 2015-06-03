@@ -104,5 +104,6 @@ var TemplateFuncMap = template.FuncMap{
 	"replacen":       strings.Replace,
 	"split":          strings.Split,
 	"contains":       Contains,
+	"markdown":       Markdown,
 	"paginator":      CurrentPaginator,
 }

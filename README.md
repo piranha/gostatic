@@ -11,7 +11,11 @@ Features include:
  - Markdown support
  - Flexible [filter system](#processors)
  - Simple [config syntax](#configuration)
+ - Support for pagination
+ - Plays well with external scripts
  - HTTP server and watcher (instant rendering on changes)
+
+And all in all, it works nicely for me, so it may work for you!
 
 ## Installation
 
@@ -241,9 +245,10 @@ You can always check list of available processors with `gostatic --processors`.
   (grouped by `path-pattern`, so you can paginate few groups of pages as a
   single one). `path-pattern` has `*` replaced by an index of this virtual page
   (1-based), and you can get a list of pages with `{{ range paginator
-  .}}...{{end}}`. Using `paginate` with the same `path-pattern` on different
-  types of pages will group them in same paginated list (*request*: please open
-  an [issue](https://github.com/piranha/gostatic/issues/new) if you have an idea
+  .}}...{{end}}` (see [paginator](#global-functions) function). Using `paginate`
+  with the same `path-pattern` on different types of pages will group them in
+  same paginated list (*request*: please open an
+  [issue](https://github.com/piranha/gostatic/issues/new) if you have an idea
   how to phrase this better).
 
 ## Templating
@@ -291,6 +296,8 @@ expands on that a bit:
 
 - `contains <needle> <value>` - check if a string (`value`) contains another one
   (`needle`).
+
+- `markdown <value>` - convert a string (`value`) from Markdown to HTML.
 
 - `paginator <page>` - get a [paginator](#paginator-interface) object for
   current page (only works on pages created by `paginate` processor).
