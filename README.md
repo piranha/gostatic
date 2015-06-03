@@ -374,6 +374,7 @@ expands on that a bit:
 
 - `.BySource <path>` - finds a page with source path `<path>`.
 - `.ByPath <path>` - finds a page with resulting path `<path>`.
+- `.GlobSource <pattern>` - list of pages, [matching](http://golang.org/pkg/path/#Match) source path `<pattern>`.
 
 ### Site interface
 

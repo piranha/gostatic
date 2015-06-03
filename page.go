@@ -350,6 +350,19 @@ func (pages PageSlice) BySource(s string) *Page {
 	return nil
 }
 
+func (pages PageSlice) GlobSource(pattern string) *PageSlice {
+	found := make(PageSlice, 0)
+
+	for _, page := range pages {
+		if path.Match(pattern, page.Source) {
+			found = append(found, page)
+		}
+	}
+
+	return &found
+}
+
+
 func (pages PageSlice) ByPath(s string) *Page {
 	for _, page := range pages {
 		if page.Path == s {
