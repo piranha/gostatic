@@ -106,4 +106,5 @@ var TemplateFuncMap = template.FuncMap{
 	"contains":       Contains,
 	"markdown":       Markdown,
 	"paginator":      CurrentPaginator,
+	"markdown":       Markdown,
 }
