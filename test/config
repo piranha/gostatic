@@ -68,3 +68,10 @@ index.md: blog/index.md
 # not working yet
 inner/*.src:
 	rename ../*.html
+
+about.md:
+	config
+	ext .html
+	markdown
+	template page
+	relativize
