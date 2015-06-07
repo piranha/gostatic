@@ -87,7 +87,7 @@ func ReplaceN(old, new string, n int, value string) string {
 	return strings.Replace(value, old, new, n)
 }
 
-func Split(sep, value string) string {
+func Split(sep, value string) []string {
 	return strings.Split(value, sep)
 }
 
