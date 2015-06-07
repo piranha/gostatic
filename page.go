@@ -173,7 +173,9 @@ func (page *Page) Changed() bool {
 		page.state = StateUnchanged
 		dest, err := os.Stat(page.OutputPath())
 
-		if err != nil || dest.ModTime().Before(page.ModTime) {
+		if (err != nil ||
+			dest.ModTime().Before(page.ModTime) ||
+			dest.ModTime().Before(page.Site.ChangedAt)) {
 			page.state = StateChanged
 		} else {
 			for _, dep := range page.Deps {

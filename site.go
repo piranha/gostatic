@@ -8,12 +8,14 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
+	"time"
 )
 
 type Site struct {
 	SiteConfig
-	Template *template.Template
-	Pages    PageSlice
+	Template  *template.Template
+	ChangedAt time.Time
+	Pages     PageSlice
 }
 
 func NewSite(config *SiteConfig) *Site {
@@ -21,9 +23,18 @@ func NewSite(config *SiteConfig) *Site {
 	template, err := template.ParseFiles(config.Templates...)
 	errhandle(err)
 
+	changed := config.changedAt
+	for _, fn := range config.Templates {
+		stat, err := os.Stat(fn)
+		if err == nil && changed.Before(stat.ModTime()) {
+			changed = stat.ModTime()
+		}
+	}
+
 	site := &Site{
 		SiteConfig: *config,
 		Template:   template,
+		ChangedAt:  changed,
 		Pages:      make(PageSlice, 0),
 	}
 

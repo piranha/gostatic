@@ -6,9 +6,11 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
 )
 
 type Command string
@@ -29,6 +31,7 @@ type SiteConfig struct {
 	Output    string
 	Rules     RuleMap
 	Other     map[string]string
+	changedAt time.Time
 }
 
 func NewSiteConfig(path string) (*SiteConfig, error) {
@@ -37,11 +40,17 @@ func NewSiteConfig(path string) (*SiteConfig, error) {
 		return nil, err
 	}
 
+	stat, err := os.Stat(path)
+	if err != nil {
+		return nil, err
+	}
+
 	basepath, _ := filepath.Split(path)
 	cfg := &SiteConfig{
-		Rules: make(RuleMap),
-		Other: make(map[string]string),
-		Base:  basepath,
+		Rules:     make(RuleMap),
+		Other:     make(map[string]string),
+		Base:      basepath,
+		changedAt: stat.ModTime(),
 	}
 
 	indent := 0
