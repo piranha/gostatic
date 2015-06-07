@@ -23,7 +23,7 @@ func HasChanged(name string, value interface{}) bool {
 	return changed
 }
 
-func Cut(value, begin, end string) (string, error) {
+func Cut(begin, end, value string) (string, error) {
 	bre, err := regexp.Compile(begin)
 	if err != nil {
 		return "", err
@@ -79,8 +79,16 @@ func StripNewlines(value string) string {
 	return regexp.MustCompile("[\r\n]").ReplaceAllString(value, "")
 }
 
-func Replace(value, old, new string) string {
+func Replace(old, new, value string) string {
 	return strings.Replace(value, old, new, -1)
+}
+
+func ReplaceN(old, new string, n int, value string) string {
+	return strings.Replace(value, old, new, n)
+}
+
+func Split(sep, value string) string {
+	return strings.Split(value, sep)
 }
 
 func Contains(needle, value string) bool {
@@ -101,8 +109,8 @@ var TemplateFuncMap = template.FuncMap{
 	"strip_html":     StripHTML,
 	"strip_newlines": StripNewlines,
 	"replace":        Replace,
-	"replacen":       strings.Replace,
-	"split":          strings.Split,
+	"replacen":       ReplaceN,
+	"split":          Split,
 	"contains":       Contains,
 	"markdown":       Markdown,
 	"paginator":      CurrentPaginator,

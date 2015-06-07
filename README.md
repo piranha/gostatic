@@ -271,14 +271,14 @@ expands on that a bit:
   with the same name. Storage used for checking is global over the whole run of
   gostatic, so choose unique names for different places.
 
-- `cut <value> <begin> <end>` - cut partial content from `<value>`, delimited
+- `cut <begin> <end> <value>` - cut partial content from `<value>`, delimited
   by regular expressions `<begin>` and `<end>`.
 
 - `hash <value>` - return 32-bit hash of a given value.
 
 - `version <page> <path>` - return relative url to a page with resulting path
-  `<path>` with `?v=<32-bit hash>` appended (used to override cache settings
-  for static files).
+  `<path>` with `?v=<32-bit hash>` appended (use to override cache settings for
+  static files).
 
 - `truncate <length> <value>` - truncate string to given length (if it's
   longer).
@@ -287,11 +287,11 @@ expands on that a bit:
 
 - `strip_newlines <value>` - remove all line breaks and newlines from string.
 
-- `replace <value> <old> <new>` - replace all occurences of `old` with `new`.
+- `replace <old> <new> <value>` - replace all occurences of `old` with `new`.
 
-- `replacen <value> <old> <new> <n>` - same as above, but only `n` times.
+- `replacen <old> <new> <n> <value>` - same as above, but only `n` times.
 
-- `split <value> <separator>` - split string by separator, generating an array
+- `split <separator> <value>` - split string by separator, generating an array
   (you can use `range` with result of this function).
 
 - `contains <needle> <value>` - check if a string (`value`) contains another one
