@@ -200,18 +200,23 @@ func ProcessRename(page *Page, args []string) {
 
 	if strings.Contains(dest, "*") {
 		if !strings.Contains(page.Pattern, "*") {
-			errhandle(fmt.Errorf(
+			errexit(fmt.Errorf(
 				"'rename' rule cannot rename '%s' to '%s'",
 				page.Pattern, dest))
 		}
 
-		group := fmt.Sprintf("([^%c]*)", filepath.Separator)
+		group := fmt.Sprintf("([^%s]*)",
+			regexp.QuoteMeta(string(filepath.Separator)))
 		base := filepath.Base(page.Pattern)
 		pat := strings.Replace(regexp.QuoteMeta(base), "\\*", group, 1)
 
 		re, err := regexp.Compile(pat)
 		errhandle(err)
 		m := re.FindStringSubmatch(filepath.Base(page.Path))
+		if len(m) == 0 {
+			errexit(fmt.Errorf("Cannot find pattern %s in path %s",
+				base, page.Path))
+		}
 
 		dest = strings.Replace(dest, "*", m[1], 1)
 	}
