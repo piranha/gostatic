@@ -144,7 +144,7 @@ var ExampleFeed = `
   <link href="{{ .Site.Other.Url }}/{{ .Url }}" rel="alternate"></link>
   <content type="html">
     {{/* .Process runs here in case only feed changed */}}
-    {{ with cut .Process.Content "<section>" "</section>" }}
+    {{ with cut "<section>" "</section>" .Process.Content }}
       {{ html . }}
     {{ end }}
   </content>
