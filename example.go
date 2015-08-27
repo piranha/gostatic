@@ -141,7 +141,7 @@ var ExampleFeed = `
   {{ range .Tags }}
   <category term="{{ . }}"></category>
   {{ end }}
-  <link href="{{ .Site.Other.Url }}{{ .Url }}" rel="alternate"></link>
+  <link href="{{ .Site.Other.Url }}/{{ .Url }}" rel="alternate"></link>
   <content type="html">
     {{/* .Process runs here in case only feed changed */}}
     {{ with cut .Process.Content "<section>" "</section>" }}
