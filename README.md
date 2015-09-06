@@ -75,6 +75,9 @@ documentation (even if it's just this `README.md`) are always very welcome!
   - [Page list interface](#page-list-interface)
   - [Site interface](#site-interface)
 
+Also, see [wiki](https://github.com/piranha/gostatic/wiki) - and feel free to
+add more information there!
+
 
 ## Approach
 
