@@ -302,6 +302,9 @@ expands on that a bit:
 - `paginator <page>` - get a [paginator](#paginator-interface) object for
   current page (only works on pages created by `paginate` processor).
 
+- `exec <cmd> [<arg1> <arg2> ....]` - exec a command with (optional) arguments.
+
+
 ### Page interface
 
 - `.Site` - global [site object](#site-interface).

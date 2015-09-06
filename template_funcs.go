@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"hash/adler32"
 	"io"
+	"os/exec"
 	"regexp"
 	"strings"
 	"text/template"
@@ -100,6 +101,13 @@ func CurrentPaginator(current *Page) *Paginator {
 	return Paginators[current.Source]
 }
 
+func Exec(cmd string, arg ...string) (string, error) {
+	c := exec.Command(cmd, arg...)
+	out, err := c.CombinedOutput()
+	return string(out), err
+}
+
+// All the custom global template functions
 var TemplateFuncMap = template.FuncMap{
 	"changed":        HasChanged,
 	"cut":            Cut,
@@ -114,4 +122,5 @@ var TemplateFuncMap = template.FuncMap{
 	"contains":       Contains,
 	"markdown":       Markdown,
 	"paginator":      CurrentPaginator,
+	"exec":           Exec,
 }
