@@ -67,9 +67,9 @@ documentation (even if it's just this `README.md`) are always very welcome!
 - [External Resources](#external-resources)
 - [Configuration](#configuration)
   - [Constants](#constants)
-- [Page config](#page-config)
+- [Page Config](#page-config)
 - [Processors](#processors)
-- [Templating](#templating)
+- [Template API Reference](#template-api-reference)
   - [Global Functions](#global-functions)
   - [Page interface](#page-interface)
   - [Page list interface](#page-list-interface)
@@ -181,7 +181,7 @@ You can also use arbitrary names for constants to
 All constants can also be accessed from the config itself, using
 `$(CONSTANT_NAME)` syntax, just like in `Makefile`.
 
-## Page config
+## Page Config
 
 Page config is only processed if you specify `config` processor for a page. It's
 format is `name: value`, for example:
@@ -254,7 +254,7 @@ You can always check list of available processors with `gostatic --processors`.
   [issue](https://github.com/piranha/gostatic/issues/new) if you have an idea
   how to phrase this better).
 
-## Templating
+## Template API Reference
 
 Templating is provided using
 [Go templates](http://golang.org/pkg/text/template/). See link for documentation
