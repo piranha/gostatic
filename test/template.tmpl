@@ -54,8 +54,12 @@
 {{define "tag"}}
 # Pages tagged with {{ .Title }}
 
-{{ range .Site.Pages.WithTag .Title }}
+{{ with .Site.Pages.WithTag .Title }}
+Total amount of pages: {{ .Len }}
+
+{{ range . }}
 - [{{ .Title }}]({{ .Url }})
+{{ end }}
 {{ end }}
 {{end}}
 
