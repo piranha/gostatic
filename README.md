@@ -178,6 +178,9 @@ You can also use arbitrary names for constants to
 [access later](#site-interface) from templates - just use any other name
 (`AUTHOR` could be one).
 
+All constants can also be accessed from the config itself, using
+`$(CONSTANT_NAME)` syntax, just like in `Makefile`.
+
 ## Page config
 
 Page config is only processed if you specify `config` processor for a page. It's

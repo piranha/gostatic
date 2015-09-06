@@ -100,7 +100,7 @@ func NewSiteConfig(path string) (*SiteConfig, error) {
 			if current == nil {
 				return nil, fmt.Errorf("Indent without rules, line %d", i+1)
 			}
-			current.ParseCommand(line)
+			current.ParseCommand(cfg, line)
 			continue
 		}
 
@@ -113,11 +113,31 @@ func NewSiteConfig(path string) (*SiteConfig, error) {
 
 // *** Parsing methods
 
+var VarRe = regexp.MustCompile(`\$\(([^\)]+)\)`)
+func (cfg *SiteConfig) SubVars(s string) string {
+	return VarRe.ReplaceAllStringFunc(s, func(m string) string {
+		name := VarRe.FindStringSubmatch(m)[1]
+		switch name {
+		case "TEMPLATES":
+			return strings.Join(cfg.Templates, ", ")
+		case "SOURCE":
+			return cfg.Source
+		case "OUTPUT":
+			return cfg.Output
+		default:
+			return cfg.Other[Capitalize(name)]
+		}
+	})
+}
+
 func (cfg *SiteConfig) ParseVariable(base string, line string) {
 	bits := TrimSplitN(line, "=", 2)
-	switch bits[0] {
+	name := bits[0]
+	value := cfg.SubVars(bits[1])
+
+	switch name {
 	case "TEMPLATES":
-		templates := strings.Split(bits[1], " ")
+		templates := strings.Split(value, " ")
 		for _, template := range templates {
 			path := filepath.Join(base, template)
 			isDir, err := IsDir(path)
@@ -136,17 +156,17 @@ func (cfg *SiteConfig) ParseVariable(base string, line string) {
 			}
 		}
 	case "SOURCE":
-		cfg.Source = filepath.Join(base, bits[1])
+		cfg.Source = filepath.Join(base, value)
 	case "OUTPUT":
-		cfg.Output = filepath.Join(base, bits[1])
+		cfg.Output = filepath.Join(base, value)
 	default:
-		cfg.Other[Capitalize(bits[0])] = bits[1]
+		cfg.Other[Capitalize(name)] = value
 	}
 }
 
 func (cfg *SiteConfig) ParseRule(line string) *Rule {
 	bits := TrimSplitN(line, ":", 2)
-	deps := NonEmptySplit(bits[1], " ")
+	deps := NonEmptySplit(cfg.SubVars(bits[1]), " ")
 	rd := &Rule{
 		Deps:     deps,
 		Commands: make(CommandList, 0),
@@ -157,7 +177,8 @@ func (cfg *SiteConfig) ParseRule(line string) *Rule {
 	return rd
 }
 
-func (rule *Rule) ParseCommand(line string) {
+func (rule *Rule) ParseCommand(cfg *SiteConfig, line string) {
+	line = cfg.SubVars(line)
 	rule.Commands = append(rule.Commands, Command(line))
 }
 

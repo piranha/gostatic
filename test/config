@@ -3,6 +3,7 @@
 TEMPLATES = template.tmpl templates
 SOURCE = site
 OUTPUT = out
+PAGE_TEMPLATE = page
 
 *.md:
 	config
@@ -11,7 +12,7 @@ OUTPUT = out
 	tags tags/*.tag
 	inner-template
 	markdown
-	template page
+	template $(PAGE_TEMPLATE)
 
 blog/*.md:
 	config
@@ -41,14 +42,14 @@ blog/index.md: blog/*.md
 	rename index.html
 	inner-template
 	markdown
-	template page
+	template $(PAGE_TEMPLATE)
 
 index.md: blog/index.md
 	config
 	rename index.html
 	inner-template
 	markdown
-	template page
+	template $(PAGE_TEMPLATE)
 
 *.less:
 	ext .css
