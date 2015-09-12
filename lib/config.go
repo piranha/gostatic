@@ -1,7 +1,7 @@
 // (c) 2012 Alexander Solovyov
 // under terms of ISC license
 
-package main
+package gostatic
 
 import (
 	"fmt"
@@ -114,6 +114,7 @@ func NewSiteConfig(path string) (*SiteConfig, error) {
 // *** Parsing methods
 
 var VarRe = regexp.MustCompile(`\$\(([^\)]+)\)`)
+
 func (cfg *SiteConfig) SubVars(s string) string {
 	return VarRe.ReplaceAllStringFunc(s, func(m string) string {
 		name := VarRe.FindStringSubmatch(m)[1]

@@ -1,10 +1,9 @@
-package main
+package gostatic
 
 import (
 	"fmt"
 	"hash/adler32"
 	"io"
-	"os/exec"
 	"regexp"
 	"strings"
 	"text/template"
@@ -96,18 +95,6 @@ func Contains(needle, value string) bool {
 	return strings.Contains(value, needle)
 }
 
-func CurrentPaginator(current *Page) *Paginator {
-	// from processors.go
-	return Paginators[current.Source]
-}
-
-func Exec(cmd string, arg ...string) (string, error) {
-	c := exec.Command(cmd, arg...)
-	out, err := c.CombinedOutput()
-	return string(out), err
-}
-
-// All the custom global template functions
 var TemplateFuncMap = template.FuncMap{
 	"changed":        HasChanged,
 	"cut":            Cut,
@@ -121,6 +108,4 @@ var TemplateFuncMap = template.FuncMap{
 	"split":          Split,
 	"contains":       Contains,
 	"markdown":       Markdown,
-	"paginator":      CurrentPaginator,
-	"exec":           Exec,
 }

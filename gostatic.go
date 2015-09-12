@@ -7,15 +7,14 @@ import (
 	"encoding/json"
 	"fmt"
 	flags "github.com/jessevdk/go-flags"
+	gostatic "github.com/piranha/gostatic/lib"
+	"github.com/piranha/gostatic/processors"
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 )
 
-var Version = "2.2"
-
-var opts struct {
+type Opts struct {
 	ShowProcessors bool    `long:"processors" description:"show page processors"`
 	ShowConfig     bool    `long:"show-config" description:"print config as JSON"`
 	ShowSummary    bool    `long:"summary" description:"print all pages on stdout"`
@@ -32,6 +31,8 @@ var opts struct {
 	Version bool `short:"V" long:"version" description:"show version and exit"`
 }
 
+var opts Opts
+
 func main() {
 	argparser := flags.NewParser(&opts,
 		flags.PrintErrors|flags.PassDoubleDash|flags.HelpFlag)
@@ -47,13 +48,7 @@ func main() {
 	}
 
 	if opts.Version {
-		out("gostatic %s\n", Version)
-		return
-	}
-
-	if opts.ShowProcessors {
-		InitProcessors()
-		ProcessorSummary()
+		out("libgostatic %s\n", gostatic.VERSION)
 		return
 	}
 
@@ -62,7 +57,7 @@ func main() {
 		if len(*opts.InitExample) > 0 {
 			target = filepath.Join(target, *opts.InitExample)
 		}
-		WriteExample(target)
+		gostatic.WriteExample(target)
 		return
 	}
 
@@ -71,9 +66,35 @@ func main() {
 		return
 	}
 
-	InitProcessors()
-	config, err := NewSiteConfig(args[0])
+	config, err := gostatic.NewSiteConfig(args[0])
 	errhandle(err)
+
+	gostatic.TemplateFuncMap["paginator"] = processors.CurrentPaginator
+
+	procs := map[string]gostatic.Processor{
+		"template":               processors.NewTemplateProcessor(),
+		"inner-template":         processors.NewInnerTemplateProcessor(),
+		"config":                 processors.NewConfigProcessor(),
+		"markdown":               processors.NewMarkdownProcessor(),
+		"ext":                    processors.NewExtProcessor(),
+		"directorify":            processors.NewDirectorifyProcessor(),
+		"tags":                   processors.NewTagsProcessor(),
+		"paginate":               processors.NewPaginateProcessor(),
+		"paginate-collect-pages": processors.NewPaginateCollectPagesProcessor(),
+		"relativize":             processors.NewRelativizeProcessor(),
+		"rename":                 processors.NewRenameProcessor(),
+	}
+
+	site := gostatic.NewSite(config, procs)
+
+	if opts.ShowProcessors {
+		site.ProcessorSummary()
+		return
+	}
+
+	if opts.Force {
+		site.ForceRefresh = true
+	}
 
 	if opts.ShowConfig {
 		x, err := json.MarshalIndent(config, "", "  ")
@@ -81,8 +102,6 @@ func main() {
 		println(string(x))
 		return
 	}
-
-	site := NewSite(config)
 
 	if len(opts.DumpPage) > 0 {
 		page := site.PageBySomePath(opts.DumpPage)
@@ -104,7 +123,8 @@ func main() {
 	}
 
 	if opts.Watch {
-		StartWatcher(config)
+		go site.Watch()
+		//StartWatcher(config, procs)
 		out("Starting server at *:%s...\n", opts.Port)
 
 		fs := http.FileServer(http.Dir(config.Output))
@@ -116,20 +136,4 @@ func main() {
 		err := http.ListenAndServe(":"+opts.Port, nil)
 		errhandle(err)
 	}
-}
-
-func StartWatcher(config *SiteConfig) {
-	filemods, err := Watcher(config)
-	errhandle(err)
-
-	go func() {
-		for {
-			fn := <-filemods
-			if !strings.HasPrefix(filepath.Base(fn), ".") {
-				drainchannel(filemods)
-				site := NewSite(config)
-				site.Render()
-			}
-		}
-	}()
 }

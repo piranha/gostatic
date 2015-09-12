@@ -1,7 +1,7 @@
 // (c) 2012 Alexander Solovyov
 // under terms of ISC license
 
-package main
+package gostatic
 
 import (
 	"fmt"
@@ -64,7 +64,7 @@ func NewPage(site *Site, path string) *Page {
 		Path:    relpath,
 		ModTime: stat.ModTime(),
 	}
-	page.peek()
+	page.Peek()
 	debug("Found page: %s; rule: %v\n",
 		page.Source, page.Rule)
 	return page
@@ -132,16 +132,24 @@ func (page *Page) Is(path string) bool {
 	return page.Url() == path || page.Path == path
 }
 
+//will be used for dinamicly created pages
+func (page *Page) WasRead(set ...bool) bool {
+	if len(set) > 0 {
+		page.wasread = set[0]
+	}
+	return page.wasread
+}
+
 // Peek is used to run those processors which should be done before others can
 // find out about us. Two actual examples include 'config' and 'rename'
 // processors right now.
-func (page *Page) peek() {
+func (page *Page) Peek() {
 	if page.Rule == nil {
 		return
 	}
 
 	for _, cmd := range page.Rule.Commands {
-		ProcessCommand(page, &cmd, true)
+		page.Site.ProcessCommand(page, &cmd, true)
 	}
 
 	// Raw is something we have after all preprocessors have finished
@@ -165,7 +173,7 @@ func (page *Page) findDeps() {
 }
 
 func (page *Page) Changed() bool {
-	if opts.Force {
+	if page.Site.ForceRefresh {
 		return true
 	}
 
@@ -173,9 +181,9 @@ func (page *Page) Changed() bool {
 		page.state = StateUnchanged
 		dest, err := os.Stat(page.OutputPath())
 
-		if (err != nil ||
+		if err != nil ||
 			dest.ModTime().Before(page.ModTime) ||
-			dest.ModTime().Before(page.Site.ChangedAt)) {
+			dest.ModTime().Before(page.Site.ChangedAt) {
 			page.state = StateChanged
 		} else {
 			for _, dep := range page.Deps {
@@ -197,7 +205,7 @@ func (page *Page) Process() *Page {
 	page.processed = true
 	if page.Rule.Commands != nil {
 		for _, cmd := range page.Rule.Commands {
-			ProcessCommand(page, &cmd, false)
+			page.Site.ProcessCommand(page, &cmd, false)
 		}
 	}
 
@@ -308,6 +316,10 @@ func (pages PageSlice) Swap(i, j int) {
 
 func (pages PageSlice) Sort() {
 	sort.Sort(pages)
+}
+
+func (pages PageSlice) Reverse() {
+	sort.Sort(sort.Reverse(pages))
 }
 
 func (pages PageSlice) Children(root string) *PageSlice {
