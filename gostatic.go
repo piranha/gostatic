@@ -47,6 +47,10 @@ func main() {
 		errhandle(fmt.Errorf("--summary and --watch do not mix together well"))
 	}
 
+	if opts.Verbose {
+		gostatic.DEBUG = true
+	}
+
 	if opts.Version {
 		out("libgostatic %s\n", gostatic.VERSION)
 		return
@@ -123,7 +127,7 @@ func main() {
 	}
 
 	if opts.Watch {
-		go site.Watch()
+		go gostatic.Watch(site)
 		//StartWatcher(config, procs)
 		out("Starting server at *:%s...\n", opts.Port)
 

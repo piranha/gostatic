@@ -59,9 +59,11 @@ func (site *Site) AddPage(path string) {
 	}
 }
 
-func (site *Site) Watch() {
-
-	filemods, err := Watcher(&site.SiteConfig)
+//todo make this function to method of Site
+func Watch(s *Site) {
+	cnf := s.SiteConfig
+	processors := s.Processors
+	filemods, err := Watcher(&cnf)
 	errhandle(err)
 
 	go func() {
@@ -70,7 +72,8 @@ func (site *Site) Watch() {
 			if !strings.HasPrefix(filepath.Base(fn), ".") {
 				drainchannel(filemods)
 				//TODO change it to site.Rerender()
-				site = NewSite(&site.SiteConfig, site.Processors)
+				site := NewSite(&cnf, processors)
+				site.Render()
 			}
 		}
 	}()

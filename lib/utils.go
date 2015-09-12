@@ -12,7 +12,7 @@ import (
 	"unicode"
 )
 
-const (
+var (
 	DEBUG bool = false
 )
 
