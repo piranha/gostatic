@@ -87,6 +87,8 @@ func main() {
 		"paginate-collect-pages": processors.NewPaginateCollectPagesProcessor(),
 		"relativize":             processors.NewRelativizeProcessor(),
 		"rename":                 processors.NewRenameProcessor(),
+		"external":               processors.NewExternalProcessor(),
+		"ignore":                 processors.NewIgnoreProcessor(),
 	}
 
 	site := gostatic.NewSite(config, procs)

@@ -91,6 +91,10 @@ func (page *Page) SetContent(content string) {
 	page.content = content
 }
 
+func (page *Page) SetState(state int) {
+	page.state = state
+}
+
 func (page *Page) FullPath() string {
 	return filepath.Join(page.Site.Source, page.Source)
 }
