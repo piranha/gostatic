@@ -1,11 +1,7 @@
 package gostatic
 
 import (
-	"bytes"
-	"errors"
 	"fmt"
-	"os/exec"
-	"path/filepath"
 	"sort"
 	"strings"
 )
@@ -70,37 +66,4 @@ func (s *Site) ProcessCommand(page *Page, cmd *Command, pre bool) error {
 		return fmt.Errorf("processor '%s' not found", bits[0])
 	}
 	return processor.Process(page, bits[1:])
-}
-
-func ProcessIgnore(page *Page, args []string) {
-	page.state = StateIgnored
-}
-
-func ProcessExternal(page *Page, args []string) {
-	if len(args) < 1 {
-		errexit(errors.New("'external' rule needs a command name"))
-	}
-	cmdName := args[0]
-	cmdArgs := args[1:]
-
-	path, err := exec.LookPath(cmdName)
-	if err != nil {
-		path, err = exec.LookPath(filepath.Join(page.Site.Base, cmdName))
-		if err != nil {
-			errhandle(fmt.Errorf("command '%s' not found", cmdName))
-		}
-	}
-
-	cmd := exec.Command(path, cmdArgs...)
-	cmd.Stdin = strings.NewReader(page.Content())
-	cmd.Dir = page.Site.Base
-	var stderr bytes.Buffer
-	cmd.Stderr = &stderr
-	data, err := cmd.Output()
-	if err != nil {
-		errhandle(fmt.Errorf("'%s' failed: %s\n%s",
-			strings.Join(args, " "), err, stderr.String()))
-	}
-
-	page.SetContent(string(data))
 }

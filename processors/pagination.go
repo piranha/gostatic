@@ -128,7 +128,7 @@ func ProcessPaginate(page *gostatic.Page, args []string) error {
 		Path:       listpath,
 		ModTime:    time.Unix(int64(n), 0),
 	}
-	listpage.WasRead(true)
+	listpage.SetWasRead(true)
 	page.Site.Pages = append(page.Site.Pages, listpage)
 	listpage.Peek()
 

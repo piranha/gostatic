@@ -60,7 +60,7 @@ func ProcessTags(page *gostatic.Page, args []string) error {
 				// have not a bit of original content
 				ModTime: time.Unix(0, 0),
 			}
-			tagpage.WasRead(true)
+			tagpage.SetWasRead(true)
 			page.Site.Pages = append(page.Site.Pages, tagpage)
 			tagpage.Peek()
 		}

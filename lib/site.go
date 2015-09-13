@@ -118,9 +118,11 @@ func (site *Site) FindDeps() {
 func (site *Site) Process() int {
 	processed := 0
 	for _, page := range site.Pages {
-		debug("Processing page %s\n", page.Source)
-		page.Process()
-		processed++
+		if page.Changed() {
+			debug("Processing page %s\n", page.Source)
+			page.Process()
+			processed++
+		}
 	}
 	return processed
 }
