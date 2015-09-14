@@ -74,10 +74,10 @@ documentation (even if it's just this `README.md`) are always very welcome!
   - [Page interface](#page-interface)
   - [Page list interface](#page-list-interface)
   - [Site interface](#site-interface)
+- [Extensibility](#extensibility)
 
 Also, see [wiki](https://github.com/piranha/gostatic/wiki) - and feel free to
 add more information there!
-
 
 ## Approach
 
@@ -393,3 +393,17 @@ expands on that a bit:
 - `.Output` - path to site destination.
 - `.Templates` - list of template files used for the site.
 - `.Other` - any other properties (capitalized) defined in site config.
+
+## Extensibility
+
+Obviously, the easiest way to extend gostatic's functionality is to use
+`external` [processor](#processors). It makes you able to process files in the
+way you want, but is more or less limited to that. There is no API right now to
+create pages on the fly (like `tags` processor does) using this method, for
+example.
+
+But `gostatic` itself is a
+[library](https://github.com/piranha/gostatic/tree/master/lib), and you can
+write your own static site generator using this library. See
+[gostatic.go](https://github.com/piranha/gostatic/blob/master/gostatic.go) for
+an example of one.
