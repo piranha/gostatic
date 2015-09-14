@@ -1,7 +1,7 @@
 // (c) 2012 Alexander Solovyov
 // under terms of ISC license
 
-package main
+package gostatic
 
 import (
 	"gopkg.in/fsnotify.v1"

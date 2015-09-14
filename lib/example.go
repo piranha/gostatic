@@ -3,7 +3,7 @@
 
 // Generating example site
 
-package main
+package gostatic
 
 import (
 	"io/ioutil"
