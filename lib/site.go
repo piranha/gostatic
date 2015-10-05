@@ -4,6 +4,7 @@
 package gostatic
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -167,7 +168,9 @@ func (site *Site) Render() {
 		errhandle(err)
 
 		_, err = page.Render()
-		errhandle(err)
+		if err != nil {
+			errhandle(fmt.Errorf("Unable to render page '%s': %v", page.Source, err))
+		}
 	}
 }
 
