@@ -122,6 +122,10 @@ func Capitalize(s string) string {
 func CopyFile(srcPath, dstPath string) (n int64, err error) {
 	fstat, err := os.Lstat(srcPath)
 
+	if err != nil {
+		return 0, err
+	}
+
 	if fstat.Mode()&os.ModeSymlink != 0 {
 		target, err := os.Readlink(srcPath)
 		if err != nil {
