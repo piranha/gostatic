@@ -14,6 +14,13 @@ import (
 	"path/filepath"
 )
 
+const (
+	ExitCodeOk            = 0
+	ExitCodeInvalidFlags  = 1
+	ExitCodeInvalidConfig = 2
+	ExitCodeOther         = 127
+)
+
 type Opts struct {
 	ShowProcessors bool    `long:"processors" description:"show page processors"`
 	ShowConfig     bool    `long:"show-config" description:"print config as JSON"`
@@ -40,11 +47,14 @@ func main() {
 
 	args, err := argparser.Parse()
 	if err != nil {
+		errhandle(fmt.Errorf("Cannot parse flags: %v", err))
+		os.Exit(ExitCodeOther)
 		return
 	}
 
 	if opts.ShowSummary && opts.Watch {
 		errhandle(fmt.Errorf("--summary and --watch do not mix together well"))
+		os.Exit(ExitCodeOther)
 	}
 
 	if opts.Verbose {
@@ -66,12 +76,16 @@ func main() {
 	}
 
 	if len(args) == 0 {
-		argparser.WriteHelp(os.Stdout)
+		argparser.WriteHelp(os.Stderr)
+		os.Exit(ExitCodeInvalidFlags)
 		return
 	}
 
 	config, err := gostatic.NewSiteConfig(args[0])
-	errhandle(err)
+	if err != nil {
+		errhandle(fmt.Errorf("Invalid config file '%s': %v", args[0], err))
+		os.Exit(ExitCodeInvalidConfig)
+	}
 
 	gostatic.TemplateFuncMap["paginator"] = processors.CurrentPaginator
 
@@ -105,7 +119,7 @@ func main() {
 	if opts.ShowConfig {
 		x, err := json.MarshalIndent(config, "", "  ")
 		errhandle(err)
-		println(string(x))
+		fmt.Fprintln(os.Stderr, string(x))
 		return
 	}
 
