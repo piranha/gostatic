@@ -20,23 +20,17 @@ type Processor interface {
 	Mode() int
 }
 
-// it is necessary to wrap assignment in a function since go compiler is strict
-// enough to throw error when there may be an assignment loop, but not smart
-// enough to determine if there is one (Processors definition loops with
-// ProcessTags)
-func (s *Site) InitProcessors(m map[string]Processor) {
-	s.Processors = m
-}
+type ProcessorMap map[string]Processor
 
-func (s *Site) ProcessorSummary() {
-	keys := make([]string, 0, len(s.Processors))
-	for k := range s.Processors {
+func (pm ProcessorMap) ProcessorSummary() {
+	keys := make([]string, 0, len(pm))
+	for k := range pm {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
 
 	for _, k := range keys {
-		p := s.Processors[k]
+		p := pm[k]
 		if p.Mode()&Hidden != 0 {
 			continue
 		}

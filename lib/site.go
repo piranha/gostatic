@@ -26,7 +26,7 @@ type Site struct {
 	Processors map[string]Processor
 }
 
-func NewSite(config *SiteConfig, procs map[string]Processor) *Site {
+func NewSite(config *SiteConfig, procs ProcessorMap) *Site {
 	template := template.New("no-idea-what-to-pass-here").Funcs(TemplateFuncMap)
 	template, err := template.ParseFiles(config.Templates...)
 	errhandle(err)
