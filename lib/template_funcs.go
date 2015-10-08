@@ -95,6 +95,32 @@ func Contains(needle, value string) bool {
 	return strings.Contains(value, needle)
 }
 
+// Excerpt takes an input string (for example, text from a blog post), and
+// truncates it to the amount of words given in maxWords. For instance, given
+// the text:
+//
+// 	"The quick brown fox jumps, over the lazy dog."
+//
+// and the given maxWords of 0, 1, 3, 4, and 6, 999, it will return in order:
+//
+// 	"" // an empty string
+// 	"The [...]"
+// 	"The quick brown [...]"
+// 	"The quick brown fox [...]"
+// 	"The quick brown fox jumps, over the lazy dog."
+func Excerpt(text string, maxWords int) string {
+	// Unsure who would want this, but still, don't trust them users ;)
+	if maxWords <= 0 {
+		return ""
+	}
+
+	splitup := strings.Split(text, " ")
+	if maxWords >= len(splitup) {
+		return text
+	}
+	return strings.Join(splitup[0:maxWords], " ") + " [...]"
+}
+
 var TemplateFuncMap = template.FuncMap{
 	"changed":        HasChanged,
 	"cut":            Cut,
@@ -108,4 +134,5 @@ var TemplateFuncMap = template.FuncMap{
 	"split":          Split,
 	"contains":       Contains,
 	"markdown":       Markdown,
+	"excerpt":        Excerpt,
 }

@@ -49,7 +49,6 @@ func main() {
 	if err != nil {
 		errhandle(fmt.Errorf("Cannot parse flags: %v", err))
 		os.Exit(ExitCodeOther)
-		return
 	}
 
 	if opts.ShowSummary && opts.Watch {
@@ -78,7 +77,6 @@ func main() {
 	if len(args) == 0 {
 		argparser.WriteHelp(os.Stderr)
 		os.Exit(ExitCodeInvalidFlags)
-		return
 	}
 
 	config, err := gostatic.NewSiteConfig(args[0])
