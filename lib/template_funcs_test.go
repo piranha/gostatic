@@ -10,7 +10,7 @@ func TestExcerpt(t *testing.T) {
 		maxWords int
 		expected string
 	}{
-		{0, "[...]"},
+		{0, ""},
 		{1, "The [...]"},
 		{3, "The quick'ned brown [...]"},
 		{4, "The quick'ned brown fox, [...]"},
