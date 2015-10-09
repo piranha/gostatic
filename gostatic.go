@@ -6,12 +6,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	flags "github.com/jessevdk/go-flags"
-	gostatic "github.com/piranha/gostatic/lib"
-	"github.com/piranha/gostatic/processors"
 	"net/http"
 	"os"
 	"path/filepath"
+
+	flags "github.com/jessevdk/go-flags"
+	gostatic "github.com/piranha/gostatic/lib"
+	"github.com/piranha/gostatic/processors"
 )
 
 const (
@@ -49,7 +50,6 @@ func main() {
 	if err != nil {
 		errhandle(fmt.Errorf("Cannot parse flags: %v", err))
 		os.Exit(ExitCodeOther)
-		return
 	}
 
 	if opts.ShowSummary && opts.Watch {

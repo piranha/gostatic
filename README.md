@@ -282,7 +282,7 @@ expands on that a bit:
 
 - `hash <value>` - return 32-bit hash of a given value.
 
-- `version <page> <path>` - return relative url to a page with resulting path
+- `version <page> <path>` - return relative URL to a page with resulting path
   `<path>` with `?v=<32-bit hash>` appended (use to override cache settings for
   static files).
 
@@ -293,7 +293,7 @@ expands on that a bit:
 
 - `strip_newlines <value>` - remove all line breaks and newlines from string.
 
-- `replace <old> <new> <value>` - replace all occurences of `old` with `new`.
+- `replace <old> <new> <value>` - replace all occurrences of `old` with `new`.
 
 - `replacen <old> <new> <n> <value>` - same as above, but only `n` times.
 
@@ -310,6 +310,10 @@ expands on that a bit:
 
 - `exec <cmd> [<arg1> <arg2> ....]` - exec a command with (optional) arguments.
 
+- `excerpt <text> <maxWordCount>` - Gets an excerpt from the given text, to a
+  maximum of `maxWordCount` words. When the text is shortened, it will produce
+  an `[...]` string, denoting there's more. For example, `The quick brown fox`
+  with `maxWordCount` of 2 will result in `The quick [...]`.
 
 ### Page interface
 
