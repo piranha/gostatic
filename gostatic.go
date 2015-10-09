@@ -6,12 +6,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	flags "github.com/jessevdk/go-flags"
-	gostatic "github.com/piranha/gostatic/lib"
-	"github.com/piranha/gostatic/processors"
 	"net/http"
 	"os"
 	"path/filepath"
+
+	flags "github.com/jessevdk/go-flags"
+	gostatic "github.com/piranha/gostatic/lib"
+	"github.com/piranha/gostatic/processors"
 )
 
 const (
@@ -74,20 +75,9 @@ func main() {
 		return
 	}
 
-	if len(args) == 0 {
-		argparser.WriteHelp(os.Stderr)
-		os.Exit(ExitCodeInvalidFlags)
-	}
-
-	config, err := gostatic.NewSiteConfig(args[0])
-	if err != nil {
-		errhandle(fmt.Errorf("Invalid config file '%s': %v", args[0], err))
-		os.Exit(ExitCodeInvalidConfig)
-	}
-
 	gostatic.TemplateFuncMap["paginator"] = processors.CurrentPaginator
 
-	procs := map[string]gostatic.Processor{
+	procs := gostatic.ProcessorMap{
 		"template":               processors.NewTemplateProcessor(),
 		"inner-template":         processors.NewInnerTemplateProcessor(),
 		"config":                 processors.NewConfigProcessor(),
@@ -103,12 +93,24 @@ func main() {
 		"ignore":                 processors.NewIgnoreProcessor(),
 	}
 
-	site := gostatic.NewSite(config, procs)
-
 	if opts.ShowProcessors {
-		site.ProcessorSummary()
+		procs.ProcessorSummary()
 		return
 	}
+
+	if len(args) == 0 {
+		argparser.WriteHelp(os.Stderr)
+		os.Exit(ExitCodeInvalidFlags)
+		return
+	}
+
+	config, err := gostatic.NewSiteConfig(args[0])
+	if err != nil {
+		errhandle(fmt.Errorf("Invalid config file '%s': %v", args[0], err))
+		os.Exit(ExitCodeInvalidConfig)
+	}
+
+	site := gostatic.NewSite(config, procs)
 
 	if opts.Force {
 		site.ForceRefresh = true
