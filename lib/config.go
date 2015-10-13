@@ -13,10 +13,14 @@ import (
 	"time"
 )
 
+// Command is a command belonging to a Rule. For example, `markdown', `directorify'.
 type Command string
 
+// CommandList is a slice of Commands.
 type CommandList []Command
 
+// Rule is a collection of a slice of dependencies, with a slice of commands in the
+// form of a CommandList.
 type Rule struct {
 	Deps     []string
 	Commands CommandList
@@ -24,6 +28,7 @@ type Rule struct {
 
 type RuleMap map[string]*Rule
 
+// SiteConfig contains the data for a complete parsed site configuration file.
 type SiteConfig struct {
 	Templates []string
 	Base      string
@@ -34,6 +39,8 @@ type SiteConfig struct {
 	changedAt time.Time
 }
 
+// NewSiteConfig parses the given `path' file to a *SiteConfig. Will return a nil
+// pointer plus the non-nil error if the parsing has failed.
 func NewSiteConfig(path string) (*SiteConfig, error) {
 	source, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -65,9 +72,9 @@ func NewSiteConfig(path string) (*SiteConfig, error) {
 		indnew := len(prefix.FindString(line))
 		switch {
 		case indnew > indent:
-			level += 1
+			level++
 		case indnew < indent:
-			level -= 1
+			level--
 		}
 		indent = indnew
 
@@ -98,13 +105,13 @@ func NewSiteConfig(path string) (*SiteConfig, error) {
 
 		if level == 1 {
 			if current == nil {
-				return nil, fmt.Errorf("Indent without rules, line %d", i+1)
+				return nil, fmt.Errorf("indent without rules, line %d", i+1)
 			}
 			current.ParseCommand(cfg, line)
 			continue
 		}
 
-		return nil, fmt.Errorf("Unhandled situation on line %d: %s",
+		return nil, fmt.Errorf("unhandled situation on line %d: %s",
 			i+1, line)
 	}
 
@@ -144,7 +151,7 @@ func (cfg *SiteConfig) ParseVariable(base string, line string) {
 			isDir, err := IsDir(path)
 
 			if err != nil {
-				errexit(fmt.Errorf("Template does not exist: %s", err))
+				errexit(fmt.Errorf("template does not exist: %s", err))
 			}
 
 			if isDir {

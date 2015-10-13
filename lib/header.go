@@ -71,9 +71,9 @@ func (cfg *PageHeader) SetValue(key string, value string, s *reflect.Value) {
 
 	// Set value
 	f := s.FieldByName(key)
-	switch f.Interface().(type) {
+	switch typ := f.Interface().(type) {
 	default:
-		errhandle(fmt.Errorf("Unknown type of field %s", key))
+		errhandle(fmt.Errorf("unknown type of field %s (is type '%v')", key, typ))
 	case string:
 		f.SetString(value)
 	case bool:
