@@ -2,7 +2,10 @@ package processors
 
 import (
 	gostatic "github.com/piranha/gostatic/lib"
+	"regexp"
 )
+
+var reSeparator = regexp.MustCompile(`(?m:^----\r?\n)`)
 
 type ConfigProcessor struct {
 }
@@ -24,7 +27,7 @@ func (p *ConfigProcessor) Mode() int {
 }
 
 func ProcessConfig(page *gostatic.Page, args []string) error {
-	parts := gostatic.TrimSplitN(page.Content(), "\n----\n", 2)
+	parts := reSeparator.Split(page.Content(), 2)
 	if len(parts) != 2 {
 		// no configuration, well then...
 		page.PageHeader = *gostatic.NewPageHeader()
