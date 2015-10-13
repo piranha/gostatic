@@ -16,12 +16,17 @@ import (
 )
 
 const (
-	ExitCodeOk            = 0
-	ExitCodeInvalidFlags  = 1
+	// ExitCodeOk is used when the application exits without error.
+	ExitCodeOk = 0
+	// ExitCodeInvalidFlags is used when invalid flags are passed.
+	ExitCodeInvalidFlags = 1
+	// ExitCodeInvalidConfig is used when an invalid configuration file is given.
 	ExitCodeInvalidConfig = 2
-	ExitCodeOther         = 127
+	// ExitCodeOther is used in all other situations.
+	ExitCodeOther = 127
 )
 
+// Opts contains the flags which have been parsed by go-flags.
 type Opts struct {
 	ShowProcessors bool    `long:"processors" description:"show page processors"`
 	ShowConfig     bool    `long:"show-config" description:"print config as JSON"`
@@ -48,7 +53,7 @@ func main() {
 
 	args, err := argparser.Parse()
 	if err != nil {
-		errhandle(fmt.Errorf("Cannot parse flags: %v", err))
+		errhandle(fmt.Errorf("cannot parse flags: %v", err))
 		os.Exit(ExitCodeOther)
 	}
 
@@ -106,7 +111,7 @@ func main() {
 
 	config, err := gostatic.NewSiteConfig(args[0])
 	if err != nil {
-		errhandle(fmt.Errorf("Invalid config file '%s': %v", args[0], err))
+		errhandle(fmt.Errorf("invalid config file '%s': %v", args[0], err))
 		os.Exit(ExitCodeInvalidConfig)
 	}
 

@@ -64,6 +64,7 @@ func Versionize(current *Page, value string) string {
 	return current.UrlTo(page) + "?v=" + h
 }
 
+// Truncate truncates the value string to maximum of the given length, and returns it.
 func Truncate(length int, value string) string {
 	if length > len(value) {
 		length = len(value)
@@ -71,26 +72,36 @@ func Truncate(length int, value string) string {
 	return value[0:length]
 }
 
+// StripHTML removes HTML tags from the value string and returns it.
 func StripHTML(value string) string {
 	return regexp.MustCompile("<[^>]+>").ReplaceAllString(value, "")
 }
 
+// StripNewlines removes all \r and \n characters from the value string,
+// and returns it as such.
 func StripNewlines(value string) string {
 	return regexp.MustCompile("[\r\n]").ReplaceAllString(value, "")
 }
 
+// Replace replaces `old' with `new' in the given value string and returns it.
+// There is no limit on the amount of replacements.
 func Replace(old, new, value string) string {
 	return strings.Replace(value, old, new, -1)
 }
 
+// ReplaceN replaces the `old' string with the `new' string in the given value,
+// n times. If n < 0, there is no limit on the number of replacements.
 func ReplaceN(old, new string, n int, value string) string {
 	return strings.Replace(value, old, new, n)
 }
 
+// Split splits the value using the separator sep, and returns it as a
+// string slice.
 func Split(sep, value string) []string {
 	return strings.Split(value, sep)
 }
 
+// Contains returns true if `needle' is contained within `value'.
 func Contains(needle, value string) bool {
 	return strings.Contains(value, needle)
 }
@@ -121,6 +132,8 @@ func Excerpt(text string, maxWords int) string {
 	return strings.Join(splitup[0:maxWords], " ") + " [...]"
 }
 
+// TemplateFuncMap contains the mapping of function names and their corresponding
+// Go functions, to be used within templates.
 var TemplateFuncMap = template.FuncMap{
 	"changed":        HasChanged,
 	"cut":            Cut,
