@@ -116,26 +116,35 @@ func (site *Site) FindDeps() {
 	}
 }
 
-func (site *Site) Process() int {
+func (site *Site) Process() (int, error) {
 	processed := 0
 	for _, page := range site.Pages {
 		if page.Changed() {
 			debug("Processing page %s\n", page.Source)
-			page.Process()
+			err := page.Process()
+			if err != nil {
+				return processed, err
+			}
 			processed++
 		}
 	}
-	return processed
+	return processed, nil
 }
 
-func (site *Site) ProcessAll() {
+func (site *Site) ProcessAll() error {
 	for _, page := range site.Pages {
-		page.Process()
+		err := page.Process()
+		if err != nil {
+			return err
+		}
 	}
+	return nil
 }
 
 func (site *Site) Summary() {
-	site.ProcessAll()
+	err := site.ProcessAll()
+	errhandle(err)
+
 	out("Total pages to render: %d\n", len(site.Pages))
 
 	for _, page := range site.Pages {
@@ -154,7 +163,8 @@ func (site *Site) Summary() {
 }
 
 func (site *Site) Render() {
-	processed := site.Process()
+	processed, err := site.Process()
+	errhandle(err)
 	out("Rendering %d changed pages of %d total\n", processed, len(site.Pages))
 
 	for _, page := range site.Pages {

@@ -52,16 +52,20 @@ func Hash(value string) string {
 	return fmt.Sprintf("%x", h.Sum(nil))
 }
 
-func Versionize(current *Page, value string) string {
+func Versionize(current *Page, value string) (string, error) {
 	page := current.Site.Pages.ByPath(value)
 	if page == nil {
 		errhandle(fmt.Errorf(
 			"trying to versionize page which does not exist: %s, current: %s",
 			value, current.Path))
 	}
-	c := page.Process().Content()
+	err := page.Process()
+	if err != nil {
+		return "", err
+	}
+	c := page.Content()
 	h := Hash(c)
-	return current.UrlTo(page) + "?v=" + h
+	return current.UrlTo(page) + "?v=" + h, nil
 }
 
 // Truncate truncates the value string to maximum of the given length, and returns it.

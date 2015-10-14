@@ -148,19 +148,23 @@ func (page *Page) WasRead() bool {
 // Peek is used to run those processors which should be done before others can
 // find out about us. Two actual examples include 'config' and 'rename'
 // processors right now.
-func (page *Page) Peek() {
+func (page *Page) Peek() error {
 	if page.Rule == nil {
-		return
+		return nil
 	}
 
 	for _, cmd := range page.Rule.Commands {
-		page.Site.ProcessCommand(page, &cmd, true)
+		err := page.Site.ProcessCommand(page, &cmd, true)
+		if err != nil {
+			return err
+		}
 	}
 
 	// Raw is something we have after all preprocessors have finished
 	if page.content != "" {
 		page.raw = page.content
 	}
+	return nil
 }
 
 func (page *Page) findDeps() {
@@ -202,19 +206,22 @@ func (page *Page) Changed() bool {
 	return page.state == StateChanged
 }
 
-func (page *Page) Process() *Page {
+func (page *Page) Process() error {
 	if page.processed || page.Rule == nil {
-		return page
+		return nil
 	}
 
 	page.processed = true
 	if page.Rule.Commands != nil {
 		for _, cmd := range page.Rule.Commands {
-			page.Site.ProcessCommand(page, &cmd, false)
+			err := page.Site.ProcessCommand(page, &cmd, false)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
-	return page
+	return nil
 }
 
 func (page *Page) WriteTo(writer io.Writer) (n int64, err error) {
