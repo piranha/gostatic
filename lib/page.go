@@ -206,9 +206,9 @@ func (page *Page) Changed() bool {
 	return page.state == StateChanged
 }
 
-func (page *Page) Process() error {
+func (page *Page) Process() (*Page, error) {
 	if page.processed || page.Rule == nil {
-		return nil
+		return page, nil
 	}
 
 	page.processed = true
@@ -216,12 +216,12 @@ func (page *Page) Process() error {
 		for _, cmd := range page.Rule.Commands {
 			err := page.Site.ProcessCommand(page, &cmd, false)
 			if err != nil {
-				return err
+				return nil, err
 			}
 		}
 	}
 
-	return nil
+	return page, nil
 }
 
 func (page *Page) WriteTo(writer io.Writer) (n int64, err error) {

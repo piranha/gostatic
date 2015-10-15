@@ -59,7 +59,7 @@ func Versionize(current *Page, value string) (string, error) {
 			"trying to versionize page which does not exist: %s, current: %s",
 			value, current.Path))
 	}
-	err := page.Process()
+	_, err := page.Process()
 	if err != nil {
 		return "", err
 	}

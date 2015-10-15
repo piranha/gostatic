@@ -121,7 +121,7 @@ func (site *Site) Process() (int, error) {
 	for _, page := range site.Pages {
 		if page.Changed() {
 			debug("Processing page %s\n", page.Source)
-			err := page.Process()
+			_, err := page.Process()
 			if err != nil {
 				return processed, err
 			}
@@ -133,7 +133,7 @@ func (site *Site) Process() (int, error) {
 
 func (site *Site) ProcessAll() error {
 	for _, page := range site.Pages {
-		err := page.Process()
+		_, err := page.Process()
 		if err != nil {
 			return err
 		}
