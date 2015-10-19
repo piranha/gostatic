@@ -9,6 +9,10 @@ import (
 	"time"
 )
 
+func init() {
+	gostatic.TemplateFuncMap["paginator"] = CurrentPaginator
+}
+
 type PaginateProcessor struct {
 	collectPages bool
 }
