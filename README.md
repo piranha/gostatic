@@ -1,6 +1,6 @@
 # gostatic
 
-Gostatic is a static site generator. What differs it from most of other tools is
+Gostatic is a static site generator. What distinguishes it from most of other tools is
 that it's written in Go and tracks changes, which means it should work
 reasonably [fast](#speed).
 
