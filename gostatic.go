@@ -80,26 +80,8 @@ func main() {
 		return
 	}
 
-	gostatic.TemplateFuncMap["paginator"] = processors.CurrentPaginator
-
-	procs := gostatic.ProcessorMap{
-		"template":               processors.NewTemplateProcessor(),
-		"inner-template":         processors.NewInnerTemplateProcessor(),
-		"config":                 processors.NewConfigProcessor(),
-		"markdown":               processors.NewMarkdownProcessor(),
-		"ext":                    processors.NewExtProcessor(),
-		"directorify":            processors.NewDirectorifyProcessor(),
-		"tags":                   processors.NewTagsProcessor(),
-		"paginate":               processors.NewPaginateProcessor(),
-		"paginate-collect-pages": processors.NewPaginateCollectPagesProcessor(),
-		"relativize":             processors.NewRelativizeProcessor(),
-		"rename":                 processors.NewRenameProcessor(),
-		"external":               processors.NewExternalProcessor(),
-		"ignore":                 processors.NewIgnoreProcessor(),
-	}
-
 	if opts.ShowProcessors {
-		procs.ProcessorSummary()
+		processors.DefaultProcessors.ProcessorSummary()
 		return
 	}
 
@@ -115,7 +97,7 @@ func main() {
 		os.Exit(ExitCodeInvalidConfig)
 	}
 
-	site := gostatic.NewSite(config, procs)
+	site := gostatic.NewSite(config, processors.DefaultProcessors)
 
 	if opts.Force {
 		site.ForceRefresh = true

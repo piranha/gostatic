@@ -14,6 +14,9 @@ type PaginateProcessor struct {
 }
 
 func NewPaginateProcessor() *PaginateProcessor {
+	if _, ok := gostatic.TemplateFuncMap["paginator"]; !ok {
+		gostatic.TemplateFuncMap["paginator"] = CurrentPaginator
+	}
 	return &PaginateProcessor{}
 }
 
