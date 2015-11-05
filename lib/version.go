@@ -1,5 +1,4 @@
 package gostatic
 
-const (
-	VERSION = "2.4"
-)
+// Current gostatic version
+const VERSION = "2.5"
