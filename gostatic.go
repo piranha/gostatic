@@ -67,7 +67,7 @@ func main() {
 	}
 
 	if opts.Version {
-		out("libgostatic %s\n", gostatic.VERSION)
+		out("gostatic %s\n", gostatic.VERSION)
 		return
 	}
 
