@@ -14,3 +14,14 @@ stuff: one, two, three
 {{ end }}
 
 {{ exec "echo" "hello" }}
+
+# Hello
+
+* hi
+<pre>
+<code>
+# hi
+fdfkfdl
+</code>
+</pre>
+* ho

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"hash/adler32"
 	"io"
+	"os/exec"
 	"regexp"
 	"strings"
 	"text/template"
@@ -110,6 +111,13 @@ func Contains(needle, value string) bool {
 	return strings.Contains(value, needle)
 }
 
+// Exec runs a `cmd` with all supplied arguments
+func Exec(cmd string, arg ...string) (string, error) {
+	c := exec.Command(cmd, arg...)
+	out, err := c.CombinedOutput()
+	return string(out), err
+}
+
 // Excerpt takes an input string (for example, text from a blog post), and
 // truncates it to the amount of words given in maxWords. For instance, given
 // the text:
@@ -151,5 +159,6 @@ var TemplateFuncMap = template.FuncMap{
 	"split":          Split,
 	"contains":       Contains,
 	"markdown":       Markdown,
+	"exec":           Exec,
 	"excerpt":        Excerpt,
 }
