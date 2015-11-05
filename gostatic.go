@@ -52,8 +52,13 @@ func main() {
 	argparser.Usage = "[OPTIONS] path/to/config\n\nBuild a site."
 
 	args, err := argparser.Parse()
+
 	if err != nil {
-		errhandle(fmt.Errorf("cannot parse flags: %v", err))
+		if _, ok := err.(*flags.Error); ok {
+			return
+		}
+
+		errhandle(fmt.Errorf("unknown error: %v", err))
 		os.Exit(ExitCodeOther)
 	}
 
