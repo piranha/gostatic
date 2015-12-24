@@ -32,7 +32,7 @@ type Opts struct {
 	ShowConfig     bool    `long:"show-config" description:"print config as JSON"`
 	ShowSummary    bool    `long:"summary" description:"print all pages on stdout"`
 	InitExample    *string `short:"i" long:"init" description:"create example site"`
-	DumpPage       string  `short:"d" long:"dump" description:"print page metadata as JSON"`
+	DumpPage       string  `short:"d" long:"dump" description:"print page metadata as JSON (pass path to source or target file)"`
 
 	// checked in Page.Changed()
 	Force bool `short:"f" long:"force" description:"force building all pages"`

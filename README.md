@@ -14,6 +14,7 @@ Features include:
  - Support for pagination
  - Plays well with external scripts
  - HTTP server and watcher (instant rendering on changes)
+ - Suitable for automation (ability to query state with `gostatic --dump`)
 
 And all in all, it works nicely for me, so it may work for you!
 

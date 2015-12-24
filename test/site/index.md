@@ -18,10 +18,7 @@ stuff: one, two, three
 # Hello
 
 * hi
-<pre>
-<code>
+```
 # hi
-fdfkfdl
-</code>
-</pre>
+```
 * ho

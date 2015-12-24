@@ -318,7 +318,7 @@ func (pages PageSlice) Less(i, j int) bool {
 	left := pages.Get(i)
 	right := pages.Get(j)
 	if left.Date.Unix() == right.Date.Unix() {
-		return left.ModTime.Unix() < right.ModTime.Unix()
+		return left.Path < right.Path
 	}
 	return left.Date.Unix() > right.Date.Unix()
 }
