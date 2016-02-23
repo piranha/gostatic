@@ -18,4 +18,5 @@ var DefaultProcessors = gostatic.ProcessorMap{
 	"rename":                 NewRenameProcessor(),
 	"external":               NewExternalProcessor(),
 	"ignore":                 NewIgnoreProcessor(),
+	"ignorefuture":           NewIgnoreFutureProcessor(),
 }
