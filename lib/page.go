@@ -117,6 +117,10 @@ func (page *Page) Url() string {
 	return url
 }
 
+func (page *Page) Name() string {
+	return filepath.Base(page.Url())
+}
+
 func (page *Page) UrlTo(other *Page) string {
 	return page.Rel(other.Url())
 }
