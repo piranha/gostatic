@@ -351,6 +351,7 @@ expands on that a bit:
   part), that was originally read from the disk.
 - `.Content` - page content.
 - `.Url` - page url (i.e. `.Path`, but with `index.html` stripped from the end).
+- `.Name` - page name (i.e. last part of `.Url`).
 - `.UrlTo <other-page>` - relative url from current to some other page.
 - `.Rel <url>` - relative url to given absolute (anchored at `/`) url.
 - `.Is <url>` - checks if page is at passed url (or path) - use it for marking
