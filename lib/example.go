@@ -114,7 +114,9 @@ title: Main Page
 ----
 <ul class="post-list">
 {{ range .Site.Pages.Children "blog/" }}
-  <li>{{ template "date" .Date }} - <a href="{{ $.Rel .Url }}">{{ .Title }}</a>
+  <li>
+    {{ template "date" .Date }} - <a href="{{ $.Rel .Url }}">{{ .Title }}</a>
+  </li>
 {{ end }}
 </ul>
 `
