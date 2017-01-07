@@ -44,7 +44,7 @@ type Page struct {
 
 type PageSlice []*Page
 
-func NewPage(site *Site, path string) *Page {
+func NewPages(site *Site, path string) PageSlice {
 	stat, err := os.Stat(path)
 	errhandle(err)
 
@@ -54,20 +54,28 @@ func NewPage(site *Site, path string) *Page {
 	// convert windows path separators to unix style
 	relpath = strings.Replace(relpath, "\\", "/", -1)
 
-	pattern, rule := site.Rules.MatchedRule(relpath)
-
-	page := &Page{
-		Site:    site,
-		Rule:    rule,
-		Pattern: pattern,
-		Source:  relpath,
-		Path:    relpath,
-		ModTime: stat.ModTime(),
+	pattern, rules := site.Rules.MatchedRules(relpath)
+	if rules == nil {
+		rules = make([]*Rule, 1)
 	}
-	page.Peek()
-	debug("Found page: %s; rule: %v\n",
-		page.Source, page.Rule)
-	return page
+
+	pages := make(PageSlice, 0)
+
+	for _, rule := range rules {
+		page := &Page{
+			Site:    site,
+			Rule:    rule,
+			Pattern: pattern,
+			Source:  relpath,
+			Path:    relpath,
+			ModTime: stat.ModTime(),
+		}
+		page.Peek()
+		debug("Found page: %s; rule: %v\n",
+			page.Source, page.Rule)
+		pages = append(pages, page)
+	}
+	return pages
 }
 
 func (page *Page) Raw() string {
@@ -318,14 +326,16 @@ func (pages PageSlice) Slice(from int, to int) PageSlice {
 func (pages PageSlice) Len() int {
 	return len(pages)
 }
+
 func (pages PageSlice) Less(i, j int) bool {
 	left := pages.Get(i)
 	right := pages.Get(j)
 	if left.Date.Unix() == right.Date.Unix() {
-		return left.Path < right.Path
+		return left.Path > right.Path
 	}
 	return left.Date.Unix() > right.Date.Unix()
 }
+
 func (pages PageSlice) Swap(i, j int) {
 	pages[i], pages[j] = pages[j], pages[i]
 }

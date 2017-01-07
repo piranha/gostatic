@@ -1,5 +1,8 @@
 # Gostatic changelog
 
+- Ability to have multiple configurations for a single path (so you can have
+  multiple outputs from one file).
+
 ## 2.6
 
 Sort pages with same date alphabetically.

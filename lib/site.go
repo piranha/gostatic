@@ -53,10 +53,11 @@ func NewSite(config *SiteConfig, procs ProcessorMap) *Site {
 	return site
 }
 
-func (site *Site) AddPage(path string) {
-	page := NewPage(site, path)
-	if page.state != StateIgnored {
-		site.Pages = append(site.Pages, page)
+func (site *Site) AddPages(path string) {
+	for _, page := range NewPages(site, path) {
+		if page.state != StateIgnored {
+			site.Pages = append(site.Pages, page)
+		}
 	}
 }
 
@@ -103,7 +104,7 @@ func (site *Site) collectFunc(errors chan<- error) filepath.WalkFunc {
 		}
 
 		if !fi.IsDir() && !strings.HasPrefix(filepath.Base(fn), ".") {
-			site.AddPage(fn)
+			site.AddPages(fn)
 		}
 
 		return nil

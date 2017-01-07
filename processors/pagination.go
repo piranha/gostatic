@@ -110,11 +110,18 @@ func ProcessPaginate(page *gostatic.Page, args []string) error {
 		return nil
 	}
 
-	pattern, rule := site.Rules.MatchedRule(listpath)
-	if rule == nil {
-		return errors.New(fmt.Sprintf("Paginators path '%s' does not match any rule",
-			listpath))
+	pattern, rules := site.Rules.MatchedRules(listpath)
+	if rules == nil {
+		return fmt.Errorf("Paginators path '%s' does not match any rule",
+			listpath)
 	}
+
+	if len(rules) > 1 {
+		return fmt.Errorf("Path '%s' matches multiple rules, pagination is not supported for this case",
+			listpath)
+	}
+
+	rule := rules[0]
 
 	if !strings.HasPrefix(string(rule.Commands[0]), "paginate-collect-pages") {
 		rule.Commands = append(

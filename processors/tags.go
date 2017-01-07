@@ -44,16 +44,19 @@ func ProcessTags(page *gostatic.Page, args []string) error {
 		tagpath := strings.Replace(pathPattern, "*", tag, 1)
 
 		if site.Pages.BySource(tagpath) == nil {
-			pattern, rule := site.Rules.MatchedRule(tagpath)
-			if rule == nil {
-				return errors.New(fmt.Sprintf("Tag path '%s' does not match any rule",
-					tagpath))
+			pattern, rules := site.Rules.MatchedRules(tagpath)
+			if rules == nil {
+				return fmt.Errorf("Tag path '%s' does not match any rule", tagpath)
 			}
+			if len(rules) > 1 {
+				return fmt.Errorf("Tags are not supported with multiple rules. Tag in question: '%s'", tagpath)
+			}
+
 			tagpage := &gostatic.Page{
 				PageHeader: gostatic.PageHeader{Title: tag},
 				Site:       site,
 				Pattern:    pattern,
-				Rule:       rule,
+				Rule:       rules[0],
 				Source:     tagpath,
 				Path:       tagpath,
 				// tags are never new, because they only depend on pages and

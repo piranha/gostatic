@@ -26,7 +26,7 @@ type Rule struct {
 	Commands CommandList
 }
 
-type RuleMap map[string]*Rule
+type RuleMap map[string]([]*Rule)
 
 // SiteConfig contains the data for a complete parsed site configuration file.
 type SiteConfig struct {
@@ -175,14 +175,17 @@ func (cfg *SiteConfig) ParseVariable(base string, line string) {
 func (cfg *SiteConfig) ParseRule(line string) *Rule {
 	bits := TrimSplitN(line, ":", 2)
 	deps := NonEmptySplit(cfg.SubVars(bits[1]), " ")
-	rd := &Rule{
+	rule := &Rule{
 		Deps:     deps,
 		Commands: make(CommandList, 0),
 	}
 
-	cfg.Rules[bits[0]] = rd
+	if _, ok := cfg.Rules[bits[0]]; !ok {
+		cfg.Rules[bits[0]] = make([]*Rule, 0)
+	}
+	cfg.Rules[bits[0]] = append(cfg.Rules[bits[0]], rule)
 
-	return rd
+	return rule
 }
 
 func (rule *Rule) ParseCommand(cfg *SiteConfig, line string) {
@@ -206,7 +209,7 @@ func (rule *Rule) IsDep(page *Page) bool {
 	return false
 }
 
-func (rules RuleMap) MatchedRule(path string) (string, *Rule) {
+func (rules RuleMap) MatchedRules(path string) (string, []*Rule) {
 	if rules[path] != nil {
 		return path, rules[path]
 	}
@@ -216,19 +219,19 @@ func (rules RuleMap) MatchedRule(path string) (string, *Rule) {
 		return name, rules[name]
 	}
 
-	for pat, rule := range rules {
+	for pat, subset := range rules {
 		matched, err := filepath.Match(pat, path)
 		errhandle(err)
 		if matched {
-			return pat, rule
+			return pat, subset
 		}
 	}
 
-	for pat, rule := range rules {
+	for pat, subset := range rules {
 		matched, err := filepath.Match(pat, name)
 		errhandle(err)
 		if matched {
-			return pat, rule
+			return pat, subset
 		}
 	}
 
