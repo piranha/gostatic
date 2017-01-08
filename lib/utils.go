@@ -27,7 +27,7 @@ func errexit(err error) {
 	if err == nil {
 		return
 	}
-	fmt.Printf("Error: %s\n", err)
+	fmt.Printf("Fatal error: %s\n", err)
 	os.Exit(1)
 }
 

@@ -174,6 +174,9 @@ func (cfg *SiteConfig) ParseVariable(base string, line string) {
 
 func (cfg *SiteConfig) ParseRule(line string) *Rule {
 	bits := TrimSplitN(line, ":", 2)
+	if len(bits) != 2 {
+		errexit(fmt.Errorf("Cannot parse rule, ':' not found in '%s'", line))
+	}
 	deps := NonEmptySplit(cfg.SubVars(bits[1]), " ")
 	rule := &Rule{
 		Deps:     deps,
