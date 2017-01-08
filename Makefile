@@ -2,11 +2,9 @@ SOURCE = $(wildcard *.go)
 TAG ?= $(shell git describe --tags)
 GOBUILD = go build -ldflags '-w'
 
-# $(tag) here will contain either `-1.0-` or just `-`
 ALL = \
-	$(foreach arch,64 32,\
 	$(foreach suffix,linux osx win.exe,\
-		build/gostatic-$(arch)-$(suffix)))
+		build/gostatic-64-$(suffix))
 
 all: $(ALL)
 
@@ -29,10 +27,6 @@ osx = darwin
 build/gostatic-64-%: $(SOURCE)
 	@mkdir -p $(@D)
 	CGO_ENABLED=0 GOOS=$(firstword $($*) $*) GOARCH=amd64 $(GOBUILD) -o $@
-
-build/gostatic-32-%: $(SOURCE)
-	@mkdir -p $(@D)
-	CGO_ENABLED=0 GOOS=$(firstword $($*) $*) GOARCH=386 $(GOBUILD) -o $@
 
 release: $(ALL)
 ifndef desc
