@@ -1,5 +1,7 @@
 # Gostatic changelog
 
+## 2.7
+
 - Ability to have multiple configurations for a single path (so you can have
   multiple outputs from one file).
 
