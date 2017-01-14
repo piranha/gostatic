@@ -1,5 +1,9 @@
 # Gostatic changelog
 
+## 2.8
+
+Two new template functions: `starts` and `ends`.
+
 ## 2.7
 
 - Ability to have multiple configurations for a single path (so you can have
