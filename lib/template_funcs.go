@@ -111,6 +111,16 @@ func Contains(needle, value string) bool {
 	return strings.Contains(value, needle)
 }
 
+// Starts returns true if `value' starts with `needle'.
+func Starts(needle, value string) bool {
+	return strings.HasPrefix(value, needle)
+}
+
+// Ends returns true if `value' ends with `needle'.
+func Ends(needle, value string) bool {
+	return strings.HasSuffix(value, needle)
+}
+
 // Exec runs a `cmd` with all supplied arguments
 func Exec(cmd string, arg ...string) (string, error) {
 	c := exec.Command(cmd, arg...)
@@ -158,6 +168,8 @@ var TemplateFuncMap = template.FuncMap{
 	"replacen":       ReplaceN,
 	"split":          Split,
 	"contains":       Contains,
+	"starts":         Starts,
+	"ends":           Ends,
 	"markdown":       Markdown,
 	"exec":           Exec,
 	"excerpt":        Excerpt,

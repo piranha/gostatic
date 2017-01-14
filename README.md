@@ -304,6 +304,12 @@ expands on that a bit:
 - `contains <needle> <value>` - check if a string (`value`) contains another one
   (`needle`).
 
+- `starts <needle> <value>` - check if a string (`value`) starts with another one
+  (`needle`).
+
+- `ends <needle> <value>` - check if a string (`value`) ends with another one
+  (`needle`).
+
 - `markdown <value>` - convert a string (`value`) from Markdown to HTML.
 
 - `paginator <page>` - get a [paginator](#paginator-interface) object for
