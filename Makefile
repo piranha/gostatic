@@ -1,4 +1,4 @@
-SOURCE = $(wildcard *.go)
+SOURCE = $(shell find . -name '*.go')
 TAG ?= $(shell git describe --tags)
 GOBUILD = go build -ldflags '-w'
 
