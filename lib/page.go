@@ -84,6 +84,7 @@ func (page *Page) Raw() string {
 		errhandle(err)
 		page.raw = string(data)
 		page.wasread = true
+		debug("Page '%s' was read, is of length %d\n", page.FullPath(), len(page.raw))
 	}
 	return page.raw
 }
@@ -148,7 +149,7 @@ func (page *Page) Is(path string) bool {
 	return page.Url() == path || page.Path == path
 }
 
-// will be used for dynamically created pages
+// Is used for dynamically created pages
 func (page *Page) SetWasRead(wasread bool) {
 	page.wasread = wasread
 }
@@ -159,7 +160,7 @@ func (page *Page) WasRead() bool {
 
 // Peek is used to run those processors which should be done before others can
 // find out about us. Two actual examples include 'config' and 'rename'
-// processors right now.
+// processors.
 func (page *Page) Peek() error {
 	if page.Rule == nil {
 		return nil
@@ -172,7 +173,7 @@ func (page *Page) Peek() error {
 		}
 	}
 
-	// Raw is something we have after all preprocessors have finished
+	// Raw is page content after preprocessors, but before preprocessors
 	if page.content != "" {
 		page.raw = page.content
 	}

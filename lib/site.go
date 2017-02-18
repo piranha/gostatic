@@ -71,9 +71,10 @@ func Watch(s *Site) {
 	go func() {
 		for {
 			fn := <-filemods
+			time.Sleep(10 * time.Millisecond)
 			if !strings.HasPrefix(filepath.Base(fn), ".") {
 				drainchannel(filemods)
-				//TODO change it to site.Rerender()
+				// TODO: change it to site.Rerender()
 				site := NewSite(&cnf, processors)
 				site.Render()
 			}

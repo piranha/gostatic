@@ -1,5 +1,11 @@
 # Gostatic changelog
 
+## 2.9
+
+`gostatic -w` now waits 10 ms before doing anything to prevent problems with
+emacs-style file changes, when it first creates empty file in place of an old
+one and then moves changes over to it.
+
 ## 2.8
 
 Two new template functions: `starts` and `ends`.
