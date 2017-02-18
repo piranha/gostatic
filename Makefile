@@ -28,6 +28,7 @@ build/gostatic-64-%: $(SOURCE)
 	@mkdir -p $(@D)
 	CGO_ENABLED=0 GOOS=$(firstword $($*) $*) GOARCH=amd64 $(GOBUILD) -o $@
 
+# NOTE: first push a tag, then make release!
 release: $(ALL)
 ifndef desc
 	@echo "Run it as 'make release desc=tralala'"
