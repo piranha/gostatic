@@ -154,6 +154,14 @@ func Excerpt(text string, maxWords int) string {
 	return strings.Join(splitup[0:maxWords], " ") + " [...]"
 }
 
+func Even(value int) bool {
+	return value % 2 == 0
+}
+
+func Odd(value int) bool {
+	return !Even(value) // checking for 1 fails for negative numbers
+}
+
 // TemplateFuncMap contains the mapping of function names and their corresponding
 // Go functions, to be used within templates.
 var TemplateFuncMap = template.FuncMap{
@@ -173,4 +181,6 @@ var TemplateFuncMap = template.FuncMap{
 	"markdown":       Markdown,
 	"exec":           Exec,
 	"excerpt":        Excerpt,
+	"even":           Even,
+	"odd":            Odd,
 }

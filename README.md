@@ -322,6 +322,10 @@ expands on that a bit:
   an `[...]` string, denoting there's more. For example, `The quick brown fox`
   with `maxWordCount` of 2 will result in `The quick [...]`.
 
+- `even <n>` - tests if `n` is divisible by 2.
+
+- `odd <n>` - tests if `n` is not divisible by 2.
+
 ### Page interface
 
 - `.Site` - global [site object](#site-interface).

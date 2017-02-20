@@ -1,5 +1,9 @@
 # Gostatic changelog
 
+## 2.10
+
+Two new template functions: `even` and `odd`.
+
 ## 2.9
 
 `gostatic -w` now waits 10 ms before doing anything to prevent problems with
