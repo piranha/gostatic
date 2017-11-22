@@ -294,9 +294,14 @@ expands on that a bit:
 
 - `strip_newlines <value>` - remove all line breaks and newlines from string.
 
-- `replace <old> <new> <value>` - replace all occurrences of `old` with `new`.
+- `replace <old> <new> <value>` - replace all occurrences of `old` with `new` in
+  `value`.
 
 - `replacen <old> <new> <n> <value>` - same as above, but only `n` times.
+
+- `replacere <pattern> <replacement> <value>` - replace text in `value`
+  according to [regexp](https://golang.org/pkg/regexp/syntax/) `pattern` and
+  `replacement`.
 
 - `split <separator> <value>` - split string by separator, generating an array
   (you can use `range` with result of this function).

@@ -1,5 +1,9 @@
 # Gostatic changelog
 
+## 2.11
+
+New template function: `replacere`.
+
 ## 2.10
 
 Two new template functions: `even` and `odd`.

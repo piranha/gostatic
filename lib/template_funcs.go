@@ -100,6 +100,14 @@ func ReplaceN(old, new string, n int, value string) string {
 	return strings.Replace(value, old, new, n)
 }
 
+func ReplaceRe(pattern, repl, value string) (string, error) {
+	re, err := regexp.Compile(pattern)
+	if err != nil {
+		return "", err
+	}
+	return re.ReplaceAllString(value, repl), nil
+}
+
 // Split splits the value using the separator sep, and returns it as a
 // string slice.
 func Split(sep, value string) []string {
@@ -174,6 +182,7 @@ var TemplateFuncMap = template.FuncMap{
 	"strip_newlines": StripNewlines,
 	"replace":        Replace,
 	"replacen":       ReplaceN,
+	"replacere":      ReplaceRe,
 	"split":          Split,
 	"contains":       Contains,
 	"starts":         Starts,
