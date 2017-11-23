@@ -29,10 +29,11 @@ build/gostatic-64-%: $(SOURCE)
 	CGO_ENABLED=0 GOOS=$(firstword $($*) $*) GOARCH=amd64 $(GOBUILD) -o $@
 
 # NOTE: first push a tag, then make release!
-release: $(ALL)
 ifndef desc
-	@echo "Run it as 'make release desc=tralala'"
+release:
+	@echo "You forgot description! Run it as 'make release desc=tralala'"
 else
+release: $(ALL)
 	github-release release -u piranha -r gostatic -t "$(TAG)" -n "$(TAG)" --description '$(desc)'
 	@for x in $(ALL); do \
 		github-release upload -u piranha \
