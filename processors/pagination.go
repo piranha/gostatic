@@ -60,8 +60,8 @@ func CurrentPaginator(current *gostatic.Page) *Paginator {
 
 func NewPaginator() *Paginator {
 	p := &Paginator{
-	//Paginated:  map[string]PageSlice{},
-	//Paginators: map[string]*Paginator{},
+		//Paginated:  map[string]PageSlice{},
+		//Paginators: map[string]*Paginator{},
 	}
 	return p
 }
