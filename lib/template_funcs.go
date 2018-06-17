@@ -163,7 +163,7 @@ func Excerpt(text string, maxWords int) string {
 }
 
 func Even(value int) bool {
-	return value % 2 == 0
+	return value%2 == 0
 }
 
 func Odd(value int) bool {
