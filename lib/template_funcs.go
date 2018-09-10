@@ -35,16 +35,16 @@ func Cut(begin, end, value string) (string, error) {
 	}
 
 	bloc := bre.FindIndex([]byte(value))
+	if bloc != nil {
+		value = value[bloc[1]:]
+	}
+
 	eloc := ere.FindIndex([]byte(value))
-
-	if bloc == nil {
-		bloc = []int{0, 0}
-	}
 	if eloc == nil {
-		eloc = []int{len(value)}
+		return value, nil
 	}
 
-	return value[bloc[1]:eloc[0]], nil
+	return value[:eloc[0]], nil
 }
 
 func Hash(value string) string {

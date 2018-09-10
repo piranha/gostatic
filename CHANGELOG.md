@@ -1,5 +1,9 @@
 # Gostatic changelog
 
+## 2.12
+
+Now `cut` searches for the `end` *after* end of `begin` match.
+
 ## 2.11
 
 New template function: `replacere`.
@@ -20,8 +24,8 @@ Two new template functions: `starts` and `ends`.
 
 ## 2.7
 
-- Ability to have multiple configurations for a single path (so you can have
-  multiple outputs from one file).
+Ability to have multiple configurations for a single path (so you can have
+multiple outputs from one file).
 
 ## 2.6
 
