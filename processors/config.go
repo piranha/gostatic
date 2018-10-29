@@ -1,8 +1,9 @@
 package processors
 
 import (
-	gostatic "github.com/piranha/gostatic/lib"
 	"regexp"
+
+	gostatic "github.com/piranha/gostatic/lib"
 )
 
 var reSeparator = regexp.MustCompile(`(?m:^----\r?\n)`)

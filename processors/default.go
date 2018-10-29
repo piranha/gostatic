@@ -4,6 +4,7 @@ import (
 	gostatic "github.com/piranha/gostatic/lib"
 )
 
+// DefaultProcessors is variable of processors
 var DefaultProcessors = gostatic.ProcessorMap{
 	"template":               NewTemplateProcessor(),
 	"inner-template":         NewInnerTemplateProcessor(),
@@ -19,4 +20,6 @@ var DefaultProcessors = gostatic.ProcessorMap{
 	"external":               NewExternalProcessor(),
 	"ignore":                 NewIgnoreProcessor(),
 	"ignorefuture":           NewIgnoreFutureProcessor(),
+	"jekyllify":              NewJekyllifyProcessor(),
+	"yaml":                   NewYamlProcessor(),
 }

@@ -1,6 +1,6 @@
 SOURCE = $(shell find . -name '*.go')
 TAG ?= $(shell git describe --tags)
-GOBUILD = go build -ldflags '-w'
+GOBUILD = go build -ldflags '-s -w'
 
 ALL = \
 	$(foreach suffix,linux osx win.exe,\
@@ -27,6 +27,7 @@ osx = darwin
 build/gostatic-64-%: $(SOURCE)
 	@mkdir -p $(@D)
 	CGO_ENABLED=0 GOOS=$(firstword $($*) $*) GOARCH=amd64 $(GOBUILD) -o $@
+	@type upx >/dev/null 2>&1 && upx $@
 
 # NOTE: first push a tag, then make release!
 ifndef desc

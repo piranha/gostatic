@@ -8,6 +8,8 @@ import (
 	"reflect"
 	"strings"
 	"time"
+
+	"gopkg.in/yaml.v2"
 )
 
 type PageHeader struct {
@@ -115,6 +117,31 @@ func ParseHeader(source string) *PageHeader {
 
 	for _, line := range strings.Split(source, "\n") {
 		cfg.ParseLine(line, &s)
+	}
+
+	return cfg
+}
+
+func ParseYamlHeader(source string) *PageHeader {
+	cfg := NewPageHeader()
+
+	s := reflect.ValueOf(cfg).Elem()
+
+	// Set default values
+	t := s.Type()
+	for i := 0; i < s.NumField(); i++ {
+		def := t.Field(i).Tag.Get("default")
+		if len(def) != 0 {
+			cfg.SetValue(t.Field(i).Name, def, &s)
+		}
+	}
+
+	m := make(map[string]string)
+	yaml.Unmarshal([]byte(source), &m)
+
+	for key, value := range m {
+		key := strings.ToUpper(key[0:1]) + key[1:]
+		cfg.SetValue(key, value, &s)
 	}
 
 	return cfg
