@@ -259,7 +259,7 @@ You can always check list of available processors with `gostatic --processors`.
   how to phrase this better).
 
 - `jekyllify` - creating pages in jekyll style, for example, the page 
-  `2018-02-02-name.md`will be  converted to `/2018/02/02/name.md`.
+  `2018-02-02-name.md` will be converted to `/2018/02/02/name.md`.
 
 - `yaml` - read the configuration for the page using yaml format (like jekyll).
 
