@@ -354,7 +354,7 @@ func (pages PageSlice) Children(root string) *PageSlice {
 
 	for _, page := range pages {
 		if !page.Hide &&
-			strings.HasPrefix(page.Url(), root) &&
+			strings.HasPrefix(page.Source, root) &&
 			page.Url() != root {
 			children = append(children, page)
 		}
