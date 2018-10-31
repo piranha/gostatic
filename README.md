@@ -1,18 +1,19 @@
 # gostatic
 
-Gostatic is a static site generator. What distinguishes it from most of other tools is
-that it's written in Go and tracks changes, which means it should work
-reasonably [fast](#speed).
+Gostatic is a static site generator. It tracks file changes during compilation,
+which is why it works reasonably [fast](#speed). Also it provides framework for
+configuration akin to Make, which makes it easy to understand and to write
+custom configurations.
 
 Features include:
 
- - No run-time dependencies, just a single binary - download it and run
+ - No run-time dependencies, just a single binary - [download](https://github.com/piranha/gostatic/releases/) it and run
  - Dependency tracking and re-rendering only changed pages
  - Markdown support
- - Flexible [filter system](#processors)
  - Simple [config syntax](#configuration)
+ - Flexible [filter system](#processors)
  - Support for pagination
- - Plays well with external scripts
+ - Plays well with external commands and scripts
  - HTTP server and watcher (instant rendering on changes)
  - Suitable for automation (ability to query state with `gostatic --dump`)
 

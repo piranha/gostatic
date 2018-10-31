@@ -27,7 +27,7 @@ mac = darwin
 build/gostatic-64-%: $(SOURCE)
 	@mkdir -p $(@D)
 	CGO_ENABLED=0 GOOS=$(firstword $($*) $*) GOARCH=amd64 $(GOBUILD) -o $@
-	@type upx >/dev/null 2>&1 && upx -qq $@ || exit 0
+#	@type upx >/dev/null 2>&1 && upx -qq $@ || exit 0
 
 # NOTE: first push a tag, then make release!
 ifndef desc
