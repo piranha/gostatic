@@ -1,5 +1,11 @@
 # Gostatic changelog
 
+## 2.13
+
+New processors for people switching from Jekyll: `jekyllify` to convert posts to
+a familiar path, and `yaml` to process headers as YAML (rather than whatever
+custom stuff gostatic uses by default).
+
 ## 2.12
 
 Now `cut` searches for the `end` *after* end of `begin` match.
