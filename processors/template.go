@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+
 	gostatic "github.com/piranha/gostatic/lib"
 )
 
@@ -60,6 +61,7 @@ func ProcessInnerTemplate(page *gostatic.Page, args []string) error {
 	//todo catch
 	defer func() {
 		if err := recover(); err != nil {
+			fmt.Printf("%s: %s\n", page.Source, err)
 			//return fmt.Sprintf("%s: %s", page.Source, err)
 		}
 	}()
@@ -70,13 +72,13 @@ func ProcessInnerTemplate(page *gostatic.Page, args []string) error {
 	}
 	t, err = t.New("ad-hoc").Parse(page.Content())
 	if err != nil {
-		return errors.New(fmt.Sprintf("Page %s: %s", page.Source, err))
+		return fmt.Errorf("Page %s: %s", page.Source, err)
 	}
 
 	var buffer bytes.Buffer
 	err = t.ExecuteTemplate(&buffer, "ad-hoc", page)
 	if err != nil {
-		return errors.New(fmt.Sprintf("Page %s: %s", page.Source, err))
+		return fmt.Errorf("Page %s: %s", page.Source, err)
 	}
 
 	page.SetContent(buffer.String())
