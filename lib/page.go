@@ -14,6 +14,9 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	"golang.org/x/text/encoding/unicode"
+	"golang.org/x/text/transform"
 )
 
 const (
@@ -80,13 +83,24 @@ func NewPages(site *Site, path string) PageSlice {
 
 func (page *Page) Raw() string {
 	if !page.wasread {
-		data, err := ioutil.ReadFile(page.FullPath())
+		fd, err := os.Open(page.FullPath())
 		errhandle(err)
+		defer fd.Close()
+		r := newReader(fd)
+		data, err := ioutil.ReadAll(r)
+		errhandle(err)
+
 		page.raw = string(data)
 		page.wasread = true
 		debug("Page '%s' was read, is of length %d\n", page.FullPath(), len(page.raw))
 	}
 	return page.raw
+}
+
+func newReader(rd io.Reader) io.Reader {
+	winutf := unicode.UTF16(unicode.LittleEndian, unicode.IgnoreBOM)
+	decoder := winutf.NewDecoder()
+	return transform.NewReader(rd, unicode.BOMOverride(decoder))
 }
 
 func (page *Page) Content() string {
