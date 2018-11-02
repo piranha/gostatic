@@ -84,6 +84,7 @@ func (page *Page) Raw() string {
 		data, err := ioutil.ReadFile(page.FullPath())
 		errhandle(err)
 
+		// remove BOM if present
 		if bytes.HasPrefix(data, []byte{0xEF, 0xBB, 0xBF}) {
 			data = data[3:]
 		}
