@@ -4,6 +4,7 @@
 package gostatic
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -82,6 +83,11 @@ func (page *Page) Raw() string {
 	if !page.wasread {
 		data, err := ioutil.ReadFile(page.FullPath())
 		errhandle(err)
+
+		if bytes.HasPrefix(data, []byte{0xEF, 0xBB, 0xBF}) {
+			data = data[3:]
+		}
+
 		page.raw = string(data)
 		page.wasread = true
 		debug("Page '%s' was read, is of length %d\n", page.FullPath(), len(page.raw))
