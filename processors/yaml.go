@@ -32,7 +32,7 @@ func (p *YamlProcessor) Mode() int {
 
 // ProcessYaml is function for proccess yaml header
 func ProcessYaml(page *gostatic.Page, args []string) error {
-	r, err := regexp.Compile(`(?sm)^---$(.*)^---$(.*)`)
+	r, err := regexp.Compile(`(?sm)^---\r?\n(.*)^---\r?\n(.*)`)
 	if err != nil {
 		panic(err)
 	}
