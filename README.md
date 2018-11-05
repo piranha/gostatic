@@ -2,8 +2,8 @@
 
 Gostatic is a static site generator. It tracks file changes during compilation,
 which is why it works reasonably [fast](#speed). Also it provides framework for
-configuration akin to Make, which makes it easy to understand and to write
-custom configurations.
+[configuration](#configuration) akin to Make, which makes it easy to understand
+and to write custom configurations.
 
 Features include:
 
@@ -84,29 +84,29 @@ add more information there!
 ## Approach
 
 Each given file is processed through a pipeline of filters, which modify the
-state and then rendered on disk. Single input file corresponds to a single
-output file, but filters can generate virtual input files.
+file state and then rendered on disk. Single input file corresponds to a single
+output file, but filters can generate virtual input files (like tag files).
 
-Each file can have dependencies, and will be rendered in case it does not exist,
-or its source is newer than output, or one of this is the case for one of its
-dependencies.
+File is rendering in those cases:
 
-All read pages are sorted by date. This date is taken in their
-[config](#page-config) or, in case if config is absent or dates there are equal,
-by file modification time.
+- output file does not exists
+- file source is newer than it's output
+- one of those is the case for one of file's dependencies
+
+All files are sorted by date. This date is taken in their [config](#page-config)
+or, in case if date in config is absent or dates there are equal, by file
+modification time.
 
 ## Speed
 
-On late 2008 MacBook (C2D 2.4 GHz, 8 GB RAM, 5400 rpm HDD) it takes `0.3s` to
-generate a site of 250 pages. It costs `0.05s` to check there are no
-modifications and `0.1s` to re-render a single changed page (along with index
-and tag pages, coming to 77 pages in total).
+On 2015 MacBook Air (i7 2.2, 8 GB RAM, SSD) it takes `0.45s` to generate a site
+of 630 pages (`0.18s` for 250 pages, seems to be linear), `0.1s` to check there
+are no modifications and `0.16s` to re-render a single changed page (along with
+index and tag pages, coming to 93 pages in total).
 
-Same timings on late 2012 MacBook Air (i7 2.0, 8 GB RAM, SSD) - `0.18s`, `0.03s`
-and `0.08s`. Also note that if you're using various external post-processors
-(like uglifyjs or lessc) they tend to slow down things a bit (for my specific
-use case both uglifyjs and lessc add another `0.4s` when files they process
-change).
+Also note that if you're using various external post-processors (like uglifyjs
+or sassc) they tend to slow down things a bit (for my specific use case both
+uglifyjs and sassc add another `0.25s` when files they process change).
 
 ## External resources
 
@@ -152,10 +152,10 @@ Here we have constants declaration (first three lines), a comment and then three
 rules. One for any markdown file, one specifically for index.md and one for
 generated tags.
 
-Note: Specific rules override generic matching rules, but logic is not exactly
-very smart, and there is no real precedence defined, so if you have several
-matches for a single file you could end up with any of them. Note that there is
-some order: exact path match, exact name match, glob path match, glob name
+Specific rules override generic matching rules, but logic is not exactly very
+smart, and there is no real precedence defined, so if you have several matches
+for a single file you could end up with any of them. Note that there is some
+order: exact path match, exact name match, glob path match, glob name
 match. NOTE: this may change in future.
 
 Rules consist of path/match, list of dependencies (also paths and matches, the
