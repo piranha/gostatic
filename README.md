@@ -108,13 +108,14 @@ Also note that if you're using various external post-processors (like uglifyjs
 or sassc) they tend to slow down things a bit (for my specific use case both
 uglifyjs and sassc add another `0.25s` when files they process change).
 
-To reproduce numbers, [download gostatic][], clone [solovyov.net][], comment out
-`:uglifyjs` and `:sassc` in `config` and then run:
+To reproduce numbers, [download hyperfine][], [download gostatic][], clone
+[solovyov.net][], comment out `:uglifyjs` and `:sassc` in `config` and then run:
 
 - `hyperfine 'gostatic -f config'`
 - `hyperfine 'gostatic config'`
 - `hyperfine 'touch src/blog/2017/fuji-raw.md && gostatic config'`
 
+[download hyperfine]: https://github.com/sharkdp/hyperfine/releases
 [download gostatic]: https://github.com/piranha/gostatic/releases
 [solovyov.net]: https://github.com/piranha/solovyov.net
 
