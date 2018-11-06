@@ -26,7 +26,7 @@ func (p *YamlProcessor) Mode() int {
 }
 
 func ProcessYaml(page *gostatic.Page, args []string) error {
-	r, err := regexp.Compile(`(?sm)^---\r?\n(.*)^---\r?\n(.*)`)
+	r, err := regexp.Compile(`(?sm)(^---\r?\n.*)^---\r?\n(.*)`)
 	if err != nil {
 		panic(err)
 	}

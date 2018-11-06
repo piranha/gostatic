@@ -6,6 +6,7 @@ package gostatic
 import (
 	"fmt"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 
@@ -136,12 +137,25 @@ func ParseYamlHeader(source string) *PageHeader {
 		}
 	}
 
-	m := make(map[string]string)
+	m := make(map[string]interface{})
 	yaml.Unmarshal([]byte(source), &m)
 
 	for key, value := range m {
 		key := strings.ToUpper(key[0:1]) + key[1:]
-		cfg.SetValue(key, value, &s)
+		switch value.(type) {
+		default:
+			cfg.SetValue(key, value.(string), &s)
+		case []interface{}:
+			temp := make([]string, len(value.([]interface{})))
+			for i, v := range value.([]interface{}) {
+				temp[i] = fmt.Sprint(v)
+			}
+			cfg.SetValue(key, strings.Join(temp, ","), &s)
+		case bool:
+			cfg.SetValue(key, strconv.FormatBool(value.(bool)), &s)
+		case nil:
+			continue
+		}
 	}
 
 	return cfg
