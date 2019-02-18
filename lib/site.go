@@ -61,7 +61,7 @@ func (site *Site) AddPages(path string) {
 	}
 }
 
-//todo make this function to method of Site
+// todo make this function to method of Site
 func Watch(s *Site) {
 	cnf := s.SiteConfig
 	processors := s.Processors
