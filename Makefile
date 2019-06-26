@@ -39,7 +39,7 @@ release: $(ALL)
 	@for x in $(ALL); do \
 		github-release upload -u piranha \
                               -r gostatic \
-                              -t $(TAG) \
+                              -t "$(TAG)" \
                               -f "$$x" \
                               -n "$$(basename $$x)" \
 		&& echo "Uploaded $$x"; \
