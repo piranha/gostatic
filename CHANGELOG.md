@@ -1,5 +1,14 @@
 # Gostatic changelog
 
+## 2.14
+
+- new template function: `matches`, checks for regexp in a string.
+- fixed parsing tags in YAML header
+- inner templates report their errors better now
+- support for BOM (easier to use with files created on Windows)
+- CRLF support
+- also, gomod - we have pinned versions of dependencies
+
 ## 2.13
 
 New processors for people switching from Jekyll: `jekyllify` to convert posts to
