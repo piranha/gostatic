@@ -323,14 +323,14 @@ expands on that a bit:
 - `split <separator> <value>` - split string by separator, generating an array
   (you can use `range` with result of this function).
 
-- `contains <needle> <value>` - check if a string (`value`) contains another one
-  (`needle`).
+- `contains <needle> <value>` - check if a string `value` contains `needle`.
 
-- `starts <needle> <value>` - check if a string (`value`) starts with another one
-  (`needle`).
+- `starts <needle> <value>` - check if a string `value` starts with `needle`.
 
-- `ends <needle> <value>` - check if a string (`value`) ends with another one
-  (`needle`).
+- `ends <needle> <value>` - check if a string `value` ends with `needle`.
+
+- `matches <pattern> <value>` - check if a
+  [regexp](https://golang.org/pkg/regexp/syntax/) `pattern` matches string `value`.
 
 - `markdown <value>` - convert a string (`value`) from Markdown to HTML.
 

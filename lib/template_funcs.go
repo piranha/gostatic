@@ -129,6 +129,11 @@ func Ends(needle, value string) bool {
 	return strings.HasSuffix(value, needle)
 }
 
+// Matches returns tre if regexp `pattern` matches string `value'.
+func Matches(pattern, value string) (bool, error) {
+	return regexp.MatchString(pattern, value)
+}
+
 // Exec runs a `cmd` with all supplied arguments
 func Exec(cmd string, arg ...string) (string, error) {
 	c := exec.Command(cmd, arg...)
@@ -187,6 +192,7 @@ var TemplateFuncMap = template.FuncMap{
 	"contains":       Contains,
 	"starts":         Starts,
 	"ends":           Ends,
+	"matches":        Matches,
 	"markdown":       Markdown,
 	"exec":           Exec,
 	"excerpt":        Excerpt,
