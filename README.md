@@ -187,7 +187,7 @@ There are three configuration constants:
 - `OUTPUT` - directory for output (relative to location of config)
 - `TEMPLATES` - list of files and/or directories (containing `*.tmpl` files),
 which will be parsed as Go templates. Each file can contain more than one
-template (see [docs](http://golang.org/pkg/text/template/#hdr-Nested_template_definitions)
+template (see [docs](https://golang.org/pkg/text/template/#hdr-Nested_template_definitions)
 on that).
 
 You can also use arbitrary names for constants to
@@ -278,7 +278,7 @@ You can always check list of available processors with `gostatic --processors`.
 ## Template API Reference
 
 Templating is provided using
-[Go templates](http://golang.org/pkg/text/template/). See link for documentation
+[Go templates](https://golang.org/pkg/text/template/). See link for documentation
 on syntax.
 
 Each template is executed in context of a [page](#page-interface). This means it
@@ -288,7 +288,7 @@ i.e. `{{ .Content }}` will output page content in place.
 ### Global functions
 
 Go template system provides some convenient
-[functions](http://golang.org/pkg/text/template/#hdr-Functions), and gostatic
+[functions](https://golang.org/pkg/text/template/#hdr-Functions), and gostatic
 expands on that a bit:
 
 - `changed <name> <value>` - checks if value has changed since previous call
@@ -422,7 +422,7 @@ expands on that a bit:
 
 - `.BySource <path>` - finds a page with source path `<path>`.
 - `.ByPath <path>` - finds a page with resulting path `<path>`.
-- `.GlobSource <pattern>` - list of pages, [matching](http://golang.org/pkg/path/#Match) source path `<pattern>`.
+- `.GlobSource <pattern>` - list of pages, [matching](https://golang.org/pkg/path/#Match) source path `<pattern>`.
 
 ### Site interface
 

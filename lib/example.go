@@ -18,7 +18,7 @@ TEMPLATES = site.tmpl
 SOURCE = src
 OUTPUT = site
 TITLE = Example Site
-URL = http://example.com/
+URL = https://example.com/
 AUTHOR = Your Name
 
 blog/*.md:
@@ -131,7 +131,7 @@ var ExampleFeed = `
   {{ end }}
   <author><name>{{ .Site.Other.Author }}</name></author>
   <link href="{{ .Site.Other.Url }}" rel="alternate"></link>
-  <generator uri="http://github.com/piranha/gostatic/">gostatic</generator>
+  <generator uri="https://github.com/piranha/gostatic">gostatic</generator>
 
 {{ with .Site.Pages.Children "blog/" }}
 {{ range .Slice 0 5 }}
@@ -161,7 +161,7 @@ title: First Post
 date: 2012-12-12
 tags: blog
 ----
-My first post with [gostatic](http://github.com/piranha/gostatic/).
+My first post with [gostatic](https://github.com/piranha/gostatic).
 `
 
 var ExampleStyle = `
