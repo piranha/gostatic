@@ -75,7 +75,7 @@ Fix `rename` processor for Windows.
 
 Major version - **breaking changes**.
 
-- **Backward incompatible** - [template functions](https://github.com/piranha/gostatic#global-functions) `cut` and `split` now have different order of arguments to better support [template pipelining](http://golang.org/pkg/text/template/#hdr-Pipelines).
+- **Backward incompatible** - [template functions](https://github.com/piranha/gostatic#global-functions) `cut` and `split` now have different order of arguments to better support [template pipelining](https://golang.org/pkg/text/template/#hdr-Pipelines).
 - Pagination is now supported, see `paginate` [processor](https://github.com/piranha/gostatic#processors) and `paginator` [template function](https://github.com/piranha/gostatic#global-functions).
 - Template and config changes are now tracked and will result in full re-render.
 - [Page](https://github.com/piranha/gostatic#page-interface) now has `.Raw` property, containing unprocessed data (but after `config` being consumed).
