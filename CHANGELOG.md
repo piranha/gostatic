@@ -1,5 +1,9 @@
 # Gostatic changelog
 
+## 2.15
+
+`.Reverse` is now available as a method on page lists.
+
 ## 2.14
 
 - new template function: `matches`, checks for regexp in a string.
