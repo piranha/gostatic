@@ -417,6 +417,7 @@ expands on that a bit:
 
 - `.Children <prefix>` - list of pages, nested under `<prefix>`.
 - `.WithTag <tag-name>` - list of pages, tagged with `<tag-name>`.
+- `.Reverse` - list of pages, sorted in reverse order.
 
 ----
 

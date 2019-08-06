@@ -352,8 +352,10 @@ func (pages PageSlice) Sort() {
 	sort.Sort(pages)
 }
 
-func (pages PageSlice) Reverse() {
-	sort.Sort(sort.Reverse(pages))
+func (pages PageSlice) Reverse() *PageSlice {
+	p1 := append(PageSlice(nil), pages...)
+	sort.Sort(sort.Reverse(p1))
+	return &p1
 }
 
 func (pages PageSlice) Children(root string) *PageSlice {
