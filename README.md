@@ -339,6 +339,9 @@ expands on that a bit:
 
 - `exec <cmd> [<arg1> <arg2> ....]` - exec a command with (optional) arguments.
 
+- `exectext <cmd> [<arg1> <arg2> ....] <text>` - exec a command with (optional)
+  arguments and `text` bound to command's stdin.
+
 - `excerpt <text> <maxWordCount>` - Gets an excerpt from the given text, to a
   maximum of `maxWordCount` words. When the text is shortened, it will produce
   an `[...]` string, denoting there's more. For example, `The quick brown fox`

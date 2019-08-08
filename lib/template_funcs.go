@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"hash/adler32"
 	"io"
+	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"text/template"
@@ -136,7 +138,51 @@ func Matches(pattern, value string) (bool, error) {
 
 // Exec runs a `cmd` with all supplied arguments
 func Exec(cmd string, arg ...string) (string, error) {
-	c := exec.Command(cmd, arg...)
+	path, err := exec.LookPath(cmd)
+	if err != nil {
+		current, err := os.Getwd()
+		if err != nil {
+			return "", err
+		}
+		path, err = exec.LookPath(filepath.Join(current, cmd))
+		if err != nil {
+			return "", fmt.Errorf("command '%s' not found", cmd)
+		}
+	}
+
+	c := exec.Command(path, arg...)
+	out, err := c.CombinedOutput()
+	return string(out), err
+}
+
+// ExecText runs a `cmd` with all supplied arguments with stdin bound to first argument
+func ExecText(cmd string, arg ...string) (string, error) {
+	text := arg[len(arg)-1]
+	arg = arg[:len(arg)-1]
+
+	path, err := exec.LookPath(cmd)
+	if err != nil {
+		current, err := os.Getwd()
+		if err != nil {
+			return "", err
+		}
+		path, err = exec.LookPath(filepath.Join(current, cmd))
+		if err != nil {
+			return "", fmt.Errorf("command '%s' not found", cmd)
+		}
+	}
+
+	c := exec.Command(path, arg...)
+	stdin, err := c.StdinPipe()
+	if err != nil {
+		return "", err
+	}
+
+	go func() {
+		defer stdin.Close()
+		io.WriteString(stdin, text)
+	}()
+
 	out, err := c.CombinedOutput()
 	return string(out), err
 }
@@ -195,6 +241,7 @@ var TemplateFuncMap = template.FuncMap{
 	"matches":        Matches,
 	"markdown":       Markdown,
 	"exec":           Exec,
+	"exectext":       ExecText,
 	"excerpt":        Excerpt,
 	"even":           Even,
 	"odd":            Odd,
