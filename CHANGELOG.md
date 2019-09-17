@@ -1,5 +1,13 @@
 # Gostatic changelog
 
+## 2.17
+
+`.Has` for pages, `.Where` and `.WhereNot` for page lists.
+
+## 2.16
+
+`exectext` function.
+
 ## 2.15
 
 `.Reverse` is now available as a method on page lists.
