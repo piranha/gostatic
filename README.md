@@ -393,6 +393,10 @@ expands on that a bit:
   active elements in menu, for example.
 - `.UrlMatches <pattern>` - checks if page url matches regular expression
   `<pattern>`.
+- `.Has <field> <value>` - backend for `.Where` and `.WhereNot`, checks if field equals to value, or:
+   - `"Url"` - calls `UrlMatches`
+   - `"Tag"` - checks tag is present in `.Tags`
+   - `"Source"` - [matches](https://golang.org/pkg/path/#Match) source path for `value`.
 
 ### Paginator interface
 
@@ -427,6 +431,8 @@ expands on that a bit:
 - `.BySource <path>` - finds a page with source path `<path>`.
 - `.ByPath <path>` - finds a page with resulting path `<path>`.
 - `.GlobSource <pattern>` - list of pages, [matching](https://golang.org/pkg/path/#Match) source path `<pattern>`.
+- `.Where <field> <value>` - list of pages, which return `true` for `.Has <field> <value>`
+- `.WhereNot <field> <value>` - list of pages, which return `false` for `.Has <field> <value>`
 
 ### Site interface
 

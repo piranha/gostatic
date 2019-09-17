@@ -279,6 +279,20 @@ func (page *Page) UrlMatches(regex string) bool {
 	return re.Match([]byte(page.Url()))
 }
 
+func (page *Page) Has(field, value string) bool {
+	switch field {
+	case "Title": return page.Title == value
+	case "Tag": return (page.Tags != nil &&
+		SliceStringIndexOf(page.Tags, value) != -1)
+	case "Url": return page.UrlMatches(value)
+	case "Source": matched, _ := path.Match(value, page.Source)
+		return matched
+	case "Hide": return ((page.Hide == true && value == "true") ||
+		(page.Hide == false && value == "false"))
+	default: return page.Other[field] == value
+	}
+}
+
 func (page *Page) Prev() *Page {
 	return page.Site.Pages.Prev(page)
 }
@@ -423,4 +437,24 @@ func (pages PageSlice) ByPath(s string) *Page {
 		}
 	}
 	return nil
+}
+
+func (pages PageSlice) Where(field, value string) *PageSlice {
+	found := make(PageSlice, 0)
+	for _, page := range pages {
+		if page.Has(field, value) {
+			found = append(found, page)
+		}
+	}
+	return &found
+}
+
+func (pages PageSlice) WhereNot(field, value string) *PageSlice {
+	found := make(PageSlice, 0)
+	for _, page := range pages {
+		if !page.Has(field, value) {
+			found = append(found, page)
+		}
+	}
+	return &found
 }
