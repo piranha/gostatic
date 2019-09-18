@@ -33,7 +33,8 @@ If you need to automate downloading latest release, I use this script (change
 
 ```
 URL=$(curl -s https://api.github.com/repos/piranha/gostatic/releases | awk '/download_url.*64-linux/ { print $2; exit }')
-curl -s $(URL) -o gostatic
+curl -Lso gostatic $(URL)
+chmod +x gostatic
 ```
 
 ## Quick Start
