@@ -6,12 +6,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"os"
 	"path/filepath"
 
 	flags "github.com/jessevdk/go-flags"
 	gostatic "github.com/piranha/gostatic/lib"
+	hotreload "github.com/piranha/gostatic/hotreload"
 	"github.com/piranha/gostatic/processors"
 )
 
@@ -96,20 +96,20 @@ func main() {
 		return
 	}
 
-	config, err := gostatic.NewSiteConfig(args[0])
-	if err != nil {
-		errhandle(fmt.Errorf("invalid config file '%s': %v", args[0], err))
-		os.Exit(ExitCodeInvalidConfig)
-	}
+	// config, err := gostatic.NewSiteConfig(args[0])
+	// if err != nil {
+	// 	errhandle(fmt.Errorf("invalid config file '%s': %v", args[0], err))
+	// 	os.Exit(ExitCodeInvalidConfig)
+	// }
 
-	site := gostatic.NewSite(config, processors.DefaultProcessors)
+	site := gostatic.NewSite(args[0], processors.DefaultProcessors)
 
 	if opts.Force {
 		site.ForceRefresh = true
 	}
 
 	if opts.ShowConfig {
-		x, err := json.MarshalIndent(config, "", "  ")
+		x, err := json.MarshalIndent(site.SiteConfig, "", "  ")
 		errhandle(err)
 		fmt.Fprintln(os.Stderr, string(x))
 		return
@@ -135,17 +135,15 @@ func main() {
 	}
 
 	if opts.Watch {
-		go gostatic.Watch(site)
-		//StartWatcher(config, procs)
+		go hotreload.Watch([]string{site.SiteConfig.Source}, site.SiteConfig.Templates,
+			func() {
+				site.Reconfig()
+				site.Render()
+			})
+
 		out("Starting server at *:%s...\n", opts.Port)
 
-		fs := http.FileServer(http.Dir(config.Output))
-		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Cache-Control", "no-store")
-			fs.ServeHTTP(w, r)
-		})
-
-		err := http.ListenAndServe(":"+opts.Port, nil)
+		err := hotreload.ServeHTTP(site.SiteConfig.Output, opts.Port)
 		errhandle(err)
 	}
 }

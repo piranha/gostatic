@@ -1,15 +1,29 @@
 // (c) 2012 Alexander Solovyov
 // under terms of ISC license
 
-package gostatic
+package hotreload
 
 import (
-	"gopkg.in/fsnotify.v1"
+	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
+
+	"github.com/fsnotify/fsnotify"
 )
 
-func Watcher(config *SiteConfig) (chan string, error) {
+func watchAll(watcher *fsnotify.Watcher) filepath.WalkFunc {
+	return func(fn string, fi os.FileInfo, err error) error {
+		if err != nil {
+			return nil
+		}
+
+		watcher.Add(fn)
+		return nil
+	}
+}
+
+func fileWatcher(dirs, files []string) (chan string, error) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		return nil, err
@@ -21,6 +35,10 @@ func Watcher(config *SiteConfig) (chan string, error) {
 		for {
 			select {
 			case ev := <-watcher.Events:
+				if strings.HasPrefix(filepath.Base(ev.Name), ".") {
+					continue
+				}
+
 				if ev.Op&fsnotify.Create == fsnotify.Create {
 					watcher.Add(ev.Name)
 				} else if ev.Op&fsnotify.Remove == fsnotify.Remove {
@@ -29,26 +47,17 @@ func Watcher(config *SiteConfig) (chan string, error) {
 
 				evs <- ev.Name
 			case err := <-watcher.Errors:
-				errhandle(err)
+				fmt.Printf("Error: %s\n", err)
 			}
 		}
 	}()
 
-	filepath.Walk(config.Source, watchAll(watcher))
-	for _, path := range config.Templates {
+	for _, path := range dirs {
+		filepath.Walk(path, watchAll(watcher))
+	}
+	for _, path := range files {
 		watcher.Add(path)
 	}
 
 	return evs, nil
-}
-
-func watchAll(watcher *fsnotify.Watcher) filepath.WalkFunc {
-	return func(fn string, fi os.FileInfo, err error) error {
-		if err != nil {
-			return nil
-		}
-
-		watcher.Add(fn)
-		return nil
-	}
 }

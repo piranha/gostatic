@@ -14,6 +14,7 @@ import (
 )
 
 type Site struct {
+	ConfigPath string
 	SiteConfig
 	Template  *template.Template
 	ChangedAt time.Time
@@ -26,31 +27,49 @@ type Site struct {
 	Processors map[string]Processor
 }
 
-func NewSite(config *SiteConfig, procs ProcessorMap) *Site {
+// make new instance of Site
+func NewSite(configPath string, procs ProcessorMap) *Site {
+	site := &Site{
+		ConfigPath: configPath,
+		//SiteConfig: *config,
+		//Template:   template,
+		//ChangedAt:  changed,
+		//		Pages:      make(PageSlice, 0),
+		Processors: procs,
+	}
+
+	site.Reconfig()
+
+	return site
+}
+
+// read site config, templates and find all eligible pages
+func (site *Site) Reconfig() {
+	config, err := NewSiteConfig(site.ConfigPath)
+	if err != nil {
+		errhandle(fmt.Errorf("invalid config file '%s': %v", site.ConfigPath, err))
+		os.Exit(2) // ExitCodeInvalidConfig
+	}
+	site.SiteConfig = *config
+
 	template := template.New("no-idea-what-to-pass-here").Funcs(TemplateFuncMap)
-	template, err := template.ParseFiles(config.Templates...)
+	template, err = template.ParseFiles(site.SiteConfig.Templates...)
 	errhandle(err)
 
-	changed := config.changedAt
-	for _, fn := range config.Templates {
+	changed := site.SiteConfig.changedAt
+	for _, fn := range site.SiteConfig.Templates {
 		stat, err := os.Stat(fn)
 		if err == nil && changed.Before(stat.ModTime()) {
 			changed = stat.ModTime()
 		}
 	}
 
-	site := &Site{
-		SiteConfig: *config,
-		Template:   template,
-		ChangedAt:  changed,
-		Pages:      make(PageSlice, 0),
-		Processors: procs,
-	}
+	site.Template = template
+	site.ChangedAt = changed
+	site.Pages = make(PageSlice, 0)
 
 	site.Collect()
 	site.FindDeps()
-
-	return site
 }
 
 func (site *Site) AddPages(path string) {
@@ -59,28 +78,6 @@ func (site *Site) AddPages(path string) {
 			site.Pages = append(site.Pages, page)
 		}
 	}
-}
-
-//todo make this function to method of Site
-func Watch(s *Site) {
-	cnf := s.SiteConfig
-	processors := s.Processors
-	filemods, err := Watcher(&cnf)
-	errhandle(err)
-
-	go func() {
-		for {
-			fn := <-filemods
-			time.Sleep(10 * time.Millisecond)
-			if !strings.HasPrefix(filepath.Base(fn), ".") {
-				drainchannel(filemods)
-				// TODO: change it to site.Rerender()
-				site := NewSite(&cnf, processors)
-				site.Render()
-			}
-		}
-	}()
-
 }
 
 func (site *Site) Collect() {
