@@ -38,6 +38,7 @@ type Opts struct {
 	Force bool `short:"f" long:"force" description:"force building all pages"`
 
 	Watch bool   `short:"w" long:"watch" description:"serve site on HTTP and rebuild on changes"`
+	NoHotreload bool `long:"no-hotreload" description:"disable hot reload during --watch"`
 	Port  string `short:"p" long:"port" default:"8000" description:"port to serve on"`
 
 	Verbose bool `short:"v" long:"verbose" description:"enable verbose output"`
@@ -135,15 +136,16 @@ func main() {
 	}
 
 	if opts.Watch {
-		go hotreload.Watch([]string{site.SiteConfig.Source}, site.SiteConfig.Templates,
+		err := hotreload.Watch([]string{site.SiteConfig.Source}, site.SiteConfig.Templates,
 			func() {
 				site.Reconfig()
 				site.Render()
 			})
+		errhandle(err)
 
 		out("Starting server at *:%s...\n", opts.Port)
 
-		err := hotreload.ServeHTTP(site.SiteConfig.Output, opts.Port)
+		err = hotreload.ServeHTTP(site.SiteConfig.Output, opts.Port, !opts.NoHotreload)
 		errhandle(err)
 	}
 }

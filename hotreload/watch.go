@@ -29,7 +29,7 @@ func fileWatcher(dirs, files []string) (chan string, error) {
 		return nil, err
 	}
 
-	evs := make(chan string, 10)
+	evs := make(chan string, 50)
 
 	go func() {
 		for {
