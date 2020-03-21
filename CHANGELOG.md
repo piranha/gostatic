@@ -1,5 +1,9 @@
 # Gostatic changelog
 
+## 2.18
+
+Hot HTML code reload when in dev mode (using `gostatic -w/--watch`).
+
 ## 2.17
 
 `.Has` for pages, `.Where` and `.WhereNot` for page lists.

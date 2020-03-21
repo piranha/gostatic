@@ -37,7 +37,7 @@ type Opts struct {
 	// checked in Page.Changed()
 	Force bool `short:"f" long:"force" description:"force building all pages"`
 
-	Watch bool   `short:"w" long:"watch" description:"serve site on HTTP and rebuild on changes"`
+	Watch bool   `short:"w" long:"watch" description:"serve site on HTTP, rebuild on changes and hot reload HTML in browser"`
 	NoHotreload bool `long:"no-hotreload" description:"disable hot reload during --watch"`
 	Port  string `short:"p" long:"port" default:"8000" description:"port to serve on"`
 
