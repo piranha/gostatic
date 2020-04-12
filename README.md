@@ -231,10 +231,11 @@ You can always check list of available processors with `gostatic --processors`.
 
 - `ignore` - ignore file.
 
-- `rename <new-name>` - rename a file to `new-name`. New name can contain `*`,
-  then it will be replaced with whatever `*` captured in path match. Right now
-  rename touches **whole** path, so be careful (you may need to include whole
-  path in rename pattern) - *this may change in future*.
+- `rename <new-name>` - rename a file to `new-name`. Note this does not change
+  path to a file (you can use `..`, though, but be careful about platform
+  differences). If `new-name` contains `*`, then it'll be replaced with content
+  of `*` from path match. For example, with `blog/*.md: rename ../blog-*.html`
+  this will rename `blog/one.html` to `blog-one.html`.
 
 - `ext <.ext>` - change file extension to a given one (which should be prefixed
   with a dot).
