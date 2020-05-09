@@ -342,7 +342,9 @@ expands on that a bit:
 - `exec <cmd> [<arg1> <arg2> ....]` - exec a command with (optional) arguments.
 
 - `exectext <cmd> [<arg1> <arg2> ....] <text>` - exec a command with (optional)
-  arguments and `text` bound to command's stdin.
+  arguments and last argument (presumably some text) bound to command's
+  stdin. If you need to do something hard, use it like `{{ exectext "sh" "-c"
+  "pipe | line" .Content }}`.
 
 - `excerpt <text> <maxWordCount>` - Gets an excerpt from the given text, to a
   maximum of `maxWordCount` words. When the text is shortened, it will produce
@@ -352,6 +354,11 @@ expands on that a bit:
 - `even <n>` - tests if `n` is divisible by 2.
 
 - `odd <n>` - tests if `n` is not divisible by 2.
+
+- `count <text>` - returns a number of words in text.
+
+- `reading_time <text>` - returns reading time based on [average reading speed
+  being 200](https://help.medium.com/hc/en-us/articles/214991667-Read-time).
 
 ### Page interface
 

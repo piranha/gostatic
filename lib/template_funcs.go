@@ -155,7 +155,7 @@ func Exec(cmd string, arg ...string) (string, error) {
 	return string(out), err
 }
 
-// ExecText runs a `cmd` with all supplied arguments with stdin bound to first argument
+// ExecText runs a `cmd` with all supplied arguments with stdin bound to last argument
 func ExecText(cmd string, arg ...string) (string, error) {
 	text := arg[len(arg)-1]
 	arg = arg[:len(arg)-1]
@@ -221,6 +221,14 @@ func Odd(value int) bool {
 	return !Even(value) // checking for 1 fails for negative numbers
 }
 
+func Count(text string) int {
+	return len(strings.Split(text, " "))
+}
+
+func ReadingTime(text string) int {
+	return (Count(text) + 199) / 200
+}
+
 // TemplateFuncMap contains the mapping of function names and their corresponding
 // Go functions, to be used within templates.
 var TemplateFuncMap = template.FuncMap{
@@ -245,4 +253,6 @@ var TemplateFuncMap = template.FuncMap{
 	"excerpt":        Excerpt,
 	"even":           Even,
 	"odd":            Odd,
+	"count":          Count,
+	"reading_time":   ReadingTime,
 }
