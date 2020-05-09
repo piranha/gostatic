@@ -4,56 +4,69 @@ package hotreload
 // synchronized by hand from assets/hotreload.js
 var Script = []byte(`
 (function() {
-    if (!('WebSocket' in window)) {
-        return;
+  if (!('WebSocket' in window)) return;
+
+  var ws = new WebSocket(((window.location.protocol === "https:") ? "wss://" : "ws://") +
+                         window.location.host +
+                         "/.gostatic.hotreload");
+
+  ws.onmessage = function(e) {
+    localStorage.hotreloaddebug && console.log(e.data);
+    enqueue(e.data);
+  };
+
+  window.addEventListener('beforeunload', function(e) {
+    ws.close();
+  });
+
+  var MODES = new Set();
+  var timeout, timeoutS;
+
+  function enqueue(mode) {
+    MODES.add(mode);
+    if (!timeout) timeoutS = 32;
+    if (timeout) {
+      clearTimeout(timeout);
+      timeoutS = Math.min(timeoutS * 2, 1000);
     }
+    timeout = setTimeout(hotreload, timeoutS);
+  }
+  function hotreload() {
+    localStorage.hotreloaddebug && console.log('reload', MODES);
+    MODES.forEach(mode => RELOADERS[mode]());
+    MODES = new Set();
+    timeout = null;
+  }
 
-    var abort;
-
-    var ws = new WebSocket(((window.location.protocol === "https:") ? "wss://" : "ws://") +
-                           window.location.host +
-                           "/.gostatic.hotreload");
-
-    ws.onmessage = function(e) {
-        console.log(e.data);
-        if (e.data == "page") {
-            if (abort) {
-                abort.abort();
-            }
-
-            abort = new AbortController();
-            fetch(window.location.href,
-                  {mode: 'same-origin',
-                   headers: {'X-With': 'hotreload'},
-                   signal: abort.signal})
-                .then((res) => res.text())
-                .then((text) => {
-                    document.documentElement.innerHTML = text;
-                    var e = new Event('load', {'bubbles': true});
-                    window.dispatchEvent(e);
-                })
-                .catch((e) => {
-                    if (!(e.message == "The operation was aborted. ")) {
-                        console.log(e);
-                    }
-                });
-        } else if (e.data == "css") {
-            // This snippet pinched from quickreload, under the MIT license:
-            // https://github.com/bjoerge/quickreload/blob/master/client.js
-            var killcache = '__gostatic=' + new Date().getTime();
-            var stylesheets = Array.prototype.slice.call(
-                document.querySelectorAll('link[rel="stylesheet"]')
-            );
-            stylesheets.forEach(function (el) {
-                var href = el.href.replace(/(&|\?)__gostatic\=\d+/, '');
-                el.href = '';
-                el.href = href + (href.indexOf("?") == -1 ? '?' : '&') + killcache;
-            });
-        }
-    }
-
-    window.addEventListener('beforeunload', function(e) {
-        ws.close();
-    });
+  var RELOADERS = {
+    page: function reloadpage() {
+      fetch(window.location.href,
+            {mode:    'same-origin',
+             headers: {'X-With': 'hotreload'}})
+        .then(res => res.text())
+        .then(text => {
+          document.documentElement.innerHTML = text;
+          var e = new Event('load', {'bubbles': true});
+          window.dispatchEvent(e);
+        })
+        .catch(e => {
+          if (e.message != "The operation was aborted. ") {
+            console.log(e);
+          }
+        });
+    },
+    css: function reloadcss() {
+      // This snippet pinched from quickreload, under the MIT license:
+      // https://github.com/bjoerge/quickreload/blob/master/client.js
+      var killcache = '__gostatic=' + new Date().getTime();
+      var stylesheets = Array.prototype.slice.call(
+        document.querySelectorAll('link[rel="stylesheet"]')
+      );
+      stylesheets.forEach(function (el) {
+        var href = el.href.replace(/(&|\?)__gostatic\=\d+/, '');
+        el.href = '';
+        el.href = href + (href.indexOf("?") == -1 ? '?' : '&') + killcache;
+      });
+    }};
 })();
 `)

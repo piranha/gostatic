@@ -49,7 +49,7 @@ func (s *Server) run() {
 	for {
 		fns := []string{}
 		fns = append(fns, <-s.filemods)
-		time.Sleep(32 * time.Millisecond)
+		time.Sleep(16 * time.Millisecond)
 		for len(s.filemods) > 0 {
 			fns = append(fns, <-s.filemods)
 		}
