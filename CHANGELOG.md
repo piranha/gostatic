@@ -1,5 +1,10 @@
 # Gostatic changelog
 
+## 2.19
+
+- new template functions: `count` and `reading_time`
+- hot reloading has an exponential timeout up to a second to reduce flickering
+
 ## 2.18
 
 Hot HTML code reload when in dev mode (using `gostatic -w/--watch`).
