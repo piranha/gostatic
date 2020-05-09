@@ -1,5 +1,9 @@
 # Gostatic changelog
 
+## 2.20
+
+Increase number in `version.go`, because it still was 2.17 :)
+
 ## 2.19
 
 - new template functions: `count` and `reading_time`
