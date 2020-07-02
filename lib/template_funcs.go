@@ -229,6 +229,25 @@ func ReadingTime(text string) int {
 	return (Count(text) + 199) / 200
 }
 
+func Some(strs ...interface{}) string {
+	for _, x := range strs {
+		switch v := x.(type) {
+		case nil:
+			continue
+		case string:
+			if v != "" {
+				return v
+			}
+		default:
+			s := fmt.Sprintf("%v", v)
+			if s != "" {
+				return s
+			}
+		}
+	}
+	return ""
+}
+
 // TemplateFuncMap contains the mapping of function names and their corresponding
 // Go functions, to be used within templates.
 var TemplateFuncMap = template.FuncMap{
@@ -255,4 +274,5 @@ var TemplateFuncMap = template.FuncMap{
 	"odd":            Odd,
 	"count":          Count,
 	"reading_time":   ReadingTime,
+	"some":           Some,
 }

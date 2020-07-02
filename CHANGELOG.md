@@ -1,5 +1,9 @@
 # Gostatic changelog
 
+## 2.21
+
+New template function - `some`: returns first non-nil value, intended to use instead of lengthy ifs
+
 ## 2.20
 
 Increase number in `version.go`, because it still was 2.17 :)

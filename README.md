@@ -360,6 +360,8 @@ expands on that a bit:
 - `reading_time <text>` - returns reading time based on [average reading speed
   being 200](https://help.medium.com/hc/en-us/articles/214991667-Read-time).
 
+- `some <x> <x> <x>....` - returns first non-nil value as a string
+
 ### Page interface
 
 - `.Site` - global [site object](#site-interface).
