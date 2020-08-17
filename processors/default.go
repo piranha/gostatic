@@ -22,4 +22,5 @@ var DefaultProcessors = gostatic.ProcessorMap{
 	"ignorefuture":           NewIgnoreFutureProcessor(),
 	"jekyllify":              NewJekyllifyProcessor(),
 	"yaml":                   NewYamlProcessor(),
+	"minify":                 NewMinifyProcessor(),
 }
