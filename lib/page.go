@@ -146,6 +146,9 @@ func (page *Page) Rel(path string) string {
 	if root == "" {
 		root = "./"
 	}
+	if len(path) == 0 {
+		return root
+	}
 	if path[0] == '/' {
 		return root + path[1:]
 	}
