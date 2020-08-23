@@ -9,7 +9,7 @@ Features include:
 
  - No run-time dependencies, just a single binary - [download](https://github.com/piranha/gostatic/releases/) it and run
  - Dependency tracking and re-rendering only changed pages
- - Markdown support
+ - Markdown support - [Commonmark](https://commonmark.org/) via [goldmark](https://github.com/yuin/goldmark/)
  - Simple [config syntax](#configuration)
  - Flexible [filter system](#processors)
  - Support for pagination
