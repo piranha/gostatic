@@ -29,6 +29,7 @@ func Markdown(source string) string {
 		),
 		goldmark.WithRendererOptions(
 			html.WithXHTML(),
+			html.WithUnsafe(),
 		),
 	)
 

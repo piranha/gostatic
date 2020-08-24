@@ -1,5 +1,9 @@
 # Gostatic changelog
 
+## 2.23
+
+Enabled unsafe HTML for goldmark - it won't omit raw HTML when rendering
+
 ## 2.22
 
 Switch markdown library from [blackfriday](github.com/russross/blackfriday) to [goldmark](https://github.com/yuin/goldmark/), adding support of Commonmark, and, notably, smartypants-like features.
