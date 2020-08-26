@@ -51,13 +51,10 @@ func (s *Site) ProcessCommand(page *Page, cmd *Command, pre bool) error {
 
 	processor := s.Processors[bits[0]]
 	if processor == nil {
-		return fmt.Errorf("Processor is nil")
+		return fmt.Errorf("processor '%s' not found", bits[0])
 	}
 	if (processor.Mode()&Pre != 0) != pre {
 		return nil
-	}
-	if processor == nil {
-		return fmt.Errorf("processor '%s' not found", bits[0])
 	}
 	return processor.Process(page, bits[1:])
 }
