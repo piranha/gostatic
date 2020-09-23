@@ -1,5 +1,10 @@
 # Gostatic changelog
 
+## 2.24
+
+- `cut` now will return empty string if one of regexes did not match
+- now invalid processor names from config are reported in a better way - their name is included in error message
+
 ## 2.23
 
 Enabled unsafe HTML for goldmark - it won't omit raw HTML when rendering
