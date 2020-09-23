@@ -37,13 +37,14 @@ func Cut(begin, end, value string) (string, error) {
 	}
 
 	bloc := bre.FindIndex([]byte(value))
-	if bloc != nil {
-		value = value[bloc[1]:]
+	if bloc == nil {
+		return "", nil
 	}
+	value = value[bloc[1]:]
 
 	eloc := ere.FindIndex([]byte(value))
 	if eloc == nil {
-		return value, nil
+		return "", nil
 	}
 
 	return value[:eloc[0]], nil
