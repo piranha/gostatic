@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	flags "github.com/jessevdk/go-flags"
 	gostatic "github.com/piranha/gostatic/lib"
@@ -80,7 +81,13 @@ func main() {
 	if opts.InitExample != nil {
 		target, _ := os.Getwd()
 		if len(*opts.InitExample) > 0 {
-			target = filepath.Join(target, *opts.InitExample)
+			// If an absolute path was given, use verbatim. Otherwise rebase path
+			// on top of current working directory.
+			if strings.HasPrefix(*opts.InitExample, "/") {
+			        target = *opts.InitExample
+			} else {
+			        target = filepath.Join(target, *opts.InitExample)
+			}
 		}
 		gostatic.WriteExample(target)
 		return
