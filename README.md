@@ -362,6 +362,10 @@ expands on that a bit:
 
 - `some <x> <x> <x>....` - returns first non-nil value as a string
 
+- `dir <path>` - returns all but the last element of a path (same as [filepath.Dir](https://golang.org/pkg/path/filepath/#Dir))
+
+- `base <path>` - returns the last element of a path (same as [filepath.Base](https://golang.org/pkg/path/filepath/#Base))
+
 ### Page interface
 
 - `.Site` - global [site object](#site-interface).
