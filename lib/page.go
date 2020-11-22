@@ -9,12 +9,12 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
-	"path"
 	"path/filepath"
 	"regexp"
 	"sort"
 	"strings"
 	"time"
+	"github.com/bmatcuk/doublestar/v2"
 )
 
 const (
@@ -288,7 +288,7 @@ func (page *Page) Has(field, value string) bool {
 	case "Tag": return (page.Tags != nil &&
 		SliceStringIndexOf(page.Tags, value) != -1)
 	case "Url": return page.UrlMatches(value)
-	case "Source": matched, _ := path.Match(value, page.Source)
+	case "Source": matched, _ := doublestar.Match(value, page.Source)
 		return matched
 	case "Hide": return ((page.Hide == true && value == "true") ||
 		(page.Hide == false && value == "false"))
@@ -425,7 +425,7 @@ func (pages PageSlice) GlobSource(pattern string) *PageSlice {
 	found := make(PageSlice, 0)
 
 	for _, page := range pages {
-		if matched, _ := path.Match(pattern, page.Source); matched {
+		if matched, _ := doublestar.Match(pattern, page.Source); matched {
 			found = append(found, page)
 		}
 	}
