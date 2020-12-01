@@ -11,6 +11,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+	"github.com/bmatcuk/doublestar/v2"
 )
 
 // Command is a command belonging to a Rule. For example, `markdown', `directorify'.
@@ -204,7 +205,7 @@ func (cmd Command) Matches(prefix Command) bool {
 
 func (rule *Rule) IsDep(page *Page) bool {
 	for _, dep := range rule.Deps {
-		matches, err := filepath.Match(dep, page.Source)
+		matches, err := doublestar.Match(dep, page.Source)
 		if err == nil && matches {
 			return true
 		}
@@ -223,7 +224,7 @@ func (rules RuleMap) MatchedRules(path string) (string, []*Rule) {
 	}
 
 	for pat, subset := range rules {
-		matched, err := filepath.Match(pat, path)
+		matched, err := doublestar.Match(pat, path)
 		errhandle(err)
 		if matched {
 			return pat, subset
@@ -231,7 +232,7 @@ func (rules RuleMap) MatchedRules(path string) (string, []*Rule) {
 	}
 
 	for pat, subset := range rules {
-		matched, err := filepath.Match(pat, name)
+		matched, err := doublestar.Match(pat, name)
 		errhandle(err)
 		if matched {
 			return pat, subset
