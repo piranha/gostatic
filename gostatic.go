@@ -11,8 +11,8 @@ import (
 	"strings"
 
 	flags "github.com/jessevdk/go-flags"
-	gostatic "github.com/piranha/gostatic/lib"
 	hotreload "github.com/piranha/gostatic/hotreload"
+	gostatic "github.com/piranha/gostatic/lib"
 	"github.com/piranha/gostatic/processors"
 )
 
@@ -38,9 +38,9 @@ type Opts struct {
 	// checked in Page.Changed()
 	Force bool `short:"f" long:"force" description:"force building all pages"`
 
-	Watch bool   `short:"w" long:"watch" description:"serve site on HTTP, rebuild on changes and hot reload HTML in browser"`
-	NoHotreload bool `long:"no-hotreload" description:"disable hot reload during --watch"`
-	Port  string `short:"p" long:"port" default:"8000" description:"port to serve on"`
+	Watch       bool   `short:"w" long:"watch" description:"serve site on HTTP, rebuild on changes and hot reload HTML in browser"`
+	NoHotreload bool   `long:"no-hotreload" description:"disable hot reload during --watch"`
+	Port        string `short:"p" long:"port" default:"8000" description:"port to serve on"`
 
 	Verbose bool `short:"v" long:"verbose" description:"enable verbose output"`
 	Version bool `short:"V" long:"version" description:"show version and exit"`
@@ -84,9 +84,9 @@ func main() {
 			// If an absolute path was given, use verbatim. Otherwise rebase path
 			// on top of current working directory.
 			if strings.HasPrefix(*opts.InitExample, "/") {
-			        target = *opts.InitExample
+				target = *opts.InitExample
 			} else {
-			        target = filepath.Join(target, *opts.InitExample)
+				target = filepath.Join(target, *opts.InitExample)
 			}
 		}
 		gostatic.WriteExample(target)

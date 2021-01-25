@@ -1,5 +1,9 @@
 # Gostatic changelog
 
+## 2.25
+
+- all glob matches (like in config) support double stars to descend recursively, like `blog/**/*.md`
+- `dir` and `base` functions to manipulate paths in templates
 - `refind` function to find strings inside strings
 
 ## 2.24
