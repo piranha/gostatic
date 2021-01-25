@@ -384,9 +384,9 @@ expands on that a bit:
 ----
 
 - `.Source` - relative path to page source.
-- `.FullSource` - full path to page source.
+- `.FullPath` - full path to page source.
 - `.Path` - relative path to page destination.
-- `.FullPath` - full path to page destination.
+- `.OutputPath` - full path to page destination.
 - `.ModTime` - page last modification time.
 
 ----
