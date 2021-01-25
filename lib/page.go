@@ -159,7 +159,7 @@ func (page *Page) Is(path string) bool {
 	return page.Url() == path || page.Path == path
 }
 
-// Is used for dynamically created pages
+// SetWasRead is used for dynamically created pages
 func (page *Page) SetWasRead(wasread bool) {
 	page.wasread = wasread
 }
