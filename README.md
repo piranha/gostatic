@@ -334,6 +334,10 @@ expands on that a bit:
 - `matches <pattern> <value>` - check if a
   [regexp](https://golang.org/pkg/regexp/syntax/) `pattern` matches string `value`.
 
+- `refind <pattern> <value>` - apply regexp `pattern` to a string `value` and
+  return first submatch (the thing in parentheses), if any, or a whole matched
+  string.
+
 - `markdown <value>` - convert a string (`value`) from Markdown to HTML.
 
 - `paginator <page>` - get a [paginator](#paginator-interface) object for

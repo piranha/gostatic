@@ -1,5 +1,7 @@
 # Gostatic changelog
 
+- `refind` function to find strings inside strings
+
 ## 2.24
 
 - `cut` now will return empty string if one of regexes did not match

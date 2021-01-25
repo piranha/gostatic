@@ -137,6 +137,21 @@ func Matches(pattern, value string) (bool, error) {
 	return regexp.MatchString(pattern, value)
 }
 
+func ReFind(pattern, value string) (string, error) {
+	re, err := regexp.Compile(pattern)
+	if err != nil {
+		return "", err
+	}
+	m := re.FindStringSubmatch(value)
+
+	switch len(m) {
+	case 0: return "", nil
+		// return first submatch if there is any
+	case 1: return m[0], nil
+	default: return m[1], nil
+	}
+}
+
 // Exec runs a `cmd` with all supplied arguments
 func Exec(cmd string, arg ...string) (string, error) {
 	path, err := exec.LookPath(cmd)
@@ -267,6 +282,7 @@ var TemplateFuncMap = template.FuncMap{
 	"starts":         Starts,
 	"ends":           Ends,
 	"matches":        Matches,
+	"refind":         ReFind,
 	"markdown":       Markdown,
 	"exec":           Exec,
 	"exectext":       ExecText,
