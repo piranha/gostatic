@@ -264,6 +264,14 @@ func Some(strs ...interface{}) string {
 	return ""
 }
 
+func Dir(value string) string {
+	return filepath.Dir(value)
+}
+
+func Base(value string) string {
+	return filepath.Base(value)
+}
+
 // TemplateFuncMap contains the mapping of function names and their corresponding
 // Go functions, to be used within templates.
 var TemplateFuncMap = template.FuncMap{
@@ -292,4 +300,6 @@ var TemplateFuncMap = template.FuncMap{
 	"count":          Count,
 	"reading_time":   ReadingTime,
 	"some":           Some,
+	"dir":            Dir,
+	"base":           Base,
 }
