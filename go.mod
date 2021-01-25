@@ -1,6 +1,7 @@
 module github.com/piranha/gostatic
 
 require (
+	github.com/bmatcuk/doublestar/v2 v2.0.4
 	github.com/fsnotify/fsnotify v1.4.7
 	github.com/gorilla/websocket v1.4.1
 	github.com/jessevdk/go-flags v1.4.0
