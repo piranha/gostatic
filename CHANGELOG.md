@@ -1,5 +1,7 @@
 # Gostatic changelog
 
+- added ability to parse Github-like frontmatter, i.e. `---\nvar: content\n---`
+
 ## 2.25
 
 - all glob matches (like in config) support double stars to descend recursively, like `blog/**/*.md`
