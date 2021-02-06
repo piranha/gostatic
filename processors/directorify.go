@@ -22,7 +22,7 @@ func (p *DirectorifyProcessor) Description() string {
 }
 
 func (p *DirectorifyProcessor) Mode() int {
-	return gostatic.Pre
+	return 0
 }
 
 func ProcessDirectorify(page *gostatic.Page, args []string) error {

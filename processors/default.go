@@ -11,6 +11,7 @@ var DefaultProcessors = gostatic.ProcessorMap{
 	"config":                 NewConfigProcessor(),
 	"markdown":               NewMarkdownProcessor(),
 	"ext":                    NewExtProcessor(),
+	"datefilename":           NewDatefilenameProcessor(),
 	"directorify":            NewDirectorifyProcessor(),
 	"tags":                   NewTagsProcessor(),
 	"paginate":               NewPaginateProcessor(),
