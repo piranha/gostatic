@@ -31,15 +31,13 @@ func ProcessDatefilename(page *gostatic.Page, args []string) error {
 	name := page.Name()
 	dir := filepath.Dir(page.Path)
 
-	validName := regexp.MustCompile(`(?P<Year>\d{4})-(?P<Month>\d{2})-(?P<Day>\d{2})-(.*)`)
+	validName := regexp.MustCompile(`(\d{4}-\d{2}-\d{2})-(.*)`)
 	if validName.MatchString(name) {
-		date := validName.FindStringSubmatch(name)
-		page.Path = date[4]
-		value := date[1] + "-" + date[2] + "-" + date[3]
-		t, err := time.Parse("2006-01-02", value)
+		fnamecomponents := validName.FindStringSubmatch(name)
+		t, err := time.Parse("2006-01-02", fnamecomponents[1])
 		if err == nil {
 			page.Date = t
-			page.Path = dir + "/" + date[4]
+			page.Path = dir + "/" + fnamecomponents[2]
 		}
 	}
 	return nil
