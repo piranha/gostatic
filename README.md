@@ -240,6 +240,9 @@ You can always check list of available processors with `gostatic --processors`.
 - `ext <.ext>` - change file extension to a given one (which should be prefixed
   with a dot).
 
+- `datefilename` - rename a file from `whatever/2021-02-08-name.html` to
+  `whatever/name.html` and set the `page.Date` to `2021-02-08`.
+
 - `directorify` - rename a file from `whatever/name.html` to
   `whatever/name/index.html`.
 
@@ -272,7 +275,7 @@ You can always check list of available processors with `gostatic --processors`.
   [issue](https://github.com/piranha/gostatic/issues/new) if you have an idea
   how to phrase this better).
 
-- `jekyllify` - creating pages in jekyll style, for example, the page 
+- `jekyllify` - creating pages in jekyll style, for example, the page
   `2018-02-02-name.md` will be converted to `/2018/02/02/name.md`.
 
 - `yaml` - read the configuration for the page using yaml format (like jekyll).
