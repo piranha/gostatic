@@ -1,5 +1,9 @@
 # Gostatic changelog
 
+## 2.27
+
+- added `datefilename` processor
+
 ## 2.26
 
 - added ability to parse Github-like frontmatter, i.e. `---\nvar: content\n---`
