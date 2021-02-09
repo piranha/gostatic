@@ -1,0 +1,16 @@
+title: All Tags
+----
+
+<h1>{{ .Title }}</h1>
+
+{{ range .Site.Pages.GlobSource "tags/*.tag" }}
+<h2>{{ .Title }}</h2>
+<ul class="post-list">
+  {{ range .Site.Pages.WithTag .Title }}
+  <li>
+    {{ template "date" .Date }} - <a href="{{ $.Rel .Url }}">{{ .Title }}</a>
+  </li>
+  {{ end }}
+</ul>
+<hr/>
+{{ end }}

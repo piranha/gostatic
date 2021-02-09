@@ -1,0 +1,26 @@
+TEMPLATES = site.tmpl
+SOURCE = src
+OUTPUT = site
+TITLE = Example Site
+URL = https://example.com/
+AUTHOR = Your Name
+
+blog/*.md:
+	config
+	ext .html
+	directorify
+	tags tags/*.tag
+	markdown
+	template post
+	template page
+
+tags/*.tag: blog/*.md
+    ignore
+
+blog.atom: blog/*.md
+	inner-template
+
+*.html: blog/*.md
+	config
+	inner-template
+	template page

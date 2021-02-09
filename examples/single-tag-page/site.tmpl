@@ -1,0 +1,50 @@
+{{ define "header" }}<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="author" content="{{ html .Site.Other.Author }}">
+  <link rel="alternate" type="application/atom+xml" title="{{ html .Site.Other.Title }} feed" href="{{ .Rel "blog.atom" }}">
+  <title>{{ .Site.Other.Title }}{{ if .Title }}: {{ .Title }}{{ end }}</title>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{{ .Rel "static/style.css" }}">
+</head>
+<body>
+{{ end }}
+
+{{ define "footer" }}
+</body>
+</html>
+{{ end }}
+
+{{define "date"}}
+<time datetime="{{ .Format "2006-01-02T15:04:05Z07:00" }}">
+  {{ .Format "2006, January 02" }}
+</time>
+{{end}}
+
+{{ define "page" }}{{ template "header" . }}
+  {{ .Content }}
+{{ template "footer" . }}{{ end }}
+
+{{ define "post" }}
+<article>
+  <header>
+    <h1>{{ .Title }}</h1>
+    <div class="info">
+      {{ template "date" .Date }} &mdash;
+      {{ range $i, $t := .Tags }}{{if $i}},{{end}}
+      <a href="/tags/{{ $t }}/">{{ $t }}</a>{{ end }}
+    </div>
+  </header>
+  <section>
+  {{ .Content }}
+  </section>
+</article>
+{{ end }}
+
+{{define "tag"}}
+# Pages tagged with {{ .Title }}
+{{ range .Site.Pages.WithTag .Title }}
+- [{{ .Title }}](../../{{ .Url }})
+{{ end }}
+{{ end }}

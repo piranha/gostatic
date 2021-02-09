@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:thr="http://purl.org/syndication/thread/1.0">
+  <id>{{ .Site.Other.Url }}</id>
+  <title>{{ .Site.Other.Title }}</title>
+  {{ with .Site.Pages.Children "blog/" }}
+  <updated>{{ .First.Date.Format "2006-01-02T15:04:05Z07:00" }}</updated>
+  {{ end }}
+  <author><name>{{ .Site.Other.Author }}</name></author>
+  <link href="{{ .Site.Other.Url }}" rel="alternate"></link>
+  <generator uri="https://github.com/piranha/gostatic">gostatic</generator>
+
+{{ with .Site.Pages.Children "blog/" }}
+{{ range .Slice 0 5 }}
+<entry>
+  <id>{{ .Url }}</id>
+  <author><name>{{ or .Other.Author .Site.Other.Author }}</name></author>
+  <title type="html">{{ html .Title }}</title>
+  <published>{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}</published>
+  {{ range .Tags }}
+  <category term="{{ . }}"></category>
+  {{ end }}
+  <link href="{{ .Site.Other.Url }}/{{ .Url }}" rel="alternate"></link>
+  <content type="html">
+    {{/* .Process runs here in case only feed changed */}}
+    {{ with cut "<section>" "</section>" .Process.Content }}
+      {{ html . }}
+    {{ end }}
+  </content>
+</entry>
+{{ end }}
+{{ end }}
+</feed>

@@ -2,3 +2,4 @@
 /gostatic-*
 /test/out/
 /build/
+/examples/*/site/
