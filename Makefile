@@ -3,7 +3,7 @@ TAG ?= $(shell git describe --tags)
 GOBUILD = go build -ldflags '-s -w'
 
 ALL = \
-	$(foreach suffix,linux mac win.exe,\
+	$(foreach suffix,linux mac mac-arm64 win.exe,\
 		build/gostatic-64-$(suffix))
 
 all: $(ALL)
@@ -22,12 +22,13 @@ fmt:
 
 # os is determined as thus: if variable of suffix exists, it's taken, if not, then
 # suffix itself is taken
-win.exe = windows
-mac = darwin
+win.exe = GOOS=windows GOARCH=amd64
+linux = GOOS=linux GOARCH=amd64
+mac = GOOS=darwin GOARCH=amd64
+mac-arm64 = GOOS=darwin GOARCH=arm64
 build/gostatic-64-%: $(SOURCE)
 	@mkdir -p $(@D)
-	CGO_ENABLED=0 GOOS=$(firstword $($*) $*) GOARCH=amd64 $(GOBUILD) -o $@
-#	@type upx >/dev/null 2>&1 && upx -qq $@ || exit 0
+	CGO_ENABLED=0 $($*) $(GOBUILD) -o $@
 
 # NOTE: first push a tag, then make release!
 ifndef desc
