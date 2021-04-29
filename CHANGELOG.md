@@ -1,5 +1,7 @@
 # Gostatic changelog
 
+Hot reloading now uses morphdom and because of that screen doesn't flicker upon change
+
 ## 2.27
 
 - added `datefilename` processor

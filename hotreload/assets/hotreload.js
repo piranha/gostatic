@@ -1,13 +1,10 @@
 /* jshint esversion: 6 */
 
-/// This script is manually syncronized to assets.go
-
 (function() {
   if (!('WebSocket' in window)) return;
 
-  var ws = new WebSocket(((window.location.protocol === "https:") ? "wss://" : "ws://") +
-                         window.location.host +
-                         "/.gostatic.hotreload");
+  var proto = (location.protocol === "https:") ? "wss://" : "ws://";
+  var ws = new WebSocket(proto + location.host + "/.gostatic.hotreload");
 
   ws.onmessage = function(e) {
     localStorage.hotreloaddebug && console.log(e.data);
@@ -44,9 +41,10 @@
              headers: {'X-With': 'hotreload'}})
         .then(res => res.text())
         .then(text => {
-          document.documentElement.innerHTML = text;
-          var e = new Event('load', {'bubbles': true});
-          window.dispatchEvent(e);
+          morphdom(document.documentElement, text);
+          // document.documentElement.innerHTML = text;
+          // var e = new Event('load', {'bubbles': true});
+          // window.dispatchEvent(e);
         })
         .catch(e => {
           if (e.message != "The operation was aborted. ") {

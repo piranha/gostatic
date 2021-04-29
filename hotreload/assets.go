@@ -1,72 +1,9 @@
 package hotreload
 
-// Script is a JS to connect to websocket and hot reload stuff
-// synchronized by hand from assets/hotreload.js
-var Script = []byte(`
-(function() {
-  if (!('WebSocket' in window)) return;
+import _ "embed"
 
-  var ws = new WebSocket(((window.location.protocol === "https:") ? "wss://" : "ws://") +
-                         window.location.host +
-                         "/.gostatic.hotreload");
+//go:embed assets/morphdom.js
+var Morphdom []byte
 
-  ws.onmessage = function(e) {
-    localStorage.hotreloaddebug && console.log(e.data);
-    enqueue(e.data);
-  };
-
-  window.addEventListener('beforeunload', function(e) {
-    ws.close();
-  });
-
-  var MODES = new Set();
-  var timeout, timeoutS;
-
-  function enqueue(mode) {
-    MODES.add(mode);
-    if (!timeout) timeoutS = 32;
-    if (timeout) {
-      clearTimeout(timeout);
-      timeoutS = Math.min(timeoutS * 2, 1000);
-    }
-    timeout = setTimeout(hotreload, timeoutS);
-  }
-  function hotreload() {
-    localStorage.hotreloaddebug && console.log('reload', MODES);
-    MODES.forEach(mode => RELOADERS[mode]());
-    MODES = new Set();
-    timeout = null;
-  }
-
-  var RELOADERS = {
-    page: function reloadpage() {
-      fetch(window.location.href,
-            {mode:    'same-origin',
-             headers: {'X-With': 'hotreload'}})
-        .then(res => res.text())
-        .then(text => {
-          document.documentElement.innerHTML = text;
-          var e = new Event('load', {'bubbles': true});
-          window.dispatchEvent(e);
-        })
-        .catch(e => {
-          if (e.message != "The operation was aborted. ") {
-            console.log(e);
-          }
-        });
-    },
-    css: function reloadcss() {
-      // This snippet pinched from quickreload, under the MIT license:
-      // https://github.com/bjoerge/quickreload/blob/master/client.js
-      var killcache = '__gostatic=' + new Date().getTime();
-      var stylesheets = Array.prototype.slice.call(
-        document.querySelectorAll('link[rel="stylesheet"]')
-      );
-      stylesheets.forEach(function (el) {
-        var href = el.href.replace(/(&|\?)__gostatic\=\d+/, '');
-        el.href = '';
-        el.href = href + (href.indexOf("?") == -1 ? '?' : '&') + killcache;
-      });
-    }};
-})();
-`)
+//go:embed assets/hotreload.js
+var Script []byte

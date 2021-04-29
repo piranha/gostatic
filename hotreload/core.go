@@ -147,6 +147,7 @@ func ServeHTTP(source, port string, hotreload bool) error {
 	http.HandleFunc(ScriptPath, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/javascript")
 		w.Header().Set("Cache-Control", "no-store")
+		w.Write(Morphdom)
 		w.Write(Script)
 	})
 

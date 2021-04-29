@@ -17,8 +17,17 @@ render:
 config:
 	go run *.go test/config --show-config
 
+
+### Utils
+
 fmt:
 	gofmt -w=true *.go
+
+morphdom:
+	curl -Lo hotreload/assets/morphdom.js https://github.com/patrick-steele-idem/morphdom/raw/master/dist/morphdom-umd.js
+
+
+### Releases
 
 # os is determined as thus: if variable of suffix exists, it's taken, if not, then
 # suffix itself is taken
