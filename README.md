@@ -100,11 +100,12 @@ modification time.
 
 ## Speed
 
-| Box                  | Pages |  Full |  Noop |      Single post |
-|:---------------------|------:|------:|------:|-----------------:|
-| Macbook Air '15 (i7) |   630 | 450ms | 100ms | 160ms (93 pages) |
-| Macbook Air '15 (i7) |   250 | 180ms |   n/a |              n/a |
-| Macbook Air '20 (M1) |   486 | 185ms |  39ms | 140ms (97 pages) |
+| Box                       | Pages |  Full |  Noop |      Single post |
+|:--------------------------|------:|------:|------:|-----------------:|
+| Macbook Air '15 (i7)      |   630 | 450ms | 100ms | 160ms (93 pages) |
+| Macbook Air '15 (i7)      |   250 | 180ms |   n/a |              n/a |
+| Macbook Air '20 (M1)      |   486 | 185ms |  39ms | 140ms (97 pages) |
+| Hetzner CX21 (2 vCPU/4GB) |   486 | 502ms |  89ms | 414ms (97 pages) |
 
 This are results of forced full site rebuild, then checking there are no
 modification, and then re-rendering a single changed page (along with pages
