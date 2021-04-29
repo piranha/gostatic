@@ -100,17 +100,22 @@ modification time.
 
 ## Speed
 
-On 2015 MacBook Air (i7 2.2, 8 GB RAM, SSD) it takes `0.45s` to generate a site
-of 630 pages (`0.18s` for 250 pages, seems to be linear), `0.1s` to check there
-are no modifications and `0.16s` to re-render a single changed page (along with
-index and tag pages, coming to 93 pages in total).
+| Box                  | Pages |  Full |  Noop |      Single post |
+|:---------------------|------:|------:|------:|-----------------:|
+| Macbook Air '15 (i7) |   630 | 450ms | 100ms | 160ms (93 pages) |
+| Macbook Air '15 (i7) |   250 | 180ms |   n/a |              n/a |
+| Macbook Air '20 (M1) |   486 | 185ms |  39ms | 140ms (97 pages) |
+
+This are results of forced full site rebuild, then checking there are no
+modification, and then re-rendering a single changed page (along with pages
+which depend on this page).
 
 Also note that if you're using various external post-processors (like uglifyjs
 or sassc) they tend to slow down things a bit (for my specific use case both
 uglifyjs and sassc add another `0.25s` when files they process change).
 
 To reproduce numbers, [download hyperfine][], [download gostatic][], clone
-[solovyov.net][], comment out `:uglifyjs` and `:sassc` in `config` and then run:
+[solovyov.net][], comment out `:google-closure-compiler` in `config` and then run:
 
 - `hyperfine 'gostatic -f config'`
 - `hyperfine 'gostatic config'`
