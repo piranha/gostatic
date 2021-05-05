@@ -282,6 +282,7 @@ var TemplateFuncMap = template.FuncMap{
 	"truncate":       Truncate,
 	"strip_html":     StripHTML,
 	"strip_newlines": StripNewlines,
+	"trim":           strings.TrimSpace,
 	"replace":        Replace,
 	"replacen":       ReplaceN,
 	"replacere":      ReplaceRe,

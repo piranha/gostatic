@@ -1,5 +1,7 @@
 # Gostatic changelog
 
+- added `trim` template function
+
 ## 2.28
 
 Hot reloading now uses morphdom and because of that screen doesn't flicker upon change

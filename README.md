@@ -322,6 +322,8 @@ expands on that a bit:
 
 - `strip_newlines <value>` - remove all line breaks and newlines from string.
 
+- `trim <value>` - trim all whitespace ([strings.TrimSpace](https://golang.org/pkg/strings/#TrimSpace)).
+
 - `replace <old> <new> <value>` - replace all occurrences of `old` with `new` in
   `value`.
 
