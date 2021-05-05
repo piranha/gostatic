@@ -1,5 +1,7 @@
 # Gostatic changelog
 
+## 2.29
+
 - added `trim` template function
 
 ## 2.28
