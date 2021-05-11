@@ -42,19 +42,50 @@ func (pm ProcessorMap) ProcessorSummary() {
 	}
 }
 
-func (s *Site) ProcessCommand(page *Page, cmd *Command, pre bool) error {
+func (cmd *Command) Name() string {
 	c := string(*cmd)
 	if strings.HasPrefix(c, ":") {
-		c = "external " + c[1:]
+		return "external"
+	} else {
+		return strings.SplitN(c, " ", 2)[0]
 	}
-	bits := strings.Split(c, " ")
+}
 
-	processor := s.Processors[bits[0]]
+func (cmd *Command) Args() []string {
+	c := string(*cmd)
+	if strings.HasPrefix(c, ":") {
+		return strings.Split(c[1:], " ")
+	} else {
+		return strings.Split(c, " ")[1:]
+	}
+}
+
+
+func (cmd *Command) Processor(s *Site) (Processor, error) {
+	name := cmd.Name()
+	processor := s.Processors[name]
 	if processor == nil {
-		return fmt.Errorf("processor '%s' not found", bits[0])
+		return nil, fmt.Errorf("processor '%s' not found", name)
+	}
+	return processor, nil
+}
+
+func (cmd *Command) IsPre(s *Site) (bool, error) {
+	processor, err := cmd.Processor(s)
+	if err != nil {
+		return false, err
+	}
+	return processor.Mode()&Pre != 0, nil
+}
+
+
+func (s *Site) ProcessCommand(page *Page, cmd *Command, pre bool) error {
+	processor, err := cmd.Processor(s)
+	if err != nil {
+		return err
 	}
 	if (processor.Mode()&Pre != 0) != pre {
 		return nil
 	}
-	return processor.Process(page, bits[1:])
+	return processor.Process(page, cmd.Args())
 }
