@@ -1,5 +1,10 @@
 # Gostatic changelog
 
+## 2.30
+
+- Hot reloading will now dispatch JS event `hotreload` on window
+- Mac binary is now universal (x64 and arm64 simultaneously)
+
 ## 2.29
 
 - added `trim` template function
