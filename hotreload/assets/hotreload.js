@@ -43,8 +43,8 @@
         .then(text => {
           morphdom(document.documentElement, text);
           // document.documentElement.innerHTML = text;
-          // var e = new Event('load', {'bubbles': true});
-          // window.dispatchEvent(e);
+          var e = new Event('hotreload', {'bubbles': true});
+          window.dispatchEvent(e);
         })
         .catch(e => {
           if (e.message != "The operation was aborted. ") {
