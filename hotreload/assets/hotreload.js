@@ -4,35 +4,39 @@
   if (!('WebSocket' in window)) return;
 
   var proto = (location.protocol === "https:") ? "wss://" : "ws://";
-  var ws = new WebSocket(proto + location.host + "/.gostatic.hotreload");
 
-  ws.onmessage = function(e) {
-    localStorage.hotreloaddebug && console.log(e.data);
-    enqueue(e.data);
-  };
+  function connect() {
+    var ws = new WebSocket(proto + location.host + "/.gostatic.hotreload");
 
-  window.addEventListener('beforeunload', function(e) {
-    ws.close();
-  });
+    ws.onmessage = function(e) {
+      localStorage.hotreloaddebug && console.log(e.data);
+      enqueue(e.data);
+    };
 
-  var MODES = new Set();
-  var timeout, timeoutS;
-
-  function enqueue(mode) {
-    MODES.add(mode);
-    if (!timeout) timeoutS = 32;
-    if (timeout) {
-      clearTimeout(timeout);
-      timeoutS = Math.min(timeoutS * 2, 1000);
-    }
-    timeout = setTimeout(hotreload, timeoutS);
+    ws.addEventListener('close', e => setTimeout(connect, 1000));
+    window.addEventListener('beforeunload', e => ws.close());
   }
-  function hotreload() {
-    localStorage.hotreloaddebug && console.log('reload', MODES);
-    MODES.forEach(mode => RELOADERS[mode]());
-    MODES = new Set();
+  connect();
+
+
+  var MESSAGES = new Set();
+  var timeout, timeoutMs;
+
+  function enqueue(msg) {
+    MESSAGES.add(msg);
+    // start with 32ms and double every message up to 1000
+    timeoutMs = timeout ? Math.min(timeoutMs * 2, 1000) : 32;
+    clearTimeout(timeout);
+    timeout = setTimeout(execute, timeoutMs);
+  }
+
+  function execute() {
+    localStorage.hotreloaddebug && console.log('reload', MESSAGES);
+    MESSAGES.forEach(mode => RELOADERS[mode]());
+    MESSAGES.clear();
     timeout = null;
   }
+
 
   var RELOADERS = {
     page: function reloadpage() {

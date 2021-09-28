@@ -1,5 +1,7 @@
 # Gostatic changelog
 
+- Hot reloading reconnects websocket if it closes, so it persists between runs of gostatic
+
 ## 2.30
 
 - Hot reloading will now dispatch JS event `hotreload` on window
