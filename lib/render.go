@@ -16,26 +16,36 @@ import (
 	"github.com/yuin/goldmark/renderer/html"
 )
 
-func Markdown(source string) string {
-	
-	md := goldmark.New(
-		goldmark.WithExtensions(
-			highlighting.NewHighlighting(
-				highlighting.WithStyle("monokai"),
+func Markdown(source string, args []string) string {
+
+	extensions := []goldmark.Extender{
+		extension.Table,
+		extension.Strikethrough,
+		extension.Linkify,
+		extension.TaskList,
+		extension.GFM,
+		extension.DefinitionList,
+		extension.Footnote,
+		extension.Typographer,
+	}
+
+	for _, v := range args {
+		//chroma=monokai is a code highlighting style example
+		if strings.HasPrefix(v, "chroma=") {
+			style := strings.Replace(v, "chroma=", "", 1)
+
+			extensions = append(extensions, highlighting.NewHighlighting(
+				highlighting.WithStyle(style),
 				highlighting.WithFormatOptions(
 					chroma.WithLineNumbers(false),
 					chroma.WithPreWrapper(&preWrapStruct{}),
 				),
-			),
-			extension.Table,
-			extension.Strikethrough,
-			extension.Linkify,
-			extension.TaskList,
-			extension.GFM,
-			extension.DefinitionList,
-			extension.Footnote,
-			extension.Typographer,
-		),
+			))
+		}
+	}
+
+	md := goldmark.New(
+		goldmark.WithExtensions(extensions...),
 		goldmark.WithParserOptions(
 			parser.WithAutoHeadingID(),
 		),
@@ -55,35 +65,25 @@ func Markdown(source string) string {
 }
 
 type preWrapStruct struct {
-	wroteScript bool
 }
-
-const script = `
-<script>
-function getId(btn)
-{
-	navigator.clipboard.writeText(btn.nextElementSibling.innerText).catch((error) => {
-		console.error(error);
-	})
-}
-</script>
-`
 
 const start = `
-<button class="copy-code-button" onclick="getId(this)" type="button">Copy</button>
-<pre class="highlight"  tabindex="0" %s><code>`
+<div class="highlight">
+<pre tabindex="0" %s;overflow-x: auto;">
+<code>`
 
 func (p *preWrapStruct) Start(code bool, styleAttr string) string {
 	w := &strings.Builder{}
-	if !p.wroteScript {
-		p.wroteScript = true
-		fmt.Fprint(w, script)
+
+	if strings.HasSuffix(styleAttr, `"`) {
+		fmt.Fprintf(w, start, styleAttr[:len(styleAttr)-1])
+	} else {
+		fmt.Fprintf(w, start, `style="`)
 	}
 
-	fmt.Fprintf(w, start, styleAttr)
 	return w.String()
 }
 
 func (p *preWrapStruct) End(code bool) string {
-	return "</code></pre>"
+	return `</code></pre></div>`
 }
