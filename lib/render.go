@@ -69,7 +69,7 @@ type preWrapStruct struct {
 
 const start = `
 <div class="highlight">
-<pre tabindex="0" %s;overflow-x: auto;">
+<pre %s>
 <code>`
 
 func (p *preWrapStruct) Start(code bool, styleAttr string) string {
