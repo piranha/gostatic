@@ -36,6 +36,7 @@ func Markdown(source string, args []string) string {
 
 			extensions = append(extensions, highlighting.NewHighlighting(
 				highlighting.WithStyle(style),
+				highlighting.WithGuessLanguage(true), // this makes sure lines without language dont look bad! re:(^```$)
 				highlighting.WithFormatOptions(
 					chroma.WithLineNumbers(false),
 					chroma.WithPreWrapper(&preWrapStruct{}),
