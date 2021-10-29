@@ -75,10 +75,16 @@ const start = `
 func (p *preWrapStruct) Start(code bool, styleAttr string) string {
 	w := &strings.Builder{}
 
-	if strings.HasSuffix(styleAttr, `"`) {
-		fmt.Fprintf(w, start, styleAttr[:len(styleAttr)-1])
+	styleAttr = strings.TrimSpace(styleAttr) // this param has spaces sometimes
+
+	if strings.HasPrefix(styleAttr, `style="`) {
+		style1 := styleAttr[:len(styleAttr)-1] //remove the trailing quote
+		style2 := `;overflow-x: auto"`
+		newStyle := style1 + style2
+		fmt.Fprintf(w, start, newStyle)
 	} else {
-		fmt.Fprintf(w, start, `style="`)
+		// styleAttr doesn't start with 'style=', don't output a style
+		fmt.Fprintf(w, start, "")
 	}
 
 	return w.String()
