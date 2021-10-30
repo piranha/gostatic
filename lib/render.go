@@ -83,7 +83,7 @@ func (p *preWrapStruct) Start(code bool, styleAttr string) string {
 		fmt.Fprintf(w, start, newStyle)
 	} else {
 		// styleAttr doesn't start with 'style=', don't output a style
-		fmt.Fprintf(w, start, "")
+		fmt.Fprintf(w, start, `style="overflow-x: auto"`)
 	}
 
 	return w.String()
