@@ -79,9 +79,7 @@ func (p *preWrapStruct) Start(code bool, styleAttr string) string {
 	styleAttr = strings.TrimSpace(styleAttr) // this param has spaces sometimes
 
 	if strings.HasPrefix(styleAttr, `style="`) {
-		style1 := styleAttr[:len(styleAttr)-1] //remove the trailing quote
-		style2 := `;overflow-x: auto"`
-		newStyle := style1 + style2
+		newStyle := styleAttr[:len(styleAttr)-1] + `;overflow-x: auto"`
 		fmt.Fprintf(w, start, newStyle)
 	} else {
 		// styleAttr doesn't start with 'style=', don't output a style
