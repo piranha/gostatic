@@ -1,5 +1,6 @@
 # Gostatic changelog
 
+- Built-in support for [chroma](https://github.com/alecthomas/chroma) highlighter (see README)
 - Hot reloading reconnects websocket if it closes, so it persists between runs of gostatic
 
 ## 2.30
