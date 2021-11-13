@@ -68,10 +68,7 @@ func Markdown(source string, args []string) string {
 type preWrapStruct struct {
 }
 
-const start = `
-<div class="highlight">
-<pre %s>
-<code>`
+const start = `<pre %s><code>`
 
 func (p *preWrapStruct) Start(code bool, styleAttr string) string {
 	w := &strings.Builder{}
@@ -82,7 +79,7 @@ func (p *preWrapStruct) Start(code bool, styleAttr string) string {
 		newStyle := styleAttr[:len(styleAttr)-1] + `;overflow-x: auto"`
 		fmt.Fprintf(w, start, newStyle)
 	} else {
-		// styleAttr doesn't start with 'style=', don't output a style
+		// styleAttr doesn't start with 'style='
 		fmt.Fprintf(w, start, `style="overflow-x: auto"`)
 	}
 
@@ -90,5 +87,5 @@ func (p *preWrapStruct) Start(code bool, styleAttr string) string {
 }
 
 func (p *preWrapStruct) End(code bool) string {
-	return `</code></pre></div>`
+	return `</code></pre>`
 }
