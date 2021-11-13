@@ -252,7 +252,16 @@ You can always check list of available processors with `gostatic --processors`.
 - `directorify` - rename a file from `whatever/name.html` to
   `whatever/name/index.html`.
 
-- `markdown` - process content as Markdown.
+- `markdown` - process content as Markdown.  
+  `markdown` without any arguments will not do any code-block highlighting.  
+  `markdown chroma=monokai` will use the [Chroma][chroma] highlighter to highlight code blocks, using the Monokai style, with inline CSS styles. (No .css file needed)
+  You can see the styles at the [Chroma style previewer][chromaStyles1].  
+  The official list of styles is in the [Chroma repo here][chromaStyles2].  
+
+
+[chroma]: https://github.com/alecthomas/chroma
+[chromaStyles1]: https://xyproto.github.io/splash/docs/
+[chromaStyles2]: https://github.com/alecthomas/chroma/tree/master/styles
 
 - `inner-template` - process content as Go template.
 

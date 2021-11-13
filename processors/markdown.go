@@ -24,7 +24,7 @@ func (p *MarkdownProcessor) Mode() int {
 }
 
 func ProcessMarkdown(page *gostatic.Page, args []string) error {
-	result := gostatic.Markdown(page.Content())
+	result := gostatic.Markdown(page.Content(), args)
 	page.SetContent(result)
 	return nil
 }
