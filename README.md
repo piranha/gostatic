@@ -37,6 +37,13 @@ curl -Lso gostatic $(URL)
 chmod +x gostatic
 ```
 
+When downloading in Macos, your file will be quarantined and to use it you'll
+have to assure Macos you know what you're doing:
+
+```
+xattr -r -d com.apple.quarantine gostatic
+```
+
 ## Quick Start
 
 Run `gostatic -i my-site` to generate basic site in directory `my-site`. It will
@@ -254,10 +261,9 @@ You can always check list of available processors with `gostatic --processors`.
 
 - `markdown` - process content as Markdown.  
   `markdown` without any arguments will not do any code-block highlighting.  
-  `markdown chroma=monokai` will use the [Chroma][chroma] highlighter to highlight code blocks, using the Monokai style, with inline CSS styles. (No .css file needed)
+  `markdown chroma=monokai` will use the [Chroma][chroma] highlighter to highlight code blocks, using the Monokai style, with inline CSS styles. (No .css file needed).  
   You can see the styles at the [Chroma style previewer][chromaStyles1].  
-  The official list of styles is in the [Chroma repo here][chromaStyles2].  
-
+  The official list of styles is in the [Chroma repo here][chromaStyles2].
 
 [chroma]: https://github.com/alecthomas/chroma
 [chromaStyles1]: https://xyproto.github.io/splash/docs/

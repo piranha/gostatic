@@ -1,5 +1,9 @@
 # Gostatic changelog
 
+- Template function `markdown` broke backward compatibility, fixed now (always wanted more than one argument)
+
+## 2.31
+
 - Built-in support for [chroma](https://github.com/alecthomas/chroma) highlighter (see README)
 - Hot reloading reconnects websocket if it closes, so it persists between runs of gostatic
 

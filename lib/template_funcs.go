@@ -272,6 +272,10 @@ func Base(value string) string {
 	return filepath.Base(value)
 }
 
+func TemplateMarkdown(strs ...string) string {
+	return Markdown(strs[len(strs)-1], strs[:len(strs)-1])
+}
+
 // TemplateFuncMap contains the mapping of function names and their corresponding
 // Go functions, to be used within templates.
 var TemplateFuncMap = template.FuncMap{
@@ -292,7 +296,7 @@ var TemplateFuncMap = template.FuncMap{
 	"ends":           Ends,
 	"matches":        Matches,
 	"refind":         ReFind,
-	"markdown":       Markdown,
+	"markdown":       TemplateMarkdown,
 	"exec":           Exec,
 	"exectext":       ExecText,
 	"excerpt":        Excerpt,
