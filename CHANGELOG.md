@@ -1,5 +1,7 @@
 # Gostatic changelog
 
+## 2.33
+
 - New template function `absurl` to join urls sanely
 
 ## 2.32
