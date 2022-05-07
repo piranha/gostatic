@@ -1,5 +1,7 @@
 # Gostatic changelog
 
+- New template function `absurl` to join urls sanely
+
 ## 2.32
 
 - Template function `markdown` broke backward compatibility, fixed now (always wanted more than one argument)

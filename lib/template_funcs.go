@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"strings"
 	"text/template"
+	"net/url"
 )
 
 var inventory = map[string]interface{}{}
@@ -276,6 +277,22 @@ func TemplateMarkdown(strs ...string) string {
 	return Markdown(strs[len(strs)-1], strs[:len(strs)-1])
 }
 
+func Absurl(prefix, path string) (string, error) {
+	if strings.HasPrefix(path, "https://") || strings.HasPrefix(path, "http://") {
+		return path, nil
+	}
+	base, err := url.Parse(prefix)
+	if err != nil {
+		return "", err
+	}
+	u, err := url.Parse(path)
+	if err != nil {
+		return "", err
+	}
+	res := base.ResolveReference(u)
+	return res.String(), nil
+}
+
 // TemplateFuncMap contains the mapping of function names and their corresponding
 // Go functions, to be used within templates.
 var TemplateFuncMap = template.FuncMap{
@@ -307,4 +324,5 @@ var TemplateFuncMap = template.FuncMap{
 	"some":           Some,
 	"dir":            Dir,
 	"base":           Base,
+	"absurl":         Absurl,
 }

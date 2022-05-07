@@ -317,7 +317,11 @@ Go template system provides some convenient
 [functions](https://golang.org/pkg/text/template/#hdr-Functions), and gostatic
 expands on that a bit:
 
-- `changed <name> <value>` - checks if value has changed since previous call
+- `absurl <base> <url>` - given an url and a base will join them to something
+  sane: leave the `<url>` in place if it's absolute, or resolve it within
+  `<base>` if it's not.
+
+- `changed <name> <value>` - checks if `<value>` has changed since previous call
   with the same name. Storage used for checking is global over the whole run of
   gostatic, so choose unique names for different places.
 
