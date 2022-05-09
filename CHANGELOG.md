@@ -1,5 +1,7 @@
 # Gostatic changelog
 
+## 2.34
+
 - New template processor `chroma` to highlight code in HTML files
 
 ## 2.33
