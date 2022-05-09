@@ -2,6 +2,7 @@ module github.com/piranha/gostatic
 
 require (
 	github.com/alecthomas/chroma v0.9.4
+	github.com/alecthomas/chroma/v2 v2.0.0-alpha4
 	github.com/bmatcuk/doublestar/v2 v2.0.4
 	github.com/fsnotify/fsnotify v1.4.9
 	github.com/gorilla/websocket v1.4.2

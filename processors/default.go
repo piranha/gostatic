@@ -10,6 +10,7 @@ var DefaultProcessors = gostatic.ProcessorMap{
 	"inner-template":         NewInnerTemplateProcessor(),
 	"config":                 NewConfigProcessor(),
 	"markdown":               NewMarkdownProcessor(),
+	"chroma":                 NewChromaProcessor(),
 	"ext":                    NewExtProcessor(),
 	"datefilename":           NewDatefilenameProcessor(),
 	"directorify":            NewDirectorifyProcessor(),

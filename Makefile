@@ -50,6 +50,7 @@ release:
 else
 release: $(ALL)
 	github-release release -u piranha -r gostatic -t "$(TAG)" -n "$(TAG)" --description '$(desc)'
+	@sleep 1
 	@for x in $(ALL); do \
 		github-release upload -u piranha \
                               -r gostatic \

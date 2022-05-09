@@ -1,5 +1,7 @@
 # Gostatic changelog
 
+- New template processor `chroma` to highlight code in HTML files
+
 ## 2.33
 
 - New template function `absurl` to join urls sanely
