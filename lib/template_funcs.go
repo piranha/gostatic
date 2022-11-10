@@ -297,7 +297,7 @@ func Absurl(prefix, path string) (string, error) {
 	return res.String(), nil
 }
 
-func AlphabetizePages(pages PageSlice) PageSlice {
+func AbcSort(pages PageSlice) PageSlice {
 	sort.SliceStable(pages, func(i, j int) bool { return pages[i].Name() < pages[j].Name() })
 	return pages
 }
@@ -305,34 +305,34 @@ func AlphabetizePages(pages PageSlice) PageSlice {
 // TemplateFuncMap contains the mapping of function names and their corresponding
 // Go functions, to be used within templates.
 var TemplateFuncMap = template.FuncMap{
-	"changed":           HasChanged,
-	"cut":               Cut,
-	"hash":              Hash,
-	"version":           Versionize,
-	"truncate":          Truncate,
-	"strip_html":        StripHTML,
-	"strip_newlines":    StripNewlines,
-	"trim":              strings.TrimSpace,
-	"replace":           Replace,
-	"replacen":          ReplaceN,
-	"replacere":         ReplaceRe,
-	"split":             Split,
-	"contains":          Contains,
-	"starts":            Starts,
-	"ends":              Ends,
-	"matches":           Matches,
-	"refind":            ReFind,
-	"markdown":          TemplateMarkdown,
-	"exec":              Exec,
-	"exectext":          ExecText,
-	"excerpt":           Excerpt,
-	"even":              Even,
-	"odd":               Odd,
-	"count":             Count,
-	"reading_time":      ReadingTime,
-	"some":              Some,
-	"dir":               Dir,
-	"base":              Base,
-	"absurl":            Absurl,
-	"alphabetize_pages": AlphabetizePages,
+	"changed":        HasChanged,
+	"cut":            Cut,
+	"hash":           Hash,
+	"version":        Versionize,
+	"truncate":       Truncate,
+	"strip_html":     StripHTML,
+	"strip_newlines": StripNewlines,
+	"trim":           strings.TrimSpace,
+	"replace":        Replace,
+	"replacen":       ReplaceN,
+	"replacere":      ReplaceRe,
+	"split":          Split,
+	"contains":       Contains,
+	"starts":         Starts,
+	"ends":           Ends,
+	"matches":        Matches,
+	"refind":         ReFind,
+	"markdown":       TemplateMarkdown,
+	"exec":           Exec,
+	"exectext":       ExecText,
+	"excerpt":        Excerpt,
+	"even":           Even,
+	"odd":            Odd,
+	"count":          Count,
+	"reading_time":   ReadingTime,
+	"some":           Some,
+	"dir":            Dir,
+	"base":           Base,
+	"absurl":         Absurl,
+	"abcsort":        AbcSort,
 }
