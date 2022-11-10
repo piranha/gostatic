@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"hash/adler32"
 	"io"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strings"
 	"text/template"
-	"net/url"
 )
 
 var inventory = map[string]interface{}{}
@@ -146,10 +147,13 @@ func ReFind(pattern, value string) (string, error) {
 	m := re.FindStringSubmatch(value)
 
 	switch len(m) {
-	case 0: return "", nil
+	case 0:
+		return "", nil
 		// return first submatch if there is any
-	case 1: return m[0], nil
-	default: return m[1], nil
+	case 1:
+		return m[0], nil
+	default:
+		return m[1], nil
 	}
 }
 
@@ -208,15 +212,15 @@ func ExecText(cmd string, arg ...string) (string, error) {
 // truncates it to the amount of words given in maxWords. For instance, given
 // the text:
 //
-// 	"The quick brown fox jumps, over the lazy dog."
+//	"The quick brown fox jumps, over the lazy dog."
 //
 // and the given maxWords of 0, 1, 3, 4, and 6, 999, it will return in order:
 //
-// 	"" // an empty string
-// 	"The [...]"
-// 	"The quick brown [...]"
-// 	"The quick brown fox [...]"
-// 	"The quick brown fox jumps, over the lazy dog."
+//	"" // an empty string
+//	"The [...]"
+//	"The quick brown [...]"
+//	"The quick brown fox [...]"
+//	"The quick brown fox jumps, over the lazy dog."
 func Excerpt(text string, maxWords int) string {
 	// Unsure who would want this, but still, don't trust them users ;)
 	if maxWords <= 0 {
@@ -293,36 +297,42 @@ func Absurl(prefix, path string) (string, error) {
 	return res.String(), nil
 }
 
+func AlphabetizePages(pages PageSlice) PageSlice {
+	sort.SliceStable(pages, func(i, j int) bool { return pages[i].Name() < pages[j].Name() })
+	return pages
+}
+
 // TemplateFuncMap contains the mapping of function names and their corresponding
 // Go functions, to be used within templates.
 var TemplateFuncMap = template.FuncMap{
-	"changed":        HasChanged,
-	"cut":            Cut,
-	"hash":           Hash,
-	"version":        Versionize,
-	"truncate":       Truncate,
-	"strip_html":     StripHTML,
-	"strip_newlines": StripNewlines,
-	"trim":           strings.TrimSpace,
-	"replace":        Replace,
-	"replacen":       ReplaceN,
-	"replacere":      ReplaceRe,
-	"split":          Split,
-	"contains":       Contains,
-	"starts":         Starts,
-	"ends":           Ends,
-	"matches":        Matches,
-	"refind":         ReFind,
-	"markdown":       TemplateMarkdown,
-	"exec":           Exec,
-	"exectext":       ExecText,
-	"excerpt":        Excerpt,
-	"even":           Even,
-	"odd":            Odd,
-	"count":          Count,
-	"reading_time":   ReadingTime,
-	"some":           Some,
-	"dir":            Dir,
-	"base":           Base,
-	"absurl":         Absurl,
+	"changed":           HasChanged,
+	"cut":               Cut,
+	"hash":              Hash,
+	"version":           Versionize,
+	"truncate":          Truncate,
+	"strip_html":        StripHTML,
+	"strip_newlines":    StripNewlines,
+	"trim":              strings.TrimSpace,
+	"replace":           Replace,
+	"replacen":          ReplaceN,
+	"replacere":         ReplaceRe,
+	"split":             Split,
+	"contains":          Contains,
+	"starts":            Starts,
+	"ends":              Ends,
+	"matches":           Matches,
+	"refind":            ReFind,
+	"markdown":          TemplateMarkdown,
+	"exec":              Exec,
+	"exectext":          ExecText,
+	"excerpt":           Excerpt,
+	"even":              Even,
+	"odd":               Odd,
+	"count":             Count,
+	"reading_time":      ReadingTime,
+	"some":              Some,
+	"dir":               Dir,
+	"base":              Base,
+	"absurl":            Absurl,
+	"alphabetize_pages": AlphabetizePages,
 }
