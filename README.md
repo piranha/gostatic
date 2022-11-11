@@ -400,6 +400,8 @@ expands on that a bit:
 
 - `base <path>` - returns the last element of a path (same as [filepath.Base](https://golang.org/pkg/path/filepath/#Base))
 
+- `abcsort <pages>` - returns the pages sorted in alphabetical order of their .Name
+
 ### Page interface
 
 - `.Site` - global [site object](#site-interface).
