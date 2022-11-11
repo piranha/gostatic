@@ -1,5 +1,9 @@
 # Gostatic changelog
 
+## 2.35
+
+- New template function `abcsort` to sort pages alphabetically
+
 ## 2.34
 
 - New template processor `chroma` to highlight code in HTML files
