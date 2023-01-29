@@ -6,10 +6,10 @@ package gostatic
 import (
 	"bytes"
 	"fmt"
-	"strings"
-	"regexp"
-	"os"
 	"html"
+	"os"
+	"regexp"
+	"strings"
 
 	chroma "github.com/alecthomas/chroma"
 	chromahtml "github.com/alecthomas/chroma/formatters/html"
@@ -23,7 +23,6 @@ import (
 )
 
 func Markdown(source string, args []string) string {
-
 	extensions := []goldmark.Extender{
 		extension.Table,
 		extension.Strikethrough,
@@ -36,7 +35,7 @@ func Markdown(source string, args []string) string {
 	}
 
 	for _, v := range args {
-		//chroma=monokai is a code highlighting style example
+		// chroma=monokai is a code highlighting style example
 		if strings.HasPrefix(v, "chroma=") {
 			style := strings.Replace(v, "chroma=", "", 1)
 
@@ -55,6 +54,7 @@ func Markdown(source string, args []string) string {
 		goldmark.WithExtensions(extensions...),
 		goldmark.WithParserOptions(
 			parser.WithAutoHeadingID(),
+			parser.WithAttribute(),
 		),
 		goldmark.WithRendererOptions(
 			markhtml.WithXHTML(),
@@ -71,8 +71,7 @@ func Markdown(source string, args []string) string {
 	return buf.String()
 }
 
-type preWrapStruct struct {
-}
+type preWrapStruct struct{}
 
 const start = `<pre %s><code>`
 
@@ -96,9 +95,10 @@ func (p *preWrapStruct) End(code bool) string {
 	return `</code></pre>`
 }
 
-
-var Code = regexp.MustCompile(`(?s)<pre><code[^>]*>.+?</code></pre>`)
-var LangRe = regexp.MustCompile(`<code class="language-([^"]+)">`)
+var (
+	Code   = regexp.MustCompile(`(?s)<pre><code[^>]*>.+?</code></pre>`)
+	LangRe = regexp.MustCompile(`<code class="language-([^"]+)">`)
+)
 
 func Chroma(htmlsource string, style string) string {
 	f := chromahtml.New(
@@ -106,7 +106,7 @@ func Chroma(htmlsource string, style string) string {
 		chromahtml.WithPreWrapper(&preWrapStruct{}),
 	)
 
-	return Code.ReplaceAllStringFunc(htmlsource, func (source string) string {
+	return Code.ReplaceAllStringFunc(htmlsource, func(source string) string {
 		pre_start := strings.IndexByte(source, '>') + 1
 		code_start := strings.IndexByte(source[pre_start:], '>') + pre_start + 1
 		code_end := len(source) - 13 // 13 is len('</code></pre>')
