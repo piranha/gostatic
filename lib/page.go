@@ -14,7 +14,7 @@ import (
 	"sort"
 	"strings"
 	"time"
-	"github.com/bmatcuk/doublestar/v2"
+	"github.com/bmatcuk/doublestar/v4"
 )
 
 const (

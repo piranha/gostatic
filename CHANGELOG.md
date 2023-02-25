@@ -1,5 +1,7 @@
 # Gostatic changelog
 
+- Updated all deps, some of them were few years old
+
 ## 2.35
 
 - New template function `abcsort` to sort pages alphabetically
