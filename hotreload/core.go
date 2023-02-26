@@ -1,4 +1,4 @@
-// This functionality is made by looking at source of devd:
+// This functionality was first made by looking at source of devd:
 // https://github.com/cortesi/devd/blob/master/livereload/livereload.go
 // which is copyrighted under MIT by Aldo Cortesi
 
@@ -7,14 +7,12 @@ package hotreload
 import (
 	"net/http"
 	"time"
-	"sync"
 	"fmt"
 	"strings"
 	"bytes"
 	"io/ioutil"
 	"os"
-
-	"github.com/gorilla/websocket"
+	// "log"
 )
 
 const (
@@ -24,83 +22,85 @@ const (
 	ScriptPath = "/.gostatic.hotreload.js"
 )
 
-type Server struct {
-	sync.Mutex
-	conns     map[*websocket.Conn]bool
+// Server-Sent Events
 
-	filemods <-chan string
-	dirs     []string
-	files    []string
+type Broker struct {
+	// Events are pushed to this channel by the main events-gathering routine
+    Notifier chan []byte
+
+    // New client connections
+    newConns chan chan []byte
+
+    // Closed client connections
+    closingConns chan chan []byte
+
+    // Client connections registry
+    conns map[chan []byte]bool
 }
 
-func NewServer(path string) (*Server, error) {
-	filemods, err := fileWatcher([]string{path}, []string{})
-	if err != nil {
-		return nil, err
-	}
+func (broker *Broker) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
+	flusher, ok := rw.(http.Flusher)
 
-	s := &Server{
-		conns: make(map[*websocket.Conn]bool),
-		filemods: filemods,
-	}
-	go s.run()
-	return s, nil
-}
-
-func (s *Server) run() {
-	for {
-		fns := []string{}
-		fns = append(fns, <-s.filemods)
-		time.Sleep(16 * time.Millisecond)
-		for len(s.filemods) > 0 {
-			fns = append(fns, <-s.filemods)
-		}
-
-		cmd := "css"
-		for _, fn := range fns {
-			if !strings.HasSuffix(fn, ".css") {
-				cmd = "page"
-			}
-		}
-
-		s.Lock()
-		for conn := range s.conns {
-			if conn == nil {
-				continue
-			}
-			err := conn.WriteMessage(websocket.TextMessage, []byte(cmd))
-			if err != nil {
-				fmt.Errorf("error: %s", err)
-				delete(s.conns, conn)
-			}
-		}
-		s.Unlock()
-	}
-
-	s.Lock()
-	for conn := range s.conns {
-		delete(s.conns, conn)
-		conn.Close()
-	}
-	s.Unlock()
-}
-
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-	CheckOrigin:     func(r *http.Request) bool { return true },
-}
-
-func (s *Server) Upgrade(w http.ResponseWriter, r *http.Request) {
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		fmt.Errorf("can't establish WebSocket connection: %s", err)
-		http.Error(w, "Can't upgrade.", 500)
+	if !ok {
+		http.Error(rw, "Streaming unsupported!", http.StatusInternalServerError)
 		return
 	}
-	s.Lock()
-	s.conns[conn] = true
-	s.Unlock()
+
+	rw.Header().Set("Content-Type", "text/event-stream")
+	rw.Header().Set("Cache-Control", "no-cache")
+	rw.Header().Set("Connection", "keep-alive")
+	rw.Header().Set("Access-Control-Allow-Origin", "*")
+
+	messageChan := make(chan []byte)
+	broker.newConns <- messageChan
+	defer func() {
+		broker.closingConns <- messageChan
+	}()
+
+	// unregister client when connection closes
+	notify := rw.(http.CloseNotifier).CloseNotify()
+	go func() {
+		<-notify
+		broker.closingConns <- messageChan
+	}()
+
+	for {
+		fmt.Fprintf(rw, "data: %s\n\n", <-messageChan)
+		flusher.Flush()
+	}
+}
+
+
+func (broker *Broker) listen() {
+	for {
+		select {
+		case s := <-broker.newConns:
+			broker.conns[s] = true
+			// log.Printf("Conn added. %d registered conns", len(broker.conns))
+
+		case s := <-broker.closingConns:
+			delete(broker.conns, s)
+			// log.Printf("Conn removed. %d registered conns", len(broker.conns))
+
+		case event := <-broker.Notifier:
+			for conn, _ := range broker.conns {
+				conn <- event
+			}
+		}
+	}
+}
+
+
+func NewServer() (broker *Broker) {
+  broker = &Broker{
+    Notifier:     make(chan []byte, 1),
+    newConns:     make(chan chan []byte),
+    closingConns: make(chan chan []byte),
+    conns:        make(map[chan []byte]bool),
+  }
+
+  go broker.listen()
+  return
 }
 
 
@@ -174,12 +174,37 @@ func (fsys injectingFS) Open(name string) (http.File, error) {
 
 // ServeHTTP serves files from `dir` and adds hotreload support to html files
 func ServeHTTP(source, port string, hotreload bool) error {
-	server, err := NewServer(source)
+	// server, err := NewServer(source)
+	// if err != nil {
+	// 	return err
+	// }
+
+	// http.HandleFunc(EndpointPath, server.Upgrade)
+	filemods, err := fileWatcher([]string{source}, []string{})
 	if err != nil {
 		return err
 	}
 
-	http.HandleFunc(EndpointPath, server.Upgrade)
+	ssebroker := NewServer()
+	go func() {
+		for {
+			fns := []string{}
+			fns = append(fns, <-filemods)
+			time.Sleep(16 * time.Millisecond)
+			for len(filemods) > 0 {
+				fns = append(fns, <-filemods)
+			}
+			cmd := "css"
+			for _, fn := range fns {
+				if !strings.HasSuffix(fn, ".css") {
+					cmd = "page"
+				}
+			}
+			ssebroker.Notifier <- []byte(cmd)
+		}
+	}()
+
+	http.HandleFunc(EndpointPath, ssebroker.ServeHTTP)
 
 	http.HandleFunc(ScriptPath, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/javascript")

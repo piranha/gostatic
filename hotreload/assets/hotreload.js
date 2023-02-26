@@ -5,18 +5,20 @@
 
   var proto = (location.protocol === "https:") ? "wss://" : "ws://";
 
-  function connect() {
-    var ws = new WebSocket(proto + location.host + "/.gostatic.hotreload");
-
-    ws.onmessage = function(e) {
+  function esconnect() {
+    var es = new EventSource('/.gostatic.hotreload');
+    es.onmessage = function(e) {
+      //console.log(e);
       localStorage.hotreloaddebug && console.log(e.data);
       enqueue(e.data);
-    };
-
-    ws.addEventListener('close', e => setTimeout(connect, 1000));
-    window.addEventListener('beforeunload', e => ws.close());
+    }
+    es.onerror = function(e) {
+      console.error('Hotreload connection closed', e);
+      es.close();
+      setTimeout(esconnect, 1000);
+    }
   }
-  connect();
+  esconnect();
 
 
   var MESSAGES = new Set();

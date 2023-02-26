@@ -1,7 +1,10 @@
 # Gostatic changelog
 
+- Switch to using [SSE][] from websockets - simpler and less deps
 - Using hotreload would trim responses to at most 32kb length, fixed now
 - Updated all deps, some of them were few years old
+
+[SSE]: https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events
 
 ## 2.35
 
