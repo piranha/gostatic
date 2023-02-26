@@ -10,7 +10,9 @@ import (
 	"sync"
 	"fmt"
 	"strings"
-	"regexp"
+	"bytes"
+	"io/ioutil"
+	"os"
 
 	"github.com/gorilla/websocket"
 )
@@ -102,41 +104,76 @@ func (s *Server) Upgrade(w http.ResponseWriter, r *http.Request) {
 }
 
 
-type Injector struct {
-	http.ResponseWriter
+/// This code is surely full of pain, but I tried overriding WriteResponse and
+/// it never worked properly :(
+
+var (
+	Head = []byte(`</head>`)
+	Entry = []byte(`<script src="/.gostatic.hotreload.js" async></script></head>`)
+)
+
+type injectingFileInfo struct {
+    os.FileInfo
+    size int64
 }
 
-var htmlRe = regexp.MustCompile("\btext/html\b")
-var injectorRe = regexp.MustCompile(`<\/head>`)
-var payload = []byte(`<script src="/.gostatic.hotreload.js" async></script></head>`)
-
-
-func (inj *Injector) WriteHeader(statusCode int) {
-	inj.ResponseWriter.Header().Del("Content-Length")
-	inj.ResponseWriter.WriteHeader(statusCode)
+func (fi injectingFileInfo) Size() int64 {
+    return fi.size
 }
 
-func (inj *Injector) Write(data []byte) (int, error) {
-	ctypes, ok := inj.ResponseWriter.Header()["Content-Type"]
-	isHTML := false
-	if ok {
-		for _, ctype := range ctypes {
-			if strings.HasPrefix(ctype, "text/html") {
-				isHTML = true
-			}
+
+type injectingFile struct {
+    http.File
+    buffer *bytes.Buffer
+}
+
+func (f *injectingFile) Read(p []byte) (int, error) {
+	if f.buffer == nil {
+		content, err := ioutil.ReadAll(f.File)
+		if err != nil {
+			return 0, err
 		}
+
+		content = bytes.Replace(content, Head, Entry, 1)
+		f.buffer = bytes.NewBuffer(content)
 	}
 
-	if isHTML {
-		data = injectorRe.ReplaceAllLiteral(data, payload)
-	}
-	return inj.ResponseWriter.Write(data)
+    return f.buffer.Read(p)
 }
+
+func (f injectingFile) Stat() (os.FileInfo, error) {
+    info, err := f.File.Stat()
+    if err != nil {
+        return nil, err
+    }
+
+    size := info.Size() + int64(len(Entry)-len(Head))
+    modifiedInfo := &injectingFileInfo{info, size}
+
+    return modifiedInfo, nil
+}
+
+
+type injectingFS struct {
+	http.FileSystem
+}
+
+func (fsys injectingFS) Open(name string) (http.File, error) {
+	file, err := fsys.FileSystem.Open(name)
+	if err != nil {
+		return nil, err
+	}
+	if (strings.HasSuffix(name, ".html")) {
+		return &injectingFile{file, nil}, nil
+	}
+	return file, err
+}
+
+/// End of injection madness
 
 
 // ServeHTTP serves files from `dir` and adds hotreload support to html files
 func ServeHTTP(source, port string, hotreload bool) error {
-
 	server, err := NewServer(source)
 	if err != nil {
 		return err
@@ -151,16 +188,15 @@ func ServeHTTP(source, port string, hotreload bool) error {
 		w.Write(Script)
 	})
 
-	fs := http.FileServer(http.Dir(source))
+	var fs http.Handler
+	if hotreload {
+		fs = http.FileServer(injectingFS{http.Dir(source)})
+	} else {
+		fs = http.FileServer(http.Dir(source))
+	}
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Cache-Control", "no-store")
-
-		if hotreload {
-			injector := Injector{w}
-			fs.ServeHTTP(&injector, r)
-		} else {
-			fs.ServeHTTP(w, r)
-		}
+		fs.ServeHTTP(w, r)
 	})
 
 	return http.ListenAndServe(":"+port, nil)

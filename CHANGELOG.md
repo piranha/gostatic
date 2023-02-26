@@ -1,5 +1,6 @@
 # Gostatic changelog
 
+- Using hotreload would trim responses to at most 32kb length, fixed now
 - Updated all deps, some of them were few years old
 
 ## 2.35
