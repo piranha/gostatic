@@ -21,12 +21,7 @@ And all in all, it works nicely for me, so it may work for you!
 
 ## Installation
 
-If you're Go user and want to install this from source, you know what to do (`go
-get` it).
-
-In other case, download a binary from
-[releases page](https://github.com/piranha/gostatic/releases) - which also
-serves as **CHANGELOG**.
+Just download a binary from [releases page](https://github.com/piranha/gostatic/releases).
 
 If you need to automate downloading latest release, I use this script (change
 `64-linux` to the type you need):
@@ -43,6 +38,10 @@ have to assure Macos you know what you're doing:
 ```
 xattr -r -d com.apple.quarantine gostatic
 ```
+
+Obviously, `go get https://github.com/piranha/gostatic` also works, if you want
+to compile from source.
+
 
 ## Quick Start
 
