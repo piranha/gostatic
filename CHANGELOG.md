@@ -1,8 +1,11 @@
 # Gostatic changelog
 
+## 2.36
+
 - Switch to using [SSE][] from websockets - simpler and less deps
 - Using hotreload would trim responses to at most 32kb length, fixed now
 - Updated all deps, some of them were few years old
+- Markdown is now parsed with [some attributes](https://github.com/yuin/goldmark#attributes)
 
 [SSE]: https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events
 
