@@ -51,6 +51,9 @@ func (broker *Broker) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	rw.Header().Set("Connection", "keep-alive")
 	rw.Header().Set("Access-Control-Allow-Origin", "*")
 
+	fmt.Fprintf(rw, "data: start\n\n")
+	flusher.Flush()
+
 	messageChan := make(chan []byte)
 	broker.newConns <- messageChan
 	defer func() {

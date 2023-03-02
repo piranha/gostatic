@@ -1,5 +1,7 @@
 # Gostatic changelog
 
+- SSE now works in a way to prevent Firefox spitting errors in console
+
 ## 2.36
 
 - Switch to using [SSE][] from websockets - simpler and less deps

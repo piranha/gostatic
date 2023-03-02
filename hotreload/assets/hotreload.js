@@ -1,25 +1,16 @@
 /* jshint esversion: 6 */
 
 (function() {
-  if (!('WebSocket' in window)) return;
-
-  var proto = (location.protocol === "https:") ? "wss://" : "ws://";
-
   function esconnect() {
     var es = new EventSource('/.gostatic.hotreload');
     es.onmessage = function(e) {
-      //console.log(e);
+      // console.log(e);
       localStorage.hotreloaddebug && console.log(e.data);
       enqueue(e.data);
     }
-    es.onerror = function(e) {
-      console.error('Hotreload connection closed', e);
-      es.close();
-      setTimeout(esconnect, 1000);
-    }
+    window.addEventListener('beforeunload', _ => es.close());
   }
   esconnect();
-
 
   var MESSAGES = new Set();
   var timeout, timeoutMs;
@@ -41,10 +32,12 @@
 
 
   var RELOADERS = {
-    page: function reloadpage() {
-      fetch(window.location.href,
-            {mode:    'same-origin',
-             headers: {'X-With': 'hotreload'}})
+    start() {
+      console.log('hotreload connection established');
+    },
+    page() {
+      fetch(window.location.href, {mode:    'same-origin',
+                                   headers: {'X-With': 'hotreload'}})
         .then(res => res.text())
         .then(text => {
           morphdom(document.documentElement, text);
@@ -58,7 +51,7 @@
           }
         });
     },
-    css: function reloadcss() {
+    css() {
       // This snippet pinched from quickreload, under the MIT license:
       // https://github.com/bjoerge/quickreload/blob/master/client.js
       var killcache = '__gostatic=' + new Date().getTime();
